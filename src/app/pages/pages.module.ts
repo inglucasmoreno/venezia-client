@@ -14,6 +14,8 @@ import { EditarPasswordComponent } from './usuarios/editar/editar-password.compo
 import { NgxPaginationModule } from 'ngx-pagination';
 import { DirectivesModule } from '../directives/directives.module';
 import { PerfilComponent } from './perfil/perfil.component';
+import { UnidadMedidaComponent } from './unidad-medida/unidad-medida.component';
+import { ProductosComponent } from './productos/productos.component';
 
 
 @NgModule({
@@ -25,6 +27,8 @@ import { PerfilComponent } from './perfil/perfil.component';
     EditarUsuarioComponent,
     EditarPasswordComponent,
     PerfilComponent,
+    UnidadMedidaComponent,
+    ProductosComponent,
   ],
   imports: [
     CommonModule,

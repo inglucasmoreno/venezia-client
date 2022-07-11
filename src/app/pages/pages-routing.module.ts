@@ -13,6 +13,8 @@ import { NuevoUsuarioComponent } from './usuarios/nuevo-usuario.component';
 import { EditarUsuarioComponent } from './usuarios/editar/editar-usuario.component';
 import { EditarPasswordComponent } from './usuarios/editar/editar-password.component';
 import { PerfilComponent } from './perfil/perfil.component';
+import { UnidadMedidaComponent } from './unidad-medida/unidad-medida.component';
+import { ProductosComponent } from './productos/productos.component';
 
 const routes: Routes = [
     {
@@ -33,6 +35,12 @@ const routes: Routes = [
             { path: 'usuarios/editar/:id', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: EditarUsuarioComponent },
             { path: 'usuarios/password/:id', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: EditarPasswordComponent },
             
+            // Unidad de medida
+            { path: 'unidad-medida', data: { permisos: 'UNIDAD_MEDIDA_NAV' }, canActivate: [PermisosGuard], component: UnidadMedidaComponent },
+
+            // Productos
+            { path: 'productos', data: { permisos: 'PRODUCTOS_NAV' }, canActivate: [PermisosGuard], component: ProductosComponent },
+
         ]
     }
 ];
