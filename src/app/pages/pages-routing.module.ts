@@ -15,6 +15,7 @@ import { EditarPasswordComponent } from './usuarios/editar/editar-password.compo
 import { PerfilComponent } from './perfil/perfil.component';
 import { UnidadMedidaComponent } from './unidad-medida/unidad-medida.component';
 import { ProductosComponent } from './productos/productos.component';
+import { VentasComponent } from './ventas/ventas.component';
 
 const routes: Routes = [
     {
@@ -29,6 +30,9 @@ const routes: Routes = [
             // Perfil de usuarios
             { path: 'perfil', component: PerfilComponent },
 
+            // Ventas
+            { path: 'ventas', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasComponent },
+
             // Usuarios
             { path: 'usuarios', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: UsuariosComponent },
             { path: 'usuarios/nuevo', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: NuevoUsuarioComponent },
@@ -40,6 +44,7 @@ const routes: Routes = [
 
             // Productos
             { path: 'productos', data: { permisos: 'PRODUCTOS_NAV' }, canActivate: [PermisosGuard], component: ProductosComponent },
+
 
         ]
     }

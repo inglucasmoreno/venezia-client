@@ -30,6 +30,18 @@ export class ProductosService {
     });
   };
 
+  // Producto por parametro
+  getProductoParametro(codigo: string): Observable<any> {
+    return this.http.get(`${base_url}/productos/buscar/parametro`,{ 
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      },
+      params: {
+        codigo
+      }
+    });
+  };
+
   // Listar productos
   listarProductos(
     direccion: number = 1,

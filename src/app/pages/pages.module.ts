@@ -16,6 +16,7 @@ import { DirectivesModule } from '../directives/directives.module';
 import { PerfilComponent } from './perfil/perfil.component';
 import { UnidadMedidaComponent } from './unidad-medida/unidad-medida.component';
 import { ProductosComponent } from './productos/productos.component';
+import { VentasComponent } from './ventas/ventas.component';
 
 
 @NgModule({
@@ -29,6 +30,7 @@ import { ProductosComponent } from './productos/productos.component';
     PerfilComponent,
     UnidadMedidaComponent,
     ProductosComponent,
+    VentasComponent,
   ],
   imports: [
     CommonModule,
