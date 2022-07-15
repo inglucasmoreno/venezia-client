@@ -17,6 +17,7 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { UnidadMedidaComponent } from './unidad-medida/unidad-medida.component';
 import { ProductosComponent } from './productos/productos.component';
 import { VentasComponent } from './ventas/ventas.component';
+import { VentasHistorialComponent } from './ventas/ventas-historial.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { VentasComponent } from './ventas/ventas.component';
     UnidadMedidaComponent,
     ProductosComponent,
     VentasComponent,
+    VentasHistorialComponent,
   ],
   imports: [
     CommonModule,

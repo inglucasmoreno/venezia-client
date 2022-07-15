@@ -20,20 +20,30 @@ export class VentasComponent implements OnInit {
   // Tipo de busqueda
   public modo: string = 'codigo';
 
+  // Items formas de pago
+  public itemsFormasPago: string[] = [
+    'Efectivo',
+    'Crédito',
+    'Débito',
+    'Mercado pago'
+  ];
+  
   // Ventas
   public showModalVenta = false;
   public precio_total: number = 0;
   public vuelto: number = 0;
   public pagaCon: number = null;
   public formaPago: string = 'Efectivo';
-  public flag_multiples_formasPago = false;
+  public formasPago: any[] = [];
+  public multiples_formasPago = false;
+  public formaPagoMonto: number = null;
 
   // Agregando productos
   public codigo: string = '';
   public productoActual: any;
   public productos: any[] = [];
   public cantidad: number = null;
-  public flag_agregandoProducto = false;
+  public agregandoProducto = false;
   public productoSeleccionado: any = null;
 
   // Listado de productos - Para modo busqueda
@@ -138,7 +148,7 @@ export class VentasComponent implements OnInit {
   // Seleccionar producto
   seleccionarProducto(producto: any): void{
     this.productoSeleccionado = producto;
-    this.flag_agregandoProducto = true;
+    this.agregandoProducto = true;
   }
 
   // Calcular precio de venta
@@ -166,6 +176,7 @@ export class VentasComponent implements OnInit {
             this.precio_total = 0;
             this.formaPago = 'Efectivo';
             this.productos = [];
+            this.metodoPagoUnico();
             this.reiniciarValores(); 
           } 
         }); 
@@ -183,33 +194,48 @@ export class VentasComponent implements OnInit {
   // Completar venta
   completarVenta(): void {
     
-    let forma_pago: any[];
-    
-    this.alertService.loading();
+    // Verificacion de valores
+    if(this.multiples_formasPago && this.formasPago.length === 0){
+      this.alertService.info('Debe seleccionar una forma de pago');
+      return;
+    }
 
-    if(!this.flag_multiples_formasPago) forma_pago = [{ descripcion: this.formaPago, valor: this.precio_total }];
+    this.alertService.question({ msg: 'Completando venta', buttonText: 'Completar' })
+        .then(({isConfirmed}) => { 
+          if(isConfirmed){
+
+            let forma_pago: any[];
     
-    const data = {
-      productos: this.productos,
-      precio_total: this.precio_total,
-      forma_pago,
-      creatorUser: this.authService.usuario.userId,
-      updatorUser: this.authService.usuario.userId,
-    };
-    this.ventasService.nuevaVenta(data).subscribe({
-      next: () => {
-        this.productoActual = null;
-        this.precio_total = 0;
-        this.productos = [];    
-        this.showModalVenta = false;   
-        this.pagaCon = null;
-        this.formaPago = 'Efectivo';
-        this.vuelto = 0;
-        this.reiniciarValores();
-        this.alertService.success('Venta finalizada')
-      },
-      error: ({error}) => this.alertService.errorApi(error.message) 
-    });  
+            this.alertService.loading();
+        
+            if(!this.multiples_formasPago) forma_pago = [{ descripcion: this.formaPago, valor: this.precio_total }];
+            else if(this.multiples_formasPago) forma_pago = this.formasPago;
+            
+            const data = {
+              productos: this.productos,
+              precio_total: this.precio_total,
+              forma_pago,
+              creatorUser: this.authService.usuario.userId,
+              updatorUser: this.authService.usuario.userId,
+            };
+            this.ventasService.nuevaVenta(data).subscribe({
+              next: () => {
+                this.productoActual = null;
+                this.precio_total = 0;
+                this.productos = [];    
+                this.showModalVenta = false;   
+                this.pagaCon = null;
+                this.formaPago = 'Efectivo';
+                this.vuelto = 0;
+                this.reiniciarValores();
+                this.metodoPagoUnico();
+                this.alertService.success('Venta completada')
+              },
+              error: ({error}) => this.alertService.errorApi(error.message) 
+            });  
+
+          } 
+        }); 
   }
 
   // Cambiar modo de busqueda
@@ -229,6 +255,93 @@ export class VentasComponent implements OnInit {
     this.vuelto = this.pagaCon - this.precio_total;
   }
 
+  // Agregar forma de pago
+  agregarFormaPago(): void {
+
+    // Verificacion de valores ingresados
+    if(!this.formaPagoMonto || this.formaPagoMonto <= 0){
+      this.alertService.info('Valores inválidos');
+      return;
+    }
+
+    // Verificacion: Se supera precio total
+    // Pendiente
+
+    this.formasPago.push({ descripcion: this.formaPago, valor: this.formaPagoMonto });
+    
+    // Se elimina el elemento
+    this.itemsFormasPago = this.itemsFormasPago.filter(elemento => elemento !== this.formaPago);
+
+    this.formaPago = this.itemsFormasPago[0];
+    
+    // this.formaPagoMonto = null;
+    this.calcularDiferencia();
+  
+  }
+
+  // Eliminar forma de pago
+  eliminarFormaPago(formaPago: any): void {
+    
+    this.formasPago = this.formasPago.filter(elemento => elemento.descripcion !== formaPago.descripcion);
+    
+    this.itemsFormasPago = [];  
+
+    console.log(this.formasPago);
+
+    let efectivo = false;
+    let credito = false;
+    let debito = false;
+    let mercadoPago = false;
+
+    for(const elemento of this.formasPago){
+      const elementoTMP: any = elemento;
+      if(elementoTMP.descripcion === 'Efectivo') efectivo = true;
+      else if(elementoTMP.descripcion === 'Crédito') credito = true;
+      else if(elementoTMP.descripcion === 'Débito') debito = true;
+      else if(elementoTMP.descripcion === 'Mercado pago') mercadoPago = true;
+    }
+
+    this.itemsFormasPago = [];
+
+    if(!efectivo) this.itemsFormasPago.push('Efectivo');
+    if(!credito) this.itemsFormasPago.push('Crédito');
+    if(!debito) this.itemsFormasPago.push('Débito');
+    if(!mercadoPago) this.itemsFormasPago.push('Mercado pago');
+
+    this.formaPago = this.itemsFormasPago[0];
+
+    this.calcularDiferencia();
+
+  }
+
+  // Regresar a metodo de pago unico
+  metodoPagoUnico(): void {
+    this.reiniciarMetodosPago();
+    this.multiples_formasPago = false;
+  }
+
+  // Reiniciar Metodos de pago
+  reiniciarMetodosPago(): void {
+    this.itemsFormasPago = [
+      'Efectivo',
+      'Crédito',
+      'Débito',
+      'Mercado pago'
+    ]
+    this.formaPago = 'Efectivo';
+    this.formaPagoMonto = null;
+    this.formasPago = [];
+  }
+
+  // Calcular diferencia - Metodos de pago multiples
+  calcularDiferencia(): void {
+    let precioTotalTMP = this.precio_total;
+    for(const elemento of this.formasPago){
+      precioTotalTMP = precioTotalTMP - elemento.valor;      
+    }  
+    this.formaPagoMonto = precioTotalTMP;
+  }
+
   // Reiniciar paginador
   reiniciarPaginador(): void {
     this.paginaActualBuscador = 1;
@@ -238,7 +351,7 @@ export class VentasComponent implements OnInit {
   reiniciarValores(): void {
     this.codigo = '';
     this.cantidad = null;
-    this.flag_agregandoProducto = false;
+    this.agregandoProducto = false;
     this.filtroBuscador.parametro = '';
     this.reiniciarPaginador();
   }

@@ -16,6 +16,7 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { UnidadMedidaComponent } from './unidad-medida/unidad-medida.component';
 import { ProductosComponent } from './productos/productos.component';
 import { VentasComponent } from './ventas/ventas.component';
+import { VentasHistorialComponent } from './ventas/ventas-historial.component';
 
 const routes: Routes = [
     {
@@ -32,6 +33,7 @@ const routes: Routes = [
 
             // Ventas
             { path: 'ventas', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasComponent },
+            { path: 'ventas/historial', data: { permisos: 'VENTAS_HISTORIAL_NAV' }, canActivate: [PermisosGuard], component: VentasHistorialComponent },
 
             // Usuarios
             { path: 'usuarios', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: UsuariosComponent },
@@ -44,7 +46,6 @@ const routes: Routes = [
 
             // Productos
             { path: 'productos', data: { permisos: 'PRODUCTOS_NAV' }, canActivate: [PermisosGuard], component: ProductosComponent },
-
 
         ]
     }
