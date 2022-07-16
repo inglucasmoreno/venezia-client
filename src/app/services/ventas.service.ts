@@ -55,4 +55,13 @@ export class VentasService {
     });
   }  
 
+  // Facturacion
+  facturacion(): Observable<any> {
+    return this.http.get(`${base_url}/ventas/facturacion/testing`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }  
+
 }
