@@ -24,6 +24,7 @@ export class VentasHistorialComponent implements OnInit {
   public ventaSeleccionada: any;
   public descripcion: string = '';
   public montoTotal: number = 0;
+  public montoTotalFacturado: number = 0;
   public productos: any[] = [];
   
   // Paginacion
@@ -63,7 +64,8 @@ export class VentasHistorialComponent implements OnInit {
     listarVentas(): void {
       this.ventasService.listarVentas( 
         this.ordenar.direccion,
-        this.ordenar.columna
+        this.ordenar.columna,
+        'true'
         )
       .subscribe( ({ ventas }) => {
         this.ventas = ventas;
@@ -101,10 +103,13 @@ export class VentasHistorialComponent implements OnInit {
     // Calculo de monto total
     calculoMontoTotal(): void {
       let montoTotalTMP = 0;
+      let montoTotalFacturadoTMP = 0;
       this.ventas.map((venta: any) => {
         montoTotalTMP += venta.precio_total;  
+        if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;   
       });
       this.montoTotal = montoTotalTMP;
+      this.montoTotalFacturado = montoTotalFacturadoTMP;
     }
   
     // Abrir modal - Detalles de venta

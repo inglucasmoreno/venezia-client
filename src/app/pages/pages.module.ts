@@ -18,6 +18,7 @@ import { UnidadMedidaComponent } from './unidad-medida/unidad-medida.component';
 import { ProductosComponent } from './productos/productos.component';
 import { VentasComponent } from './ventas/ventas.component';
 import { VentasHistorialComponent } from './ventas/ventas-historial.component';
+import { CajaComponent } from './caja/caja.component';
 
 
 @NgModule({
@@ -33,6 +34,7 @@ import { VentasHistorialComponent } from './ventas/ventas-historial.component';
     ProductosComponent,
     VentasComponent,
     VentasHistorialComponent,
+    CajaComponent,
   ],
   imports: [
     CommonModule,

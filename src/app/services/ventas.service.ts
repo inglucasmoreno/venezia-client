@@ -33,12 +33,14 @@ export class VentasService {
   // Listar ventas
   listarVentas(
     direccion: number = -1,
-    columna: string = 'createdAt'  
+    columna: string = 'createdAt',
+    activo = 'todo' 
   ): Observable<any> {
     return this.http.get(`${base_url}/ventas`, {
       params: {
         direccion: String(direccion),
-        columna
+        columna,
+        activo
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -49,15 +51,6 @@ export class VentasService {
   // Actualizar venta
   actualizarVenta(id:string, data: any): Observable<any> {
     return this.http.put(`${base_url}/ventas/${id}`, data, {
-      headers: {
-        'Authorization': localStorage.getItem('token')
-      }
-    });
-  }  
-
-  // Facturacion
-  facturacion(): Observable<any> {
-    return this.http.get(`${base_url}/ventas/facturacion/testing`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }

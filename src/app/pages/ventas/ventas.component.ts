@@ -29,8 +29,12 @@ export class VentasComponent implements OnInit {
   ];
   
   // Ventas
+  public comprobante = 'Normal';
   public showModalVenta = false;
+
   public precio_total: number = 0;
+  public precio_total_limpio: number = 0;
+
   public vuelto: number = 0;
   public pagaCon: number = null;
   public formaPago: string = 'Efectivo';
@@ -122,7 +126,7 @@ export class VentasComponent implements OnInit {
       if(elemento.productoTMP._id === producto._id){
         repetido = true;
         elemento.cantidad += cantidad;
-        elemento.precio += producto.precio;
+        elemento.precio += producto.precio * cantidad;
       }
     })
 
@@ -130,6 +134,7 @@ export class VentasComponent implements OnInit {
       const nuevoProducto = {
         productoTMP: producto,
         producto: producto._id,
+        balanza: producto.balanza,
         descripcion: producto.descripcion,
         unidad_medida: producto.unidad_medida.descripcion,
         cantidad: cantidad,
@@ -153,11 +158,23 @@ export class VentasComponent implements OnInit {
 
   // Calcular precio de venta
   calcularPrecio(): void {
+    
     let precioTMP = 0;
     this.productos.map(producto => {
       precioTMP += producto.precio;
     })
-    this.precio_total = precioTMP;
+    
+    // Precio sin adicionales ni descuentos
+    this.precio_total_limpio = precioTMP;
+
+    if(this.formasPago.length === 0){ // Forma de pago unica
+      console.log('Forma de pago unica')
+      // Con adicional por credito => precio total + 10% : Sin adicional por credito
+      this.formaPago === 'Crédito' ? this.precio_total = precioTMP * 1.10 : this.precio_total = precioTMP;
+    }else{
+      console.log('Forma de pago multimple')
+    }
+
   }
 
   // Abrir modal - Completar venta
@@ -172,8 +189,10 @@ export class VentasComponent implements OnInit {
           if(isConfirmed){
             this.productoActual = null;
             this.pagaCon = null;
+            this.comprobante = 'Normal',
             this.vuelto = 0;
             this.precio_total = 0;
+            this.precio_total_limpio = 0;
             this.formaPago = 'Efectivo';
             this.productos = [];
             this.metodoPagoUnico();
@@ -214,7 +233,10 @@ export class VentasComponent implements OnInit {
             const data = {
               productos: this.productos,
               precio_total: this.precio_total,
+              precio_total_limpio: this.precio_total_limpio,
+              comprobante: this.comprobante,
               forma_pago,
+              adicional_credito: this.formaPago === 'Crédito' ? this.precio_total_limpio * 0.10 : 0,
               creatorUser: this.authService.usuario.userId,
               updatorUser: this.authService.usuario.userId,
             };
@@ -222,6 +244,8 @@ export class VentasComponent implements OnInit {
               next: () => {
                 this.productoActual = null;
                 this.precio_total = 0;
+                this.precio_total_limpio = 0;
+                this.comprobante = 'Normal',
                 this.productos = [];    
                 this.showModalVenta = false;   
                 this.pagaCon = null;

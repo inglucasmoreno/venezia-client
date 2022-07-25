@@ -10,11 +10,12 @@
             </button>
         </div>
         <div class="p-4 text-sm">
-            <div class="flex items-center justify-between border-gray-300 p-2">
-                <p class="text-right"> <span class="font-semibold"> Fecha: </span> {{ ventaSeleccionada?.createdAt | fecha }} </p>  
+            <div class="flex justify-between border-gray-300">
+                <p class="text-left"> <span class="font-semibold"> Fecha: </span>  {{ ventaSeleccionada?.createdAt | fecha }} </p>  
                 <p class="text-right capitalize"> <span class="font-semibold"> Creador: </span> {{ ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{ ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>  
             </div>
-            <div class="mt-2">
+            <p class="text-left mt-4 text-sm"> <span class="font-semibold"> Tipo de comprobante: </span> <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> {{ ventaSeleccionada?.comprobante }} </span> </p>  
+            <div class="mt-4">
                 <h2 class="font-semibold text-sm bg-gray-100 p-2 w-full border border-gray-300"> Montos y formas de pago </h2>
                 <div class="text-sm border-b border-gray-200 flex items-center justify-between" *ngFor="let formaPago of ventaSeleccionada?.forma_pago"> 
                     <span class="font-semibold p-2">
@@ -61,9 +62,17 @@
                       <p> Total de ventas: {{ ventas.length }} </p>
                   </div>
               </div>
-              <div class="md:flex md:items-center px-4 py-2">
-                  <div class="p-2 text-sm border border-gray-400 w-max">
-                    <span class="font-semibold"> Monto total: </span>  ${{ montoTotal | moneda }}
+              <div class="md:flex md:items-center md:justify-between px-4 py-2">
+                  <div class="p-2 text-sm w-max">
+                      <div class="flex items-center"> 
+                          <div class="font-semibold border text-xs border-gray-300 rounded bg-gray-100 p-1"> Monto total: ${{ montoTotal | moneda }} </div> 
+                          <div class="font-semibold ml-4 text-blue-800 text-xs border border-blue-300 text-center bg-blue-100 rounded p-1"> Monto facturado:  ${{ montoTotalFacturado | moneda }} </div> 
+                      </div>
+                      <!-- <p class="text-blue-800 text-xs border border-blue-300 text-center bg-blue-100 rounded p-1">
+                      </p>
+                      <p class="text-primary-800 text-xs">
+                          <span class="font-semibold"> - Monto sin facturar: </span>  ${{ montoTotal - montoTotalFacturado | moneda }}
+                      </p> -->
                   </div>
                   <div class="md:my-2 flex sm:flex-row flex-col">
                       <select (change)="paginaActual = 1" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
@@ -102,6 +111,18 @@
                                       </div>
                                   </th>
                                   <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('comprobante')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                        <span>
+                                            Comprobante                                             
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'comprobante' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'comprobante' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'comprobante'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                  <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
                                     <div (click)="ordenarPorColumna('creatorUser')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
                                         <span>
                                             Usuario creador                                             
@@ -135,8 +156,13 @@
                                       </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                    <p class="text-gray-900 whitespace-no-wrap">
-                                        {{ venta.creatorUser.apellido }} {{ venta.creatorUser.nombre }} 
+                                    <p [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}" class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
+                                        {{ venta.comprobante }}
+                                    </p>
+                                </td>
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap capitalize">
+                                        {{ venta.creatorUser.apellido.toLowerCase() }} {{ venta.creatorUser.nombre.toLowerCase() }} 
                                     </p>
                                   </td>
                                   <td class="px-5 py-2 border-b flex items-center justify-center border-gray-200 text-xs text-center">
