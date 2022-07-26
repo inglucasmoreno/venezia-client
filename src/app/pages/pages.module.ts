@@ -19,6 +19,7 @@ import { ProductosComponent } from './productos/productos.component';
 import { VentasComponent } from './ventas/ventas.component';
 import { VentasHistorialComponent } from './ventas/ventas-historial.component';
 import { CajaComponent } from './caja/caja.component';
+import { CajasHistorialComponent } from './caja/cajas-historial.component';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import { CajaComponent } from './caja/caja.component';
     VentasComponent,
     VentasHistorialComponent,
     CajaComponent,
+    CajasHistorialComponent,
   ],
   imports: [
     CommonModule,

@@ -96,9 +96,9 @@
 
   <!-- Cuerpo de la seccion -->
 
-  <div class="flex mt-2">
+  <div class="md:flex mt-2">
     
-    <div class="w-1/2 h-full">
+    <div class="md:w-1/2 h-full">
      
       <div class="border border-gray-300 rounded-t shadow">
         <div class="flex items-center justify-between rounded-t bg-primary-800 p-2">
@@ -182,7 +182,7 @@
       </div>
 
     </div>
-    <div *ngIf="productos.length > 0" class="border max-h-screen overflow-y-auto border-gray-300 shadow rounded-t ml-4 w-1/2 h-full">
+    <div *ngIf="productos.length > 0" class="border max-h-screen overflow-y-auto border-gray-300 mt-2 md:mt-0 shadow rounded-t md:ml-4 md:w-1/2 h-full">
       <div class="bg-primary-800 flex items-center justify-between rounded-t p-2">
         <h1 class="text-xl text-white pl-2"> Productos de la venta </h1>
         <div>

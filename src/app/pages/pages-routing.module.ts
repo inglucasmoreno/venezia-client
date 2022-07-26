@@ -18,6 +18,7 @@ import { ProductosComponent } from './productos/productos.component';
 import { VentasComponent } from './ventas/ventas.component';
 import { VentasHistorialComponent } from './ventas/ventas-historial.component';
 import { CajaComponent } from './caja/caja.component';
+import { CajasHistorialComponent } from './caja/cajas-historial.component';
 
 const routes: Routes = [
     {
@@ -50,6 +51,7 @@ const routes: Routes = [
 
             // Cajas
             { path: 'caja', data: { permisos: 'CAJAS_NAV' }, canActivate: [PermisosGuard], component: CajaComponent },
+            { path: 'cajas-historial', data: { permisos: 'CAJAS_NAV' }, canActivate: [PermisosGuard], component: CajasHistorialComponent },
 
         ]
     }

@@ -147,6 +147,7 @@ export class CajaComponent implements OnInit {
 
   // Abrir modal: Ingresos y Gastos
   abrirModalIngresosGastos(tipo: string): void {
+    window.scrollTo(0,0);
     if(tipo === 'crear'){
       this.formIngresosGastos.monto = null;
       this.formIngresosGastos.descripcion = '';
@@ -197,6 +198,7 @@ export class CajaComponent implements OnInit {
 
   // Abrir modal: Actualizar saldo inicial
   abrirModalSaldoInicial(): void {
+    window.scrollTo(0,0);
     this.nuevoSaldo = this.saldoInicial;
     this.showModalSaldoInicial = true;
   }
