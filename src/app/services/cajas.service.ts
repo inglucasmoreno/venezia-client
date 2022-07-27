@@ -43,8 +43,8 @@ export class CajasService {
 
   // Listar cajas
   listarCajas(
-    direccion: number = 1,
-    columna: string = 'descripcion'  
+    direccion: number = -1,
+    columna: string = 'createdAt'  
   ): Observable<any> {
     return this.http.get(`${base_url}/cajas`, {
       params: {

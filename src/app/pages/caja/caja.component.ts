@@ -135,7 +135,9 @@ export class CajaComponent implements OnInit {
 
             this.cajasService.nuevaCaja(data).subscribe({
               next: () => {
-                this.alertService.close()
+                this.efectivoEnCajaReal = null;
+                this.tesoreria = null;
+                this.calculosIniciales();
               },
               error: ({error}) => this.alertService.errorApi(error.message)
             }) 
