@@ -25,7 +25,8 @@ export class VentasComponent implements OnInit {
     'Efectivo',
     'Crédito',
     'Débito',
-    'Mercado pago'
+    'Mercado pago',
+    'PedidosYa'
   ];
   
   // Ventas
@@ -42,6 +43,8 @@ export class VentasComponent implements OnInit {
   public multiples_formasPago = false;
   public formaPagoMonto: number = null;
 
+  public diferenciaPago = 0;
+
   // Agregando productos
   public codigo: string = '';
   public productoActual: any;
@@ -57,6 +60,9 @@ export class VentasComponent implements OnInit {
   public paginaActualBuscador: number = 1;
   public cantidadItemsBuscador: number = 5;
 
+  // PedidosYa
+  public pedidosya_comprobante:string = '';
+
   // Filtrados
   public filtroBuscador = {
     activo: 'true',
@@ -70,6 +76,8 @@ export class VentasComponent implements OnInit {
               private productosService: ProductosService) { }
 
   ngOnInit(): void {
+    // Se recuperan los valores del localstorage
+    this.recuperarLocalStorage();
     gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = 'Dashboard - Ventas';
   }
@@ -148,12 +156,19 @@ export class VentasComponent implements OnInit {
     this.calcularPrecio();
     this.reiniciarValores();
     this.alertService.close();
+
   }
 
   // Seleccionar producto
   seleccionarProducto(producto: any): void{
     this.productoSeleccionado = producto;
     this.agregandoProducto = true;
+  }
+  
+  // Seleccionando forma de pago
+  seleccionarFormaPago(): void {
+    this.pedidosya_comprobante = '';
+    this.calcularPrecio();
   }
 
   // Calcular precio de venta
@@ -165,15 +180,20 @@ export class VentasComponent implements OnInit {
     })
     
     // Precio sin adicionales ni descuentos
-    this.precio_total_limpio = precioTMP;
+    this.precio_total_limpio = this.dataService.redondear(precioTMP, 2);
 
     if(this.formasPago.length === 0){ // Forma de pago unica
       console.log('Forma de pago unica')
       // Con adicional por credito => precio total + 10% : Sin adicional por credito
-      this.formaPago === 'Crédito' ? this.precio_total = precioTMP * 1.10 : this.precio_total = precioTMP;
+      this.formaPago === 'Crédito' 
+      ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2) 
+      : this.precio_total = this.dataService.redondear(precioTMP, 2);
     }else{
       console.log('Forma de pago multimple')
     }
+
+    // Se almacenan los valores en el localstorage
+    this.almacenamientoLocalStorage();
 
   }
 
@@ -194,9 +214,11 @@ export class VentasComponent implements OnInit {
             this.precio_total = 0;
             this.precio_total_limpio = 0;
             this.formaPago = 'Efectivo';
+            this.pedidosya_comprobante = '';
             this.productos = [];
             this.metodoPagoUnico();
-            this.reiniciarValores(); 
+            this.reiniciarValores();
+            this.almacenamientoLocalStorage(); // Alamacenamiento de valores en localStorage
           } 
         }); 
   }
@@ -213,9 +235,20 @@ export class VentasComponent implements OnInit {
   // Completar venta
   completarVenta(): void {
     
-    // Verificacion de valores
-    if(this.multiples_formasPago && this.formasPago.length === 0){
+    // Verificacion - Formas de pago multiples
+    if(this.multiples_formasPago && this.formasPago.length === 0){ // Seleccionar al menos una forma de pago (Multiples formas de pago)
       this.alertService.info('Debe seleccionar una forma de pago');
+      return;
+    }
+
+    if(this.multiples_formasPago && this.diferenciaPago !== 0){
+      this.alertService.info('Debe cubrir el precio total de la venta');
+      return;
+    }
+
+    // Verificacion - PedidosYa
+    if(this.formaPago === 'PedidosYa' && this.pedidosya_comprobante.trim() === ''){
+      this.alertService.info('Colocar número de comprobante de PedidosYa');
       return;
     }
 
@@ -235,6 +268,7 @@ export class VentasComponent implements OnInit {
               precio_total: this.precio_total,
               precio_total_limpio: this.precio_total_limpio,
               comprobante: this.comprobante,
+              pedidosya_comprobante: this.formaPago === 'PedidosYa' ? this.pedidosya_comprobante : '',
               forma_pago,
               adicional_credito: this.formaPago === 'Crédito' ? this.precio_total_limpio * 0.10 : 0,
               creatorUser: this.authService.usuario.userId,
@@ -251,8 +285,10 @@ export class VentasComponent implements OnInit {
                 this.pagaCon = null;
                 this.formaPago = 'Efectivo';
                 this.vuelto = 0;
+                this.pedidosya_comprobante = '';
                 this.reiniciarValores();
                 this.metodoPagoUnico();
+                this.almacenamientoLocalStorage();  // Alamacenamiento de valores en localStorage
                 this.alertService.success('Venta completada')
               },
               error: ({error}) => this.alertService.errorApi(error.message) 
@@ -277,6 +313,8 @@ export class VentasComponent implements OnInit {
   // Calcular vuelto
   calcularVuelto(): void{
     this.vuelto = this.pagaCon - this.precio_total;
+    localStorage.setItem('vuelto', JSON.stringify(this.vuelto));
+    localStorage.setItem('pagaCon', JSON.stringify(this.pagaCon));
   }
 
   // Agregar forma de pago
@@ -288,8 +326,12 @@ export class VentasComponent implements OnInit {
       return;
     }
 
-    // Verificacion: Se supera precio total
-    // Pendiente
+    console.log(this.diferenciaPago);
+
+    if(this.formaPagoMonto > this.diferenciaPago){
+      this.alertService.info('No se puede superar el monto de la venta');
+      return;
+    }
 
     this.formasPago.push({ descripcion: this.formaPago, valor: this.formaPagoMonto });
     
@@ -313,14 +355,12 @@ export class VentasComponent implements OnInit {
     console.log(this.formasPago);
 
     let efectivo = false;
-    let credito = false;
     let debito = false;
     let mercadoPago = false;
 
     for(const elemento of this.formasPago){
       const elementoTMP: any = elemento;
       if(elementoTMP.descripcion === 'Efectivo') efectivo = true;
-      else if(elementoTMP.descripcion === 'Crédito') credito = true;
       else if(elementoTMP.descripcion === 'Débito') debito = true;
       else if(elementoTMP.descripcion === 'Mercado pago') mercadoPago = true;
     }
@@ -328,7 +368,6 @@ export class VentasComponent implements OnInit {
     this.itemsFormasPago = [];
 
     if(!efectivo) this.itemsFormasPago.push('Efectivo');
-    if(!credito) this.itemsFormasPago.push('Crédito');
     if(!debito) this.itemsFormasPago.push('Débito');
     if(!mercadoPago) this.itemsFormasPago.push('Mercado pago');
 
@@ -340,8 +379,27 @@ export class VentasComponent implements OnInit {
 
   // Regresar a metodo de pago unico
   metodoPagoUnico(): void {
+    this.itemsFormasPago = [
+      'Efectivo',
+      'Crédito',
+      'Débito',
+      'Mercado pago',
+      'PedidosYa'
+    ];
     this.reiniciarMetodosPago();
     this.multiples_formasPago = false;
+    this.almacenamientoLocalStorage();
+  }
+
+  metodoPagoMultiple(): void {
+    this.itemsFormasPago = [
+      'Efectivo',
+      'Débito',
+      'Mercado pago',
+    ];
+    this.formaPago = 'Efectivo';
+    this.multiples_formasPago = true;
+    this.calcularDiferencia();
   }
 
   // Reiniciar Metodos de pago
@@ -350,11 +408,13 @@ export class VentasComponent implements OnInit {
       'Efectivo',
       'Crédito',
       'Débito',
-      'Mercado pago'
+      'Mercado pago',
+      'PedidosYa'
     ]
     this.formaPago = 'Efectivo';
     this.formaPagoMonto = null;
     this.formasPago = [];
+    this.almacenamientoLocalStorage();
   }
 
   // Calcular diferencia - Metodos de pago multiples
@@ -363,7 +423,49 @@ export class VentasComponent implements OnInit {
     for(const elemento of this.formasPago){
       precioTotalTMP = precioTotalTMP - elemento.valor;      
     }  
-    this.formaPagoMonto = precioTotalTMP;
+
+    this.formaPagoMonto = this.dataService.redondear(precioTotalTMP, 2);
+    this.diferenciaPago = this.dataService.redondear(precioTotalTMP, 2);
+
+    this.almacenamientoLocalStorage();
+  }
+
+  // Almacenamiento en localstorage
+  almacenamientoLocalStorage(): void {
+    localStorage.setItem('precio_total', JSON.stringify(this.precio_total));
+    localStorage.setItem('precio_total_limpio', JSON.stringify(this.precio_total_limpio));  
+    localStorage.setItem('productos', JSON.stringify(this.productos));
+    localStorage.setItem('productoActual', JSON.stringify(this.productoActual));
+    localStorage.setItem('vuelto', JSON.stringify(this.vuelto));
+    localStorage.setItem('pagaCon', JSON.stringify(this.pagaCon));
+    localStorage.setItem('formaPago', JSON.stringify(this.formaPago));
+    localStorage.setItem('formasPago', JSON.stringify(this.formasPago));
+    localStorage.setItem('multiples_formasPago', JSON.stringify(this.multiples_formasPago));
+    localStorage.setItem('formaPagoMonto', JSON.stringify(this.formaPagoMonto));
+    localStorage.setItem('diferenciaPago', JSON.stringify(this.diferenciaPago));
+    localStorage.setItem('itemsFormasPago', JSON.stringify(this.itemsFormasPago));
+  }
+
+  // Recuperacion de valores de localStorage
+  recuperarLocalStorage(): void {
+    this.precio_total = localStorage.getItem('precio_total') ? JSON.parse(localStorage.getItem('precio_total')) : 0;  
+    this.precio_total_limpio = localStorage.getItem('precio_total_limpio') ? JSON.parse(localStorage.getItem('precio_total_limpio')) : 0; 
+    this.productos = localStorage.getItem('productos') ? JSON.parse(localStorage.getItem('productos')) : [];    
+    this.productoActual = localStorage.getItem('productoActual') ? JSON.parse(localStorage.getItem('productoActual')) : null;
+    this.vuelto = localStorage.getItem('vuelto') ? JSON.parse(localStorage.getItem('vuelto')) : 0;
+    this.pagaCon = localStorage.getItem('pagaCon') ? JSON.parse(localStorage.getItem('pagaCon')) : null;
+    this.formaPago = localStorage.getItem('formaPago') ? JSON.parse(localStorage.getItem('formaPago')) : 'Efectivo';
+    this.formasPago = localStorage.getItem('formasPago') ? JSON.parse(localStorage.getItem('formasPago')) : [];
+    this.multiples_formasPago = localStorage.getItem('multiples_formasPago') ? JSON.parse(localStorage.getItem('multiples_formasPago')) : false;
+    this.formaPagoMonto = localStorage.getItem('formaPagoMonto') ? JSON.parse(localStorage.getItem('formaPagoMonto')) : null;
+    this.diferenciaPago = localStorage.getItem('diferenciaPago') ? JSON.parse(localStorage.getItem('diferenciaPago')) : 0;
+    this.itemsFormasPago = localStorage.getItem('itemsFormasPago') ? JSON.parse(localStorage.getItem('itemsFormasPago')) : [
+      'Efectivo',
+      'Crédito',
+      'Débito',
+      'Mercado pago',
+      'PedidosYa'
+    ];
   }
 
   // Reiniciar paginador

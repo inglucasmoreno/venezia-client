@@ -25,6 +25,7 @@ export class VentasHistorialComponent implements OnInit {
   public descripcion: string = '';
   public montoTotal: number = 0;
   public montoTotalFacturado: number = 0;
+  public montoTotalPedidosYa:number = 0;
   public productos: any[] = [];
   
   // Paginacion
@@ -33,8 +34,9 @@ export class VentasHistorialComponent implements OnInit {
   
   // Filtrado
   public filtro = {
-    activo: 'true',
-    parametro: ''
+    facturacion: 'todos',
+    pedidosYa: 'todos',
+    parametro: '',
   }
   
   // Ordenar
@@ -104,12 +106,15 @@ export class VentasHistorialComponent implements OnInit {
     calculoMontoTotal(): void {
       let montoTotalTMP = 0;
       let montoTotalFacturadoTMP = 0;
+      let montoTotalPedidosYaTMP = 0;
       this.ventas.map((venta: any) => {
         montoTotalTMP += venta.precio_total;  
-        if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;   
+        if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;  
+        if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaTMP += venta.precio_total;   
       });
       this.montoTotal = montoTotalTMP;
       this.montoTotalFacturado = montoTotalFacturadoTMP;
+      this.montoTotalPedidosYa = montoTotalPedidosYaTMP;
     }
   
     // Abrir modal - Detalles de venta
@@ -126,19 +131,7 @@ export class VentasHistorialComponent implements OnInit {
         this.alertService.errorApi(error);
       });
     }
-  
-    // Filtrar Activo/Inactivo
-    filtrarActivos(activo: any): void{
-      this.paginaActual = 1;
-      this.filtro.activo = activo;
-    }
-  
-    // Filtrar por Parametro
-    filtrarParametro(parametro: string): void{
-      this.paginaActual = 1;
-      this.filtro.parametro = parametro;
-    }
-  
+      
     // Ordenar por columna
     ordenarPorColumna(columna: string){
       this.ordenar.columna = columna;

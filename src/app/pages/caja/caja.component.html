@@ -126,20 +126,27 @@
                 <span class="ml-1"> Otros ingresos </span>       
               </p>
               <p> ${{ totalIngresos | moneda }} </p>
-            </div> 
+            </div>   
             <div class="flex items-center justify-between p-2">
               <p class="flex items-center">  
                 <span class="text-red-500 font-semibold"> (-) </span>
                 <span class="ml-1"> Otros gastos </span>       
               </p>
               <p class="text-red-500"> -${{ totalGastos | moneda }} </p>
-            </div>   
+            </div>
+            <div class="flex items-center justify-between p-2">
+              <p class="flex items-center">  
+                <span class="text-red-500 font-semibold"> (-) </span>
+                <span class="ml-1"> PedidosYa </span>       
+              </p>
+              <p class="text-red-500"> -${{ total_pedidosYa | moneda }} </p>
+            </div>    
             <div (click)="showPostnet = !showPostnet" class="flex cursor-pointer items-center justify-between p-2">
               <div class="flex items-center">  
                 <span class="text-red-500 font-semibold"> (-) </span>
                 <div class="ml-1 flex items-center"> 
                   <span>
-                    Total postnet 
+                    Total postnet
                   </span>
                   <span *ngIf="showPostnet" class="p-1 ml-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 bg-gray-100 border border-gray-400 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

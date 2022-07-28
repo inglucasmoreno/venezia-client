@@ -1,4 +1,5 @@
 
+<!-- Detalles de venta -->
 <app-modal [showModal]="showModalDetalle">
     <div>
         <div class="text-white bg-primary-800 flex items-center p-2 rounded-t justify-between">
@@ -10,11 +11,17 @@
             </button>
         </div>
         <div class="p-4 text-sm">
-            <div class="flex justify-between border-gray-300">
+            <div class="md:flex md:justify-between border-gray-300">
                 <p class="text-left"> <span class="font-semibold"> Fecha: </span>  {{ ventaSeleccionada?.createdAt | fecha }} </p>  
-                <p class="text-right capitalize"> <span class="font-semibold"> Creador: </span> {{ ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{ ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>  
+                <p class="md:text-right capitalize mt-2 md:mt-0"> <span class="font-semibold"> Creador: </span> {{ ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{ ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>  
             </div>
-            <p class="text-left mt-4 text-sm"> <span class="font-semibold"> Tipo de comprobante: </span> <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> {{ ventaSeleccionada?.comprobante }} </span> </p>  
+            <p class="text-left mt-4 text-sm"> 
+                <span class="font-semibold"> Tipo de comprobante: </span> 
+                <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> {{ ventaSeleccionada?.comprobante }} </span> 
+            </p>  
+            <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa'" class="mt-3 w-max"> 
+                <span class="bg-red-700 p-1 font-semibold rounded text-white"> PedidosYa - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
+            </p>
             <div class="mt-4">
                 <h2 class="font-semibold text-sm bg-gray-100 p-2 w-full border border-gray-300"> Montos y formas de pago </h2>
                 <div class="text-sm border-b border-gray-200 flex items-center justify-between" *ngFor="let formaPago of ventaSeleccionada?.forma_pago"> 
@@ -63,27 +70,34 @@
                   </div>
               </div>
               <div class="md:flex md:items-center md:justify-between px-4 py-2">
-                  <div class="p-2 text-sm w-max">
-                      <div class="flex items-center"> 
-                          <div class="font-semibold border text-xs border-gray-300 rounded bg-gray-100 p-1"> Monto total: ${{ montoTotal | moneda }} </div> 
-                          <div class="font-semibold ml-4 text-blue-800 text-xs border border-blue-300 text-center bg-blue-100 rounded p-1"> Monto facturado:  ${{ montoTotalFacturado | moneda }} </div> 
-                      </div>
-                      <!-- <p class="text-blue-800 text-xs border border-blue-300 text-center bg-blue-100 rounded p-1">
-                      </p>
-                      <p class="text-primary-800 text-xs">
-                          <span class="font-semibold"> - Monto sin facturar: </span>  ${{ montoTotal - montoTotalFacturado | moneda }}
-                      </p> -->
-                  </div>
-                  <div class="md:my-2 flex sm:flex-row flex-col">
-                      <select (change)="paginaActual = 1" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
-                          <option value="10"> 10 elementos </option>
-                          <option value="20"> 20 elementos </option>
-                          <option value="50"> 50 elementos </option>
-                          <option value="100"> 100 elementos </option>
-                      </select>
+                  <div class="md:my-2 flex text-sm sm:flex-row flex-col">
+                        <input (keyup)="paginaActual = 1" [(ngModel)]="filtro.parametro" type="text" class="p-2 border focus:outline-none border-gray-400 rounded" placeholder="Usuario, Nro comp.">
+                        <div>
+                            <select (change)="paginaActual = 1" [(ngModel)]="filtro.pedidosYa" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
+                                <option value="todos"> Todos </option>
+                                <option value="PedidosYa"> PedidosYa </option>
+                                <option value="SinPedidosYa"> Sin PedidosYa </option>
+                            </select>
+                            <select (change)="paginaActual = 1" [(ngModel)]="filtro.facturacion" class="bg-white ml-2 text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
+                                <option value="todos"> Todos </option>
+                                <option value="normal"> Normal </option>
+                                <option value="facturadas"> Facturadas </option>
+                            </select>
+                        </div>
+                        <select (change)="paginaActual = 1" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+                            <option value="10"> 10 elementos </option>
+                            <option value="20"> 20 elementos </option>
+                            <option value="50"> 50 elementos </option>
+                            <option value="100"> 100 elementos </option>
+                        </select>
                   </div>
               </div>
-              <div class="px-4 py-2 overflow-x-auto">
+              <div class=" pl-4 flex items-center"> 
+                <div class="font-semibold border-l-8 border-green-500 bg-green-100 text-green-800 text-xs text-center rounded p-1 md:p-2"> Monto total: ${{ montoTotal | moneda }} </div> 
+                <div class="font-semibold border-l-8 border-blue-500 bg-blue-100 ml-4 text-blue-800 text-xs text-center rounded p-1 md:p-2"> Monto facturado:  ${{ montoTotalFacturado | moneda }} </div> 
+                <div class="font-semibold border-l-8 border-red-500 bg-red-100 ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-1 md:p-2"> Monto PedidosYa:  ${{ montoTotalPedidosYa | moneda }} </div>     
+              </div>
+              <div class="px-4 py-2 mt-2 overflow-x-auto">
                   <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
                       <table class="min-w-full leading-normal">
                           <thead>
@@ -111,14 +125,9 @@
                                       </div>
                                   </th>
                                   <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
-                                    <div (click)="ordenarPorColumna('comprobante')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                    <div class="w-max flex items-center justify-center focus:outline-none">
                                         <span>
-                                            Comprobante                                             
-                                        </span>
-                                        <span class="ml-2">
-                                            <svg *ngIf="ordenar.columna == 'comprobante' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
-                                            <svg *ngIf="ordenar.columna == 'comprobante' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                            <svg *ngIf="ordenar.columna != 'comprobante'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                            Características                                             
                                         </span>
                                     </div>
                                 </th>
@@ -144,7 +153,7 @@
                               </tr>
                           </thead>
                           <tbody *ngIf="ventas">
-                              <tr class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                              <tr class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | filtroVentas:filtro.parametro:filtro.pedidosYa:filtro.facturacion | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
                                   <td class="px-5 py-3 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
                                           {{ venta.createdAt | fecha }}
@@ -156,9 +165,14 @@
                                       </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                    <p [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}" class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
-                                        {{ venta.comprobante }}
-                                    </p>
+                                    <div class="flex items-center">
+                                        <div [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}" class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
+                                            {{ venta.comprobante }}
+                                        </div>
+                                        <div *ngIf="venta.forma_pago[0].descripcion === 'PedidosYa'" class="p-1 ml-2 w-max bg-red-700 text-white rounded font-semibold">
+                                            PedidosYA - #{{ venta.pedidosya_comprobante }}
+                                        </div>
+                                    </div>
                                 </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 whitespace-no-wrap capitalize">

@@ -22,6 +22,7 @@ export class CajaComponent implements OnInit {
   public diferencia: number = 0;
   public tesoreria: number = null;
   public total_facturado: number = 0;
+  public total_pedidosYa: number = 0;
   
   // Saldo inicial de caja
   public saldoInicial: number = 0;
@@ -64,15 +65,18 @@ export class CajaComponent implements OnInit {
           total_postnet,
           totalGastos,
           totalIngresos,
+          total_pedidosYa,
           ingresos,
           gastos,
           saldoInicial,
           total_facturado
         } = valores;
         this.saldoInicial = saldoInicial;
-        this.efectivoEnCaja = saldoInicial + total_ventas + totalIngresos  - total_postnet - totalGastos;
+
+        this.efectivoEnCaja = saldoInicial + total_ventas + totalIngresos  - total_postnet - totalGastos - total_pedidosYa;
         this.total_facturado = total_facturado,
         this.valoresCaja = valores;
+        this.total_pedidosYa = total_pedidosYa,
         this.ingresos = ingresos;
         this.gastos = gastos;
         this.totalGastos = totalGastos;
@@ -111,7 +115,7 @@ export class CajaComponent implements OnInit {
             // Generacion de datos finales
             const data = {
               saldo_inicial: this.saldoInicial,
-              saldo_proxima_caja: this.saldoProximaCaja,
+              saldo_proxima_caja: this.dataService.redondear(this.saldoProximaCaja, 2),
               total_ventas: this.valoresCaja.total_ventas,
               total_efectivo_en_caja: this.efectivoEnCaja,
               total_efectivo_en_caja_real: this.efectivoEnCajaReal,
@@ -125,6 +129,7 @@ export class CajaComponent implements OnInit {
               total_debito: this.valoresCaja.total_debito,
               total_efectivo: this.valoresCaja.total_efectivo,
               total_adicional_credito: this.valoresCaja.total_adicional_credito,
+              total_pedidosYa: this.total_pedidosYa,
               tesoreria: this.tesoreria === null ? 0 : this.tesoreria, 
               diferencia: this.diferencia,
               gastos: this.gastos,
