@@ -27,7 +27,7 @@ export class FiltroVentasPipe implements PipeTransform {
       filtrados = filtrados.filter( valor => {
         return valor.comprobante === 'Fiscal';
       });
-    }else if(facturacion === 'SinPedidosYa'){
+    }else if(facturacion === 'normal'){
       filtrados = filtrados.filter( valor => {
         return valor.comprobante !== 'Fiscal';
       });

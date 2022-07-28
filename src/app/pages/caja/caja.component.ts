@@ -18,20 +18,23 @@ export class CajaComponent implements OnInit {
   public valoresCaja: any;
   public efectivoEnCaja: number = 0;
   public efectivoEnCajaReal: number = null;
-  public showPostnet: boolean = false;
   public diferencia: number = 0;
   public tesoreria: number = null;
   public total_facturado: number = 0;
   public total_pedidosYa: number = 0;
   
+  // Shows - Flag mostrar
+  public showFacturado: boolean = false;
+  public showPostnet: boolean = false;
+  public showModalSaldoInicial: boolean = false;
+  public showModalIngresosGastos = false;
+
   // Saldo inicial de caja
   public saldoInicial: number = 0;
   public nuevoSaldo: number = 0;
-  public showModalSaldoInicial: boolean = false;
   public saldoProximaCaja: number = 0;
 
   // Gastos/Ingresos
-  public showModalIngresosGastos = false;
   public ingresos: any[] = [];
   public gastos: any[] = [];
   public totalIngresos: number = 0;

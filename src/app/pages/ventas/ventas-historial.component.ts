@@ -72,6 +72,7 @@ export class VentasHistorialComponent implements OnInit {
       .subscribe( ({ ventas }) => {
         this.ventas = ventas;
         this.calculoMontoTotal();
+        this.showModalDetalle = false;
         this.alertService.close();
       }, (({error}) => {
         this.alertService.errorApi(error.msg);
@@ -100,6 +101,21 @@ export class VentasHistorialComponent implements OnInit {
             }
           });
   
+    }
+
+    // Facturacion electronica
+    facturacionElectronica(): void {
+      this.alertService.question({ msg: 'Facturación electrónica', buttonText: 'Facturar' })
+      .then(({isConfirmed}) => {  
+        if (isConfirmed) {
+          const { _id, precio_total } = this.ventaSeleccionada;
+          this.alertService.loading();
+          this.ventasService.actualizarFacturacion(_id, {precio_total, updatorUser: this.authService.usuario.userId }).subscribe({
+            next: () => this.listarVentas(),
+            error: (error) => this.alertService.errorApi(error.message)
+          })
+        }
+      });  
     }
 
     // Calculo de monto total

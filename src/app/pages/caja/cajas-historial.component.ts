@@ -14,12 +14,11 @@ export class CajasHistorialComponent implements OnInit {
   // Modals
   public showModalCaja: boolean = false;
   
-  // Postnet
+  // Shows - Flag muestra
   public showPostnet = false;
-
-  // Ingresos y Gastos
   public showIngresos: boolean = false;
   public showGastos: boolean = false;
+  public showFacturado: boolean = false;
 
   // Cajas
   public cajaSeleccionada: any;

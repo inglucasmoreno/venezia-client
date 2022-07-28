@@ -15,10 +15,15 @@
                 <p class="text-left"> <span class="font-semibold"> Fecha: </span>  {{ ventaSeleccionada?.createdAt | fecha }} </p>  
                 <p class="md:text-right capitalize mt-2 md:mt-0"> <span class="font-semibold"> Creador: </span> {{ ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{ ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>  
             </div>
-            <p class="text-left mt-4 text-sm"> 
-                <span class="font-semibold"> Tipo de comprobante: </span> 
-                <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> {{ ventaSeleccionada?.comprobante }} </span> 
-            </p>  
+            <div class="text-left flex items-center mt-4 text-sm"> 
+                <div class="font-semibold mr-2"> Tipo de comprobante: </div> 
+                <div clas="flex items-center">
+                    <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> 
+                        {{ ventaSeleccionada?.comprobante }} 
+                    </span> 
+                    <button (click)="facturacionElectronica()" *ngIf="ventaSeleccionada?.comprobante === 'Normal'" class="bg-secondaryColor px-2 focus:outline-none text-white text-xs py-1 rounded ml-2 font-semibold"> Facturar </button>
+                </div>
+            </div>  
             <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa'" class="mt-3 w-max"> 
                 <span class="bg-red-700 p-1 font-semibold rounded text-white"> PedidosYa - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
             </p>

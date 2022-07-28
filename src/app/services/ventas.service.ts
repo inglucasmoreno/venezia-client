@@ -57,4 +57,13 @@ export class VentasService {
     });
   }  
 
+  // Actualizar facturacion
+  actualizarFacturacion(id: string, data: any): Observable<any> {
+    return this.http.put(`${base_url}/ventas/actualizar/facturacion/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }  
+
 }

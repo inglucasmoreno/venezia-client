@@ -108,10 +108,17 @@
             </p>
             <p> ${{ valoresCaja?.total_adicional_credito | moneda }} </p>
           </div>
-          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
-            <p> Total en ventas </p>
-            <p> ${{ valoresCaja?.total_ventas | moneda }} </p>
+          <div (click)="showFacturado = !showFacturado" class="my-2 cursor-pointer font-semibold bg-gray-100 p-2 rounded border border-gray-300 ">
+            <div class="flex items-center justify-between">
+              <p> Total en ventas </p>
+              <p> ${{ valoresCaja?.total_ventas | moneda }} </p>
+            </div>
+            <div *ngIf="showFacturado" class="flex bg-blue-100 border border-blue-300 text-blue-700 p-2 mt-2 items-center justify-between">
+              <p> Total facturado </p>
+              <p> ${{ valoresCaja?.total_facturado | moneda }} </p>  
+            </div>
           </div>
+
           <div>
             <div class="flex items-center justify-between p-2">
               <p class="flex items-center">  
