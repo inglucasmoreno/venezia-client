@@ -23,7 +23,7 @@ export class VentasService {
 
   // Venta por ID
   getVenta(id: string): Observable<any> {
-    return this.http.get(`${base_url}/ventas/${ id }`,{ 
+    return this.http.get(`${base_url}/ventas/${ id }`,{
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -34,11 +34,15 @@ export class VentasService {
   listarVentas(
     direccion: number = -1,
     columna: string = 'createdAt',
-    activo = 'todo' 
+    activo = 'todo',
+    fechaDesde = '',
+    fechaHasta = '',
   ): Observable<any> {
     return this.http.get(`${base_url}/ventas`, {
       params: {
         direccion: String(direccion),
+        fechaDesde,
+        fechaHasta,
         columna,
         activo
       },
@@ -55,7 +59,7 @@ export class VentasService {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  }
 
   // Actualizar facturacion
   actualizarFacturacion(id: string, data: any): Observable<any> {
@@ -64,6 +68,6 @@ export class VentasService {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  }
 
 }

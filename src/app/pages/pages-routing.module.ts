@@ -19,6 +19,7 @@ import { VentasComponent } from './ventas/ventas.component';
 import { VentasHistorialComponent } from './ventas/ventas-historial.component';
 import { CajaComponent } from './caja/caja.component';
 import { CajasHistorialComponent } from './caja/cajas-historial.component';
+import { VentasActivasComponent } from './ventas/ventas-activas.component';
 
 const routes: Routes = [
     {
@@ -36,6 +37,7 @@ const routes: Routes = [
             // Ventas
             { path: 'ventas', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasComponent },
             { path: 'ventas/historial', data: { permisos: 'VENTAS_HISTORIAL_NAV' }, canActivate: [PermisosGuard], component: VentasHistorialComponent },
+            { path: 'ventas/activas', data: { permisos: 'VENTAS_ACTIVAS' }, canActivate: [PermisosGuard], component: VentasActivasComponent},
 
             // Usuarios
             { path: 'usuarios', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: UsuariosComponent },

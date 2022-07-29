@@ -3,18 +3,15 @@ import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { VentasService } from 'src/app/services/ventas.service';
-import gsap from 'gsap';
 
 @Component({
-  selector: 'app-ventas-historial',
-  templateUrl: './ventas-historial.component.html',
+  selector: 'app-ventas-activas',
+  templateUrl: './ventas-activas.component.html',
   styles: [
   ]
 })
-export class VentasHistorialComponent implements OnInit {
+export class VentasActivasComponent implements OnInit {
 
-  // Flag
-  public inicio = true;
 
   // Modals
   public showModalDetalle = false;
@@ -41,9 +38,7 @@ export class VentasHistorialComponent implements OnInit {
     facturacion: 'todos',
     pedidosYa: 'todos',
     parametro: '',
-    fechaDesde: '',
-    fechaHasta: ''
-  } 
+  }
   
   // Ordenar
   public ordenar = {
@@ -57,9 +52,10 @@ export class VentasHistorialComponent implements OnInit {
               private dataService: DataService) { }
   
     ngOnInit(): void {
-      gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
-      this.dataService.ubicacionActual = 'Dashboard - Historial de ventas'; 
+      this.dataService.ubicacionActual = 'Dashboard - Ventas activas'; 
       this.permisos.all = this.permisosUsuarioLogin();
+      this.alertService.loading();
+      this.listarVentas(); 
     }
   
     // Asignar permisos de usuario login
@@ -69,20 +65,15 @@ export class VentasHistorialComponent implements OnInit {
   
     // Listar ventas
     listarVentas(): void {
-      this.alertService.loading();
       this.ventasService.listarVentas( 
         this.ordenar.direccion,
         this.ordenar.columna,
-        'todo',
-        this.filtro.fechaDesde,
-        this.filtro.fechaHasta
+        'true'
         )
       .subscribe( ({ ventas }) => {
-        this.inicio === true ? this.inicio = false : null;
         this.ventas = ventas;
         this.calculoMontoTotal();
         this.showModalDetalle = false;
-        this.paginaActual = 1;
         this.alertService.close();
       }, (({error}) => {
         this.alertService.errorApi(error.msg);
@@ -147,6 +138,7 @@ export class VentasHistorialComponent implements OnInit {
     abrirModalDetalles(venta: any): void {
       this.alertService.loading();
       this.ventasService.getVenta(venta._id).subscribe(({venta, productos}) => {
+        window.scrollTo(0,0);
         this.ventaSeleccionada = venta;
         console.log(productos);
         this.productos = productos;
@@ -164,6 +156,5 @@ export class VentasHistorialComponent implements OnInit {
       this.alertService.loading();
       this.listarVentas();
     }
-  
 
 }
