@@ -38,7 +38,8 @@ public productoForm: any = {
   unidad_medida: '',
   balanza: 'false',
   codigo: '',
-  precio: null
+  precio: null,
+  precio_mayorista: null
 }
 
 // Paginacion
@@ -119,13 +120,14 @@ constructor(private productosService: ProductosService,
     this.productoSeleccionado = producto;
     this.productosService.getProducto(producto._id).subscribe({
       next: ({producto}) => {
-        const { descripcion, unidad_medida, balanza, codigo, precio } = producto;
+        const { descripcion, unidad_medida, balanza, codigo, precio, precio_mayorista } = producto;
         this.productoForm = {
           descripcion,
           unidad_medida: unidad_medida._id,
           balanza: balanza ? 'true' : 'false',
           codigo,
-          precio        
+          precio,
+          precio_mayorista       
         }
         this.alertService.close();
         this.showModalProducto = true;
@@ -156,13 +158,12 @@ constructor(private productosService: ProductosService,
 
   verificacion(): boolean {
     
-    const { descripcion, unidad_medida, balanza, precio } = this.productoForm;
-
-    console.log(this.productoForm);
+    const { descripcion, unidad_medida, balanza, precio, precio_mayorista } = this.productoForm;
 
     const condicion = descripcion.trim() === '' ||
                       (unidad_medida.trim() === '' && balanza === 'false') ||
-                      precio === 0 || precio === null
+                      precio === 0 || precio === null ||
+                      precio_mayorista < 0 || precio_mayorista === null 
     
     if(condicion) return true
     else return false
@@ -172,7 +173,7 @@ constructor(private productosService: ProductosService,
   // Nuevo producto
   nuevoProducto(): void {
 
-    const { descripcion, codigo, unidad_medida, balanza, precio } = this.productoForm;
+    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista } = this.productoForm;
 
     // Verificacion
     if(this.verificacion()){
@@ -188,6 +189,7 @@ constructor(private productosService: ProductosService,
       balanza: balanza === 'true' ? true : false,
       codigo,
       precio,
+      precio_mayorista,
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
     }
@@ -206,7 +208,7 @@ constructor(private productosService: ProductosService,
   // Actualizar producto
   actualizarProducto(): void {
 
-    const { descripcion, codigo, unidad_medida, balanza, precio } = this.productoForm;
+    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista } = this.productoForm;
 
     // Verificacion
     if(this.verificacion()){
@@ -222,6 +224,7 @@ constructor(private productosService: ProductosService,
       balanza: balanza === 'true' ? true : false,
       codigo,
       precio,
+      precio_mayorista,
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
     }
@@ -270,7 +273,8 @@ constructor(private productosService: ProductosService,
       unidad_medida: '',
       balanza: 'false',
       codigo: '',
-      precio: null
+      precio: null,
+      precio_mayorista: null
     }
   }
 

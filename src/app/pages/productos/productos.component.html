@@ -39,9 +39,12 @@
         <div class="md:flex md:items-center mt-4">
           <div class="md:w-1/2">
             <p class="font-semibold"> <span class="text-red-500"> * </span> Precio </p>
-            <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" [(ngModel)]="productoForm.precio" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 300" type="number">
+            <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" [(ngModel)]="productoForm.precio" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 1800" type="number">
           </div>
-          <div class="md:w-1/2 md:ml-4"></div>
+          <div class="md:w-1/2 md:ml-4">
+            <p class="font-semibold"> <span class="text-red-500"> * </span> Precio mayorista </p>
+            <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" [(ngModel)]="productoForm.precio_mayorista" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 1500" type="number">
+          </div>
         </div>
         <div *ngIf="productoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
           <div class="xl:w-1/2">
