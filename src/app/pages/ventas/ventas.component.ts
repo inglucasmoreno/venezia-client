@@ -26,7 +26,8 @@ export class VentasComponent implements OnInit {
     'Crédito',
     'Débito',
     'Mercado pago',
-    'PedidosYa'
+    'PedidosYa',
+    'PedidosYa - Efectivo'
   ];
   
   // Ventas
@@ -247,7 +248,7 @@ export class VentasComponent implements OnInit {
     }
 
     // Verificacion - PedidosYa
-    if(this.formaPago === 'PedidosYa' && this.pedidosya_comprobante.trim() === ''){
+    if((this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') && this.pedidosya_comprobante.trim() === ''){
       this.alertService.info('Colocar número de comprobante de PedidosYa');
       return;
     }
@@ -268,7 +269,7 @@ export class VentasComponent implements OnInit {
               precio_total: this.precio_total,
               precio_total_limpio: this.precio_total_limpio,
               comprobante: this.comprobante,
-              pedidosya_comprobante: this.formaPago === 'PedidosYa' ? this.pedidosya_comprobante : '',
+              pedidosya_comprobante: (this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') ? this.pedidosya_comprobante : '',
               forma_pago,
               adicional_credito: this.formaPago === 'Crédito' ? this.precio_total_limpio * 0.10 : 0,
               creatorUser: this.authService.usuario.userId,
@@ -326,8 +327,6 @@ export class VentasComponent implements OnInit {
       return;
     }
 
-    console.log(this.diferenciaPago);
-
     if(this.formaPagoMonto > this.diferenciaPago){
       this.alertService.info('No se puede superar el monto de la venta');
       return;
@@ -384,7 +383,8 @@ export class VentasComponent implements OnInit {
       'Crédito',
       'Débito',
       'Mercado pago',
-      'PedidosYa'
+      'PedidosYa',
+      'PedidosYa - Efectivo'
     ];
     this.reiniciarMetodosPago();
     this.multiples_formasPago = false;
@@ -409,7 +409,8 @@ export class VentasComponent implements OnInit {
       'Crédito',
       'Débito',
       'Mercado pago',
-      'PedidosYa'
+      'PedidosYa',
+      'PedidosYa - Efectivo'
     ]
     this.formaPago = 'Efectivo';
     this.formaPagoMonto = null;
@@ -464,7 +465,8 @@ export class VentasComponent implements OnInit {
       'Crédito',
       'Débito',
       'Mercado pago',
-      'PedidosYa'
+      'PedidosYa',
+      'PedidosYa - Efectivo'
     ];
   }
 

@@ -12,11 +12,19 @@ export class FiltroVentasPipe implements PipeTransform {
     // Filtrado - PedidosYa
     if(pedidosYa === 'PedidosYa'){
       filtrados = valores.filter( valor => {
+        return valor.forma_pago[0]?.descripcion === 'PedidosYa' || valor.forma_pago[0]?.descripcion === 'PedidosYa - Efectivo';
+      });
+    }else if(pedidosYa === 'PedidosYa - App'){
+      filtrados = valores.filter( valor => {
         return valor.forma_pago[0]?.descripcion === 'PedidosYa';
+      });
+    }else if(pedidosYa === 'PedidosYa - Efectivo'){
+      filtrados = valores.filter( valor => {
+        return valor.forma_pago[0]?.descripcion === 'PedidosYa - Efectivo';
       });
     }else if(pedidosYa === 'SinPedidosYa'){
       filtrados = valores.filter( valor => {
-        return valor.forma_pago[0]?.descripcion !== 'PedidosYa';
+        return valor.forma_pago[0]?.descripcion !== 'PedidosYa' && valor.forma_pago[0]?.descripcion !== 'PedidosYa - Efectivo' ;
       });
     }else if(pedidosYa === 'todos'){
       filtrados = valores; 

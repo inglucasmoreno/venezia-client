@@ -136,7 +136,7 @@ export class VentasHistorialComponent implements OnInit {
       this.ventas.map((venta: any) => {
         montoTotalTMP += venta.precio_total;  
         if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;  
-        if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaTMP += venta.precio_total;   
+        if(venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaTMP += venta.precio_total;   
       });
       this.montoTotal = montoTotalTMP;
       this.montoTotalFacturado = montoTotalFacturadoTMP;
