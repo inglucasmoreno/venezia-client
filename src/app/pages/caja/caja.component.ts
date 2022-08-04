@@ -22,6 +22,7 @@ export class CajaComponent implements OnInit {
   public tesoreria: number = null;
   public total_facturado: number = 0;
   public total_pedidosYa: number = 0;
+  public cantidad_ventas: number = 0;
   
   // Shows - Flag mostrar
   public showFacturado: boolean = false;
@@ -69,6 +70,7 @@ export class CajaComponent implements OnInit {
           totalGastos,
           totalIngresos,
           total_pedidosYa,
+          cantidad_ventas,
           ingresos,
           gastos,
           saldoInicial,
@@ -81,6 +83,7 @@ export class CajaComponent implements OnInit {
         this.valoresCaja = valores;
         this.total_pedidosYa = total_pedidosYa,
         this.ingresos = ingresos;
+        this.cantidad_ventas = cantidad_ventas;
         this.gastos = gastos;
         this.totalGastos = totalGastos;
         this.totalIngresos = totalIngresos;
@@ -129,6 +132,7 @@ export class CajaComponent implements OnInit {
               otros_gastos: this.totalGastos,
               total_credito: this.valoresCaja.total_credito,
               total_mercadopago: this.valoresCaja.total_mercadopago,
+              cantidad_ventas: this.cantidad_ventas,
               total_debito: this.valoresCaja.total_debito,
               total_efectivo: this.valoresCaja.total_efectivo,
               total_adicional_credito: this.valoresCaja.total_adicional_credito,

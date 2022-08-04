@@ -20,6 +20,8 @@ import { VentasHistorialComponent } from './ventas/ventas-historial.component';
 import { CajaComponent } from './caja/caja.component';
 import { CajasHistorialComponent } from './caja/cajas-historial.component';
 import { VentasActivasComponent } from './ventas/ventas-activas.component';
+import { PedidosyaComponent } from './pedidosya/pedidosya.component';
+import { PedidosyaHistorialComponent } from './pedidosya/pedidosya-historial.component';
 
 const routes: Routes = [
     {
@@ -50,6 +52,10 @@ const routes: Routes = [
 
             // Productos
             { path: 'productos', data: { permisos: 'PRODUCTOS_NAV' }, canActivate: [PermisosGuard], component: ProductosComponent },
+
+            // PedidosYa
+            { path: 'pedidosya', data: { permisos: 'PEDIDOSYA_NAV' }, canActivate: [PermisosGuard], component: PedidosyaComponent },
+            { path: 'pedidosya/historial', data: { permisos: 'PEDIDOSYA_NAV' }, canActivate: [PermisosGuard], component: PedidosyaHistorialComponent },
 
             // Cajas
             { path: 'caja', data: { permisos: 'CAJAS_NAV' }, canActivate: [PermisosGuard], component: CajaComponent },

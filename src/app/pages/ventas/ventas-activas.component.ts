@@ -27,6 +27,8 @@ export class VentasActivasComponent implements OnInit {
   public montoTotal: number = 0;
   public montoTotalFacturado: number = 0;
   public montoTotalPedidosYa:number = 0;
+  public montoTotalPedidosYaEfectivo:number = 0;
+  public montoTotalPedidosYaApp:number = 0;
   public productos: any[] = [];
   
   // Paginacion
@@ -124,14 +126,20 @@ export class VentasActivasComponent implements OnInit {
       let montoTotalTMP = 0;
       let montoTotalFacturadoTMP = 0;
       let montoTotalPedidosYaTMP = 0;
+      let montoTotalPedidosYaEfectivoTMP = 0;
+      let montoTotalPedidosYaAppTMP = 0;
       this.ventas.map((venta: any) => {
         montoTotalTMP += venta.precio_total;  
         if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;  
         if(venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaTMP += venta.precio_total;   
+        if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaAppTMP += venta.precio_total;   
+        if(venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaEfectivoTMP += venta.precio_total; 
       });
       this.montoTotal = montoTotalTMP;
       this.montoTotalFacturado = montoTotalFacturadoTMP;
       this.montoTotalPedidosYa = montoTotalPedidosYaTMP;
+      this.montoTotalPedidosYaEfectivo = montoTotalPedidosYaEfectivoTMP;
+      this.montoTotalPedidosYaApp = montoTotalPedidosYaAppTMP;
     }
   
     // Abrir modal - Detalles de venta

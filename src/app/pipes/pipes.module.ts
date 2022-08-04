@@ -8,6 +8,7 @@ import { FiltroUnidadMedidaPipe } from './filtro-unidad-medida.pipe';
 import { FiltroProductosPipe } from './filtro-productos.pipe';
 import { FiltroVentasPipe } from './filtro-ventas.pipe';
 import { FiltroCajasPipe } from './filtro-cajas.pipe';
+import { FiltroPedidosyaPipe } from './filtro-pedidosya.pipe';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { FiltroCajasPipe } from './filtro-cajas.pipe';
     FiltroProductosPipe,
     FiltroVentasPipe,
     FiltroCajasPipe,
+    FiltroPedidosyaPipe,
   ],
   imports: [
     CommonModule
@@ -32,6 +34,7 @@ import { FiltroCajasPipe } from './filtro-cajas.pipe';
     FiltroProductosPipe,
     FiltroVentasPipe,
     FiltroCajasPipe,
+    FiltroPedidosyaPipe
   ]
 })
 export class PipesModule { }

@@ -6,12 +6,13 @@ import { VentasService } from 'src/app/services/ventas.service';
 import gsap from 'gsap';
 
 @Component({
-  selector: 'app-ventas-historial',
-  templateUrl: './ventas-historial.component.html',
+  selector: 'app-pedidosya-historial',
+  templateUrl: './pedidosya-historial.component.html',
   styles: [
   ]
 })
-export class VentasHistorialComponent implements OnInit {
+export class PedidosyaHistorialComponent implements OnInit {
+
 
   // Flag
   public inicio = true;
@@ -27,8 +28,6 @@ export class VentasHistorialComponent implements OnInit {
   public ventas: any = [];
   public ventaSeleccionada: any;
   public descripcion: string = '';
-  public montoTotal: number = 0;
-  public montoTotalFacturado: number = 0;
   public montoTotalPedidosYa:number = 0;
   public montoTotalPedidosYaEfectivo:number = 0;
   public montoTotalPedidosYaApp:number = 0;
@@ -60,7 +59,7 @@ export class VentasHistorialComponent implements OnInit {
   
     ngOnInit(): void {
       gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
-      this.dataService.ubicacionActual = 'Dashboard - Historial de ventas'; 
+      this.dataService.ubicacionActual = 'Dashboard - Ventas - PedidosYa'; 
       this.permisos.all = this.permisosUsuarioLogin();
     }
   
@@ -81,7 +80,7 @@ export class VentasHistorialComponent implements OnInit {
         )
       .subscribe( ({ ventas }) => {
         this.inicio === true ? this.inicio = false : null;
-        this.ventas = ventas;
+        this.ventas = ventas.filter( venta => (venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo'));
         this.calculoMontoTotal();
         this.showModalDetalle = false;
         this.paginaActual = 1;
@@ -115,37 +114,16 @@ export class VentasHistorialComponent implements OnInit {
   
     }
 
-    // Facturacion electronica
-    facturacionElectronica(): void {
-      this.alertService.question({ msg: 'Facturación electrónica', buttonText: 'Facturar' })
-      .then(({isConfirmed}) => {  
-        if (isConfirmed) {
-          const { _id, precio_total } = this.ventaSeleccionada;
-          this.alertService.loading();
-          this.ventasService.actualizarFacturacion(_id, {precio_total, updatorUser: this.authService.usuario.userId }).subscribe({
-            next: () => this.listarVentas(),
-            error: (error) => this.alertService.errorApi(error.message)
-          })
-        }
-      });  
-    }
-
     // Calculo de monto total
     calculoMontoTotal(): void {
-      let montoTotalTMP = 0;
-      let montoTotalFacturadoTMP = 0;
       let montoTotalPedidosYaTMP = 0;
       let montoTotalPedidosYaEfectivoTMP = 0;
       let montoTotalPedidosYaAppTMP = 0;
       this.ventas.map((venta: any) => {
-        montoTotalTMP += venta.precio_total;  
-        if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;  
         if(venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaTMP += venta.precio_total;   
         if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaAppTMP += venta.precio_total;   
         if(venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaEfectivoTMP += venta.precio_total; 
       });
-      this.montoTotal = montoTotalTMP;
-      this.montoTotalFacturado = montoTotalFacturadoTMP;
       this.montoTotalPedidosYa = montoTotalPedidosYaTMP;
       this.montoTotalPedidosYaEfectivo = montoTotalPedidosYaEfectivoTMP;
       this.montoTotalPedidosYaApp = montoTotalPedidosYaAppTMP;
@@ -172,6 +150,5 @@ export class VentasHistorialComponent implements OnInit {
       this.alertService.loading();
       this.listarVentas();
     }
-  
 
 }

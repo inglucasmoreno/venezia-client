@@ -19,16 +19,16 @@
                 <div class="font-semibold mr-2"> Tipo de comprobante: </div> 
                 <div clas="flex items-center">
                     <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> 
-                        {{ ventaSeleccionada?.comprobante }} 
+                        {{ ventaSeleccionada?.comprobante !== 'Fiscal' ? ventaSeleccionada?.comprobante : 'Guia de despacho' }} 
                     </span> 
                     <!-- <button (click)="facturacionElectronica()" *ngIf="ventaSeleccionada?.comprobante === 'Normal'" class="bg-primary-800 hover:bg-secondaryColor transform duration-300 px-2 focus:outline-none text-white text-xs py-1 rounded ml-2 font-semibold"> Facturar </button> -->
                 </div>
             </div>  
             <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa'" class="mt-4 w-max"> 
-                <span class="bg-red-700 p-1 font-semibold rounded text-white"> PedidosYa - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
+                <span class="bg-yellow-100 text-yellow-700 border border-yellow-300 p-1 font-semibold rounded"> PedidosYa - Online - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
             </p>
             <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa - Efectivo'" class="mt-4 w-max"> 
-              <span class="bg-red-700 p-1 font-semibold rounded text-white"> PedidosYa - Efectivo - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
+              <span class="bg-orange-100 text-orange-700 border border-orange-300 p-1 font-semibold rounded"> PedidosYa - Efectivo - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
             </p>
             <div class="mt-4">
                 <h2 class="font-semibold text-sm bg-gray-100 p-2 w-full border border-gray-300"> Montos y formas de pago </h2>
@@ -106,14 +106,14 @@
                             <select (change)="paginaActual = 1" [(ngModel)]="filtro.pedidosYa" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
                                 <option value="todos"> Todos </option>
                                 <option value="PedidosYa"> PedidosYa </option>
-                                <option value="PedidosYa - App"> PedidosYa - App </option>
+                                <option value="PedidosYa - App"> PedidosYa - Online </option>
                                 <option value="PedidosYa - Efectivo"> PedidosYa - Efectivo </option>
                                 <option value="SinPedidosYa"> Sin PedidosYa </option>
                             </select>
                             <select (change)="paginaActual = 1" [(ngModel)]="filtro.facturacion" class="bg-white ml-2 text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
                                 <option value="todos"> Todos </option>
                                 <option value="normal"> Normal </option>
-                                <option value="facturadas"> Facturadas </option>
+                                <option value="facturadas"> Guia de despacho </option>
                             </select>
                         </div>
                         <select (change)="paginaActual = 1" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
@@ -129,8 +129,11 @@
               <!-- Totales -->
               <div class="md:flex md:items-center px-4 text-center md:justify-center"> 
                 <div class="font-semibold border-l-8 border-green-500 w-full mt-2 md:mt-0 bg-green-100 text-green-800 text-xs text-center rounded p-2"> Monto total: ${{ montoTotal | moneda }} </div> 
-                <div class="font-semibold border-l-8 border-blue-500 w-full mt-2 md:mt-0 bg-blue-100 md:ml-4 text-blue-800 text-xs text-center rounded p-2"> Monto facturado:  ${{ montoTotalFacturado | moneda }} </div> 
-                <div class="font-semibold border-l-8 border-red-500 w-full mt-2 md:mt-0 bg-red-100 md:ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-2"> Monto PedidosYa:  ${{ montoTotalPedidosYa | moneda }} </div>     
+                <div class="font-semibold border-l-8 border-blue-500 w-full mt-2 md:mt-0 bg-blue-100 md:ml-4 text-blue-800 text-xs text-center rounded p-2"> Guia de despacho:  ${{ montoTotalFacturado | moneda }} </div> 
+                <div *ngIf="filtro.pedidosYa === 'todos' || filtro.pedidosYa === 'SinPedidosYa'" class="font-semibold border-l-8 border-red-500 w-full mt-2 md:mt-0 bg-red-100 md:ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa:  ${{ montoTotalPedidosYa | moneda }} </div> 
+                <div *ngIf="filtro.pedidosYa === 'PedidosYa'" class="font-semibold border-l-8 border-red-500 w-full mt-2 md:mt-0 bg-red-100 md:ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa:  ${{ montoTotalPedidosYa | moneda }} </div> 
+                <div *ngIf="filtro.pedidosYa === 'PedidosYa - App'" class="font-semibold border-l-8 border-yellow-500 w-full mt-2 md:mt-0 bg-yellow-100 md:ml-4 text-yellow-700 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa - Online:  ${{ montoTotalPedidosYaApp | moneda }} </div>     
+                <div *ngIf="filtro.pedidosYa === 'PedidosYa - Efectivo'" class="font-semibold border-l-8 border-orange-500 w-full mt-2 md:mt-0 bg-orange-100 md:ml-4 text-orange-700 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa - Efectivo:  ${{ montoTotalPedidosYaEfectivo | moneda }} </div>     
               </div>
 
               <!-- Tabla de ventas -->
@@ -204,9 +207,9 @@
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <div class="flex items-center">
                                         <div [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}" class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
-                                            {{ venta.comprobante }}
+                                            {{ venta.comprobante !== 'Fiscal' ? venta.comprobante : 'Guia de despacho' }}
                                         </div>
-                                        <div *ngIf="venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo'" class="p-1 ml-2 w-max bg-red-700 text-white rounded font-semibold">
+                                        <div [ngClass]="{'bg-orange-100 text-orange-700 border-orange-300':venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo', 'bg-yellow-100 text-yellow-700 border-yellow-300':venta.forma_pago[0].descripcion === 'PedidosYa'}" *ngIf="venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo'" class="p-1 ml-2 w-max border rounded font-semibold">
                                             PedidosYA - #{{ venta.pedidosya_comprobante }}
                                         </div>
                                     </div>
