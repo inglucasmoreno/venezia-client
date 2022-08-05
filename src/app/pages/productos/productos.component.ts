@@ -28,6 +28,7 @@ public idProducto: string = '';
 public productos: any = [];
 public productoSeleccionado: any;
 public descripcion: string = '';
+public codigoTMP: string = '';
 
 // Unidades de medida
 public unidades: any[] = [];
@@ -35,7 +36,7 @@ public unidades: any[] = [];
 // Formulario producto
 public productoForm: any = {
   descripcion: '',
-  unidad_medida: '',
+  unidad_medida: '000000000000000000000000',
   balanza: 'false',
   codigo: '',
   precio: null,
@@ -265,12 +266,35 @@ constructor(private productosService: ProductosService,
 
   }
 
+  // Adaptacion de codigo
+  adaptacionCodigo(desde: string): void {
+    
+    console.log(this.productoForm.balanza);
+
+    this.productoForm.unidad_medida = this.productoForm.balanza === 'true' ? '111111111111111111111111' : '000000000000000000000000';
+
+    // Se guarda el codigo
+    if(desde === 'codigo'){
+      this.codigoTMP = this.productoForm.codigo;
+    }
+
+    if((desde === 'balanza' || desde === 'codigo') && this.productoForm.balanza === 'true'){
+      this.productoForm.codigo = this.codigoTMP.slice(2,7);
+    }
+
+    if((desde === 'balanza' || desde === 'codigo') && this.productoForm.balanza === 'false'){
+      this.productoForm.codigo = this.codigoTMP;
+    }
+    
+  }
+
   // Reiniciando formulario
   reiniciarFormulario(): void {
     this.idProducto = '';
+    this.codigoTMP = '';
     this.productoForm = {
       descripcion: '',
-      unidad_medida: '',
+      unidad_medida: '000000000000000000000000',
       balanza: 'false',
       codigo: '',
       precio: null,

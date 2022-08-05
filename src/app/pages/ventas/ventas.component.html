@@ -166,8 +166,8 @@
               <p class="text-gray-500 text-xs"> ${{ productoSeleccionado.precio | moneda }} x {{ productoSeleccionado.unidad_medida.descripcion }} </p>
             </div>
             <div class="flex items-center">
-              <input (keyup.enter)="agregarProducto(productoSeleccionado, cantidad)" [(ngModel)]="cantidad" type="number" min="1" class="border p-2 text-sm focus:outline-none w-28 border-gray-300 rounded" placeholder="Cantidad">
-              <button (click)="agregarProducto(productoSeleccionado, cantidad)" title="Agregar producto" class="border focus:outline-none border-gray-300 hover:text-green-700 ml-2 p-2 rounded">
+              <input (keyup.enter)="agregarProducto(productoSeleccionado, cantidad, 'buscador')" [(ngModel)]="cantidad" type="number" min="1" class="border p-2 text-sm focus:outline-none w-28 border-gray-300 rounded" placeholder="Cantidad">
+              <button (click)="agregarProducto(productoSeleccionado, cantidad, 'buscador')" title="Agregar producto" class="border focus:outline-none border-gray-300 hover:text-green-700 ml-2 p-2 rounded">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                 </svg>          
@@ -185,7 +185,7 @@
         <div class="bg-white p-2">
           <p class="text-2xl font-semibold"> {{ productoActual.descripcion }} </p>
           <p class="text-gray-500 text-sm"> {{ productoActual.codigo }} </p>
-          <p class="text-sm mt-2"> Cantidad: 1 ({{ productoActual.unidad_medida.descripcion }}) </p>
+          <p class="text-sm mt-2"> Cantidad: {{ productoActual.cantidad }} ({{ productoActual.unidad_medida.descripcion }}) </p>
           <p class="text-xl mt-4 font-semibold"> ${{ productoActual.precio | moneda }} </p>
         </div>
       </div>
@@ -212,7 +212,7 @@
         <div *ngFor="let producto of productos" (click)="eliminarProducto(producto)" class="border hover:border-secondaryColor cursor-pointer border-gray-300 rounded mt-2 p-2 text-sm">
           <p class="font-semibold"> {{ producto.productoTMP.descripcion }} </p>
           <p class="text-gray-500 text-xs"> Precio x {{producto.unidad_medida}}: ${{ producto.productoTMP.precio }} </p>
-          <p class="mt-1"> Cantidad: {{ producto.cantidad }} ({{ producto.unidad_medida }}) </p>
+          <p class="mt-1"> Cantidad: {{ producto.balanza ? ( producto.cantidad | moneda ) : producto.cantidad }} ({{ producto.unidad_medida }}) </p>
           <p class="text-sm mt-4 font-semibold">  ${{ producto.precio | moneda }} </p>
         </div>
       </div>

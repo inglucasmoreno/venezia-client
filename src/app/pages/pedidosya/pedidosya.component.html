@@ -83,7 +83,7 @@
                                     </path>
                                 </svg>
                             </span>
-                            <input #txtParametro placeholder="Usuario creador" (keyup)="filtrarParametro(txtParametro.value)" class="appearance-none rounded-r rounded-l border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                            <input #txtParametro placeholder="Usuario" (keyup)="filtrarParametro(txtParametro.value)" class="appearance-none rounded-r rounded-l border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
                             />
                         </div>
                         <select (change)="paginaActual = 1" class="bg-white md:ml-2 text-sm focus:outline-none w-max px-2 py-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
@@ -94,10 +94,10 @@
                         </select>
                     </div>
               </div>
-              <div class="text-sm ml-4 mb-2 border border-l-8 rounded-l border-gray-500 p-2 w-max">
+              <!-- <div class="text-sm ml-4 mb-2 border border-l-8 rounded-l border-gray-500 p-2 w-max">
                 <span> Total de ingresos: </span>
                 <span class="font-semibold"> ${{ total | moneda }} </span>    
-              </div>
+              </div> -->
               <div class="px-4 py-2 overflow-x-auto">
                   <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
                       <table class="min-w-full leading-normal">

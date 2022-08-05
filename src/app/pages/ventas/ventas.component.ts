@@ -108,7 +108,6 @@ export class VentasComponent implements OnInit {
     this.alertService.loading();
     this.productosService.getProductoParametro(this.codigo).subscribe({
       next: ({producto}) => {
-        this.productoActual = producto;
         this.agregarProducto(producto);
       },
       error: ({error}) => {
@@ -120,38 +119,50 @@ export class VentasComponent implements OnInit {
   }
 
   // Agregar producto
-  agregarProducto(producto: any, cantidad: number = 1): void {
+  agregarProducto(producto: any, cantidad: number = 1, desde: string = 'codigo'): void {
 
     let repetido = false;
+    let cantidadProducto = 0;
 
-    // Verificacion de cantidad correcta
+    // Verificacion de cantidad correcta - Si viene desde buscador
     if(cantidad === null || cantidad <= 0){
       this.alertService.info('Debe colocar una cantidad válida');
       return;
+    }
+
+    // El producto es de balanza    
+    if(producto.balanza && desde === 'codigo'){
+      cantidadProducto = Number(this.codigo.slice(7,this.codigo.length - 1)) / 1000;
+    }else{
+      cantidadProducto = cantidad;
     }
 
     // Verificacion: Producto repetido
     this.productos.find( elemento => {
       if(elemento.productoTMP._id === producto._id){
         repetido = true;
-        elemento.cantidad += cantidad;
-        elemento.precio += producto.precio * cantidad;
+        elemento.cantidad = this.dataService.redondear(elemento.cantidad + cantidadProducto, 2);
+        elemento.precio += this.dataService.redondear(producto.precio * cantidadProducto, 2);
       }
     })
 
+    this.productoActual = producto;
+    this.productoActual.cantidad = cantidadProducto;
+    this.productoActual.precio_final = producto.precio * cantidadProducto;
+
     if(!repetido){ // El producto no esta repetido en la lista
       const nuevoProducto = {
-        productoTMP: producto,
+        productoTMP: this.productoActual,
         producto: producto._id,
         balanza: producto.balanza,
         descripcion: producto.descripcion,
         unidad_medida: producto.unidad_medida.descripcion,
-        cantidad: cantidad,
+        cantidad: this.dataService.redondear(cantidadProducto, 2),
         creatorUser: this.authService.usuario.userId,
         updatorUser: this.authService.usuario.userId,
-        precio: producto.precio * cantidad
+        precio: producto.precio * cantidadProducto
       }
-      this.productos.push(nuevoProducto);
+      this.productos.unshift(nuevoProducto);
     }
 
     this.calcularPrecio();
@@ -180,6 +191,8 @@ export class VentasComponent implements OnInit {
       precioTMP += producto.precio;
     })
     
+    console.log(this.dataService.redondear(precioTMP, 2));
+
     // Precio sin adicionales ni descuentos
     this.precio_total_limpio = this.dataService.redondear(precioTMP, 2);
 

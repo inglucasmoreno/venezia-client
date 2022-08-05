@@ -24,13 +24,15 @@ export class FiltroProductosPipe implements PipeTransform {
     }else if(boolActivo === null){
       filtrados = valores; 
     }
-    
+     
     // Filtrado por parametro
     parametro = parametro.toLocaleLowerCase();
     
     if(parametro.length !== 0){
       return filtrados.filter( valor => { 
-        return valor.descripcion.toLocaleLowerCase().includes(parametro)
+        return valor.descripcion.toLocaleLowerCase().includes(parametro) ||
+               valor.codigo.toLocaleLowerCase().includes(parametro) ||
+               valor.codigo.toLocaleLowerCase().includes(parametro.slice(2,7))
       });
     }else{
       return filtrados;

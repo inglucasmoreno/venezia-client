@@ -14,7 +14,7 @@
           </div>
           <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
             <p class="font-semibold"> <span class="text-red-500"> * </span> Balanza </p>
-            <select [(ngModel)]="productoForm.balanza" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
+            <select (change)="adaptacionCodigo('balanza')" [(ngModel)]="productoForm.balanza" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
               <option value="false"> No </option>
               <option value="true"> Si </option>
             </select>
@@ -24,7 +24,6 @@
           <div class="md:w-1/2">
             <p class="font-semibold"> <span class="text-red-500"> * </span> Unidad de medida </p>
             <select *ngIf="productoForm.balanza === 'false'" [(ngModel)]="productoForm.unidad_medida" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
-              <option value=""> Seleccionar unidad </option>
               <option *ngFor="let unidad of unidades" [value]="unidad._id"> {{ unidad.descripcion }} </option>
             </select>
             <div *ngIf="productoForm.balanza === 'true'" class="py-2 px-2 mt-1 bg-gray-100 border-b-2 border-gray-300 tranform duration-500 outline-none w-full text-gray-800">
@@ -33,7 +32,7 @@
           </div>
           <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
             <p class="font-semibold"> Código </p>
-            <input [(ngModel)]="productoForm.codigo" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 24545" type="text">
+            <input (keyup.enter)="adaptacionCodigo('codigo')" [(ngModel)]="productoForm.codigo" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 24545" type="text">
           </div>
         </div>
         <div class="md:flex md:items-center mt-4">
