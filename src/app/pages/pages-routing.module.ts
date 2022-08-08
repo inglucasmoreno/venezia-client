@@ -38,8 +38,8 @@ const routes: Routes = [
 
             // Ventas
             { path: 'ventas', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasComponent },
-            { path: 'ventas/historial', data: { permisos: 'VENTAS_HISTORIAL_NAV' }, canActivate: [PermisosGuard], component: VentasHistorialComponent },
-            { path: 'ventas/activas', data: { permisos: 'VENTAS_ACTIVAS' }, canActivate: [PermisosGuard], component: VentasActivasComponent},
+            { path: 'ventas/historial', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasHistorialComponent },
+            { path: 'ventas/activas', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasActivasComponent},
 
             // Usuarios
             { path: 'usuarios', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: UsuariosComponent },

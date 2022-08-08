@@ -72,7 +72,7 @@ export class VentasComponent implements OnInit {
 
   constructor(private dataService: DataService,
               private alertService: AlertService,
-              private authService: AuthService,
+              public authService: AuthService,
               private ventasService: VentasService,
               private productosService: ProductosService) { }
 
@@ -160,7 +160,8 @@ export class VentasComponent implements OnInit {
         cantidad: this.dataService.redondear(cantidadProducto, 2),
         creatorUser: this.authService.usuario.userId,
         updatorUser: this.authService.usuario.userId,
-        precio: producto.precio * cantidadProducto
+        precio: producto.precio * cantidadProducto,
+        precio_unitario: producto.precio
       }
       this.productos.unshift(nuevoProducto);
     }

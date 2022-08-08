@@ -19,8 +19,15 @@ export class NuevoUsuarioComponent implements OnInit {
   // Permisos
   public permisos = {
     usuarios: 'USUARIOS_NOT_ACCESS',
-    productos: 'PRODUCTOS_NOT_ACCESS'
+    ventas: 'VENTAS_NOT_ACCESS',
+    productos: 'PRODUCTOS_NOT_ACCESS',
+    unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
+    pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+    cajas: 'CAJAS_NOT_ACCESS'
   };
+
+  // Modals
+  public showModal = false;
 
   // Modelo reactivo
   public usuarioForm: FormGroup;
@@ -101,7 +108,30 @@ export class NuevoUsuarioComponent implements OnInit {
     }));
 
   }
+
+  // Abrir modal: Permisos
+  abrirPermisos(): void {
+    this.showModal = true;
+  }
   
+  // Asignar permisos por tipo de usuario seleccionado
+  asignarPermisosTipoUsuario():void {
+    
+    const { role } = this.usuarioForm.value;
+
+    if(role === 'USER_ROLE'){
+      this.permisos = {
+        usuarios: 'USUARIOS_NOT_ACCESS',
+        ventas: 'VENTAS_ALL',
+        productos: 'PRODUCTOS_READ',
+        unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
+        pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+        cajas: 'CAJAS_ALL',
+      }
+    }
+
+  }
+
   // Se arma el arreglo de permisos
   adicionarPermisos(): any {
 
@@ -112,12 +142,36 @@ export class NuevoUsuarioComponent implements OnInit {
       permisos.push('USUARIOS_NAV');
       permisos.push(this.permisos.usuarios);
     }
-    
+
+    // Seccion ventas
+    if(this.permisos.ventas !== 'VENTAS_NOT_ACCESS'){
+      permisos.push('VENTAS_NAV');
+      permisos.push(this.permisos.ventas);
+    }
+
     // Seccion productos
-    // if(this.permisos.productos !== 'PRODUCTOS_NOT_ACCESS'){
-    //   permisos.push('PRODUCTOS_NAV');
-    //   permisos.push(this.permisos.productos);
-    // }
+    if(this.permisos.productos !== 'PRODUCTOS_NOT_ACCESS'){
+      permisos.push('PRODUCTOS_NAV');
+      permisos.push(this.permisos.productos);
+    }
+
+    // Seccion unidades de medida
+    if(this.permisos.unidad_medida !== 'UNIDAD_MEDIDA_NOT_ACCESS'){
+      permisos.push('UNIDAD_MEDIDA_NAV');
+      permisos.push(this.permisos.unidad_medida);
+    }
+
+    // Seccion pedidosYa
+    if(this.permisos.pedidosYa !== 'PEDIDOSYA_NOT_ACCESS'){
+      permisos.push('PEDIDOSYA_NAV');
+      permisos.push(this.permisos.pedidosYa);
+    }
+
+    // Seccion cajas
+    if(this.permisos.cajas !== 'CAJAS_NOT_ACCESS'){
+      permisos.push('CAJAS_NAV');
+      permisos.push(this.permisos.cajas);
+    }
     
     return permisos;  
   

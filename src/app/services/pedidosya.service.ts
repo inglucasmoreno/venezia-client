@@ -33,12 +33,16 @@ export class PedidosyaService {
   // Listar pedidosYa
   listarPedidosYa(
     direccion: number = -1,
-    columna: string = 'createdAt'  
+    columna: string = 'createdAt',
+    fechaDesde: string = '',
+    fechaHasta: string = ''  
   ): Observable<any> {
     return this.http.get(`${base_url}/pedidosya`, {
       params: {
         direccion: String(direccion),
-        columna
+        columna,
+        fechaDesde,
+        fechaHasta
       },
       headers: {
         'Authorization': localStorage.getItem('token')

@@ -70,4 +70,13 @@ export class VentasService {
     });
   }
 
+  // Comprobante electronico
+  getComprobante(id: string): Observable<any> {
+    return this.http.get(`${base_url}/ventas/comprobante/${ id }`,{
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
 }

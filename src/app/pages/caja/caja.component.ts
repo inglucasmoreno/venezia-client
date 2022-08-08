@@ -48,7 +48,7 @@ export class CajaComponent implements OnInit {
 
 
   constructor(private dataService: DataService,
-              private authService: AuthService,
+              public authService: AuthService,
               private ingresosGastosService: IngresosGastosService,
               private alertService: AlertService,
               private cajasService: CajasService) { }

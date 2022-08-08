@@ -4,6 +4,9 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import gsap from 'gsap';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-ventas-historial',
@@ -163,6 +166,18 @@ export class VentasHistorialComponent implements OnInit {
       },({error})=>{
         this.alertService.errorApi(error);
       });
+    }
+
+    // Generacion de PDF
+    comprobanteElectronico(venta: any): void {
+      this.alertService.loading();
+      this.ventasService.getComprobante(venta._id).subscribe({
+        next: () => {
+          window.open(`${base_url}/pdf/comprobante.pdf`,'_blank');
+          this.alertService.close();
+        },
+        error: ({error}) => this.alertService.errorApi(error.message)
+      })
     }
       
     // Ordenar por columna

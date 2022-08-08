@@ -20,8 +20,15 @@ export class EditarUsuarioComponent implements OnInit {
   // Permisos
   public permisos = {
     usuarios: 'USUARIOS_NOT_ACCESS',
-    productos: 'PRODUCTOS_NOT_ACCESS'
+    ventas: 'VENTAS_NOT_ACCESS',
+    productos: 'PRODUCTOS_NOT_ACCESS',
+    unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
+    pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+    cajas: 'CAJAS_NOT_ACCESS'
   };
+
+  // Modals
+  public showModal = false;
 
   public id: string;
   public usuario: Usuario;
@@ -94,9 +101,21 @@ export class EditarUsuarioComponent implements OnInit {
       // Usuarios
       (permiso === 'USUARIOS_ALL' || permiso === 'USUARIOS_READ') ? this.permisos.usuarios = permiso : null;
 
+      // Ventas
+      (permiso === 'VENTAS_ALL' || permiso === 'VENTAS_READ') ? this.permisos.ventas = permiso : null;
+
       // Productos
       (permiso === 'PRODUCTOS_ALL' || permiso === "PRODUCTOS_READ") ? this.permisos.productos = permiso : null;
+
+      // Unidades de medida
+      (permiso === 'UNIDAD_MEDIDA_ALL' || permiso === 'UNIDAD_MEDIDA_READ') ? this.permisos.unidad_medida = permiso : null;
+
+      // PedidosYa
+      (permiso === 'PEDIDOSYA_ALL' || permiso === 'PEDIDOSYA_READ') ? this.permisos.pedidosYa = permiso : null;
     
+      // Cierre de cajas
+      (permiso === 'CAJAS_ALL' || permiso === 'CAJAS_READ') ? this.permisos.cajas = permiso : null;
+
     });
 
   }
@@ -137,7 +156,29 @@ export class EditarUsuarioComponent implements OnInit {
 
   }
 
+  // Abrir modal: Permisos
+  abrirPermisos(): void {
+    this.showModal = true;
+  }
+
+  // Asignar permisos por tipo de usuario seleccionado
+  asignarPermisosTipoUsuario():void {
     
+    const { role } = this.usuarioForm.value;
+
+    if(role === 'USER_ROLE'){
+      this.permisos = {
+        usuarios: 'USUARIOS_NOT_ACCESS',
+        ventas: 'VENTAS_ALL',
+        productos: 'PRODUCTOS_READ',
+        unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
+        pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+        cajas: 'CAJAS_ALL',
+      }
+    }
+
+  }
+
   // Se arma el arreglo de permisos
   adicionarPermisos(): any {
 
@@ -148,12 +189,36 @@ export class EditarUsuarioComponent implements OnInit {
       permisos.push('USUARIOS_NAV');
       permisos.push(this.permisos.usuarios);
     }
-    
+
+    // Seccion ventas
+    if(this.permisos.ventas !== 'VENTAS_NOT_ACCESS'){
+      permisos.push('VENTAS_NAV');
+      permisos.push(this.permisos.ventas);
+    }
+
     // Seccion productos
-    // if(this.permisos.productos !== 'PRODUCTOS_NOT_ACCESS'){
-    //   permisos.push('PRODUCTOS_NAV');
-    //   permisos.push(this.permisos.productos);
-    // }
+    if(this.permisos.productos !== 'PRODUCTOS_NOT_ACCESS'){
+      permisos.push('PRODUCTOS_NAV');
+      permisos.push(this.permisos.productos);
+    }
+
+    // Seccion unidades de medida
+    if(this.permisos.unidad_medida !== 'UNIDAD_MEDIDA_NOT_ACCESS'){
+      permisos.push('UNIDAD_MEDIDA_NAV');
+      permisos.push(this.permisos.unidad_medida);
+    }
+
+    // Seccion pedidosYa
+    if(this.permisos.pedidosYa !== 'PEDIDOSYA_NOT_ACCESS'){
+      permisos.push('PEDIDOSYA_NAV');
+      permisos.push(this.permisos.pedidosYa);
+    }
+
+    // Seccion cajas
+    if(this.permisos.cajas !== 'CAJAS_NOT_ACCESS'){
+      permisos.push('CAJAS_NAV');
+      permisos.push(this.permisos.cajas);
+    }
     
     return permisos;  
   

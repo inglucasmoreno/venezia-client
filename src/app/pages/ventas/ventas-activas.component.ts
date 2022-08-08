@@ -3,6 +3,9 @@ import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { VentasService } from 'src/app/services/ventas.service';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-ventas-activas',
@@ -49,7 +52,7 @@ export class VentasActivasComponent implements OnInit {
   }
   
   constructor(private ventasService: VentasService,
-              private authService: AuthService,
+              public authService: AuthService,
               private alertService: AlertService,
               private dataService: DataService) { }
   
@@ -155,6 +158,18 @@ export class VentasActivasComponent implements OnInit {
       },({error})=>{
         this.alertService.errorApi(error);
       });
+    }
+
+    // Generacion de PDF
+    comprobanteElectronico(venta: any): void {
+      this.alertService.loading();
+      this.ventasService.getComprobante(venta._id).subscribe({
+        next: () => {
+          window.open(`${base_url}/pdf/comprobante.pdf`,'_blank');
+          this.alertService.close();
+        },
+        error: ({error}) => this.alertService.errorApi(error.message)
+      })
     }
       
     // Ordenar por columna

@@ -1,3 +1,70 @@
+<!-- Modal: Permisos -->
+<app-modal [showModal]="showModal">
+    <div class="text-sm p-2 rounded-t text-white flex items-center justify-between bg-primary-800">
+        <h1 class="text-lg"> Configuracion de permisos </h1>
+        <svg xmlns="http://www.w3.org/2000/svg" (click)="showModal = false" class="h-5 w-5 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </div>
+    <div class="p-2">
+        <div class="flex items-center text-sm p-2">
+            <div class="w-1/2">
+                <p class="font-semibold"> Usuarios </p>
+                <select [(ngModel)]="permisos.usuarios" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="USUARIOS_NOT_ACCESS"> Sin acceso </option>
+                    <option value="USUARIOS_ALL"> Permiso total </option>
+                    <option value="USUARIOS_READ"> Solo lectura </option>
+                </select>
+            </div>
+            <div class="w-1/2 ml-4">
+                <p class="font-semibold"> Ventas </p>
+                <select [(ngModel)]="permisos.ventas" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="VENTAS_NOT_ACCESS"> Sin acceso </option>
+                    <option value="VENTAS_ALL"> Permiso total </option>
+                </select>       
+            </div>   
+        </div>
+        <div class="flex items-center text-sm p-2">
+            <div class="w-1/2">
+                <p class="font-semibold"> Productos </p>
+                <select [(ngModel)]="permisos.productos" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="PRODUCTOS_NOT_ACCESS"> Sin acceso </option>
+                    <option value="PRODUCTOS_ALL"> Permiso total </option>
+                    <option value="PRODUCTOS_READ"> Solo lectura </option>
+                </select>
+            </div>
+            <div class="w-1/2 ml-4">
+                <p class="font-semibold"> Unidades de medida </p>
+                <select [(ngModel)]="permisos.unidad_medida" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="UNIDAD_MEDIDA_NOT_ACCESS"> Sin acceso </option>
+                    <option value="UNIDAD_MEDIDA_ALL"> Permiso total </option>
+                    <option value="UNIDAD_MEDIDA_READ"> Solo lectura </option>
+                </select>       
+            </div>   
+        </div>
+        <div class="flex items-center text-sm p-2">
+            <div class="w-1/2">
+                <p class="font-semibold"> PedidosYa </p>
+                <select [(ngModel)]="permisos.pedidosYa" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="PEDIDOSYA_NOT_ACCESS"> Sin acceso </option>
+                    <option value="PEDIDOSYA_ALL"> Permiso total </option>
+                    <option value="PEDIDOSYA_READ"> Solo lectura </option>
+                </select>
+            </div>
+            <div class="w-1/2 ml-4">
+                <p class="font-semibold"> Cierre de caja </p>
+                <select [(ngModel)]="permisos.cajas" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="CAJAS_NOT_ACCESS"> Sin acceso </option>
+                    <option value="CAJAS_ALL"> Permiso total </option>
+                </select>       
+            </div>   
+        </div>
+    </div>
+    <div class="p-2">
+        <button (click)="showModal = false" class="p-2 bg-secondaryColor focus:outline-none text-white w-full rounded shadow"> Regresar </button>
+    </div>
+</app-modal>
+
 <div class="lg:flex max-w-5xl mx-auto p-4 gsap-contenido">
     <div class="w-full lg:w-1/2 bg-white mr-2 shadow rounded border border-gray-200">
         <div class="flex items-center pb-2 py-2 px-2 bg-primary-800 rounded-t">
@@ -71,7 +138,15 @@
                         </select>
                     </div>
                 </div>
-                <div class="w-full mx-2 flex-1"></div>
+                <div *ngIf="usuarioForm.value.role === 'ADMIN_ROLE'" class="w-1/2"></div>
+                <div *ngIf="usuarioForm.value.role !== 'ADMIN_ROLE'" class="w-full text-sm mx-2 flex-1">
+                    <div class="font-semibold mt-3 text-gray-600 text-sm">
+                        <span class="text-red-500"> * </span> Permisos
+                    </div>
+                    <div class="bg-white my-2 flex">
+                        <button (click)="abrirPermisos()" class="bg-secondaryColor text-white focus:outline-none font-semibold p-2 rounded w-full border border-gray-300"> Configuración de permisos </button>
+                    </div>       
+                </div>
             </div>
         </div>
     </div>

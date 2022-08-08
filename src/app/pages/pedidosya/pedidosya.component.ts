@@ -38,7 +38,9 @@ export class PedidosyaComponent implements OnInit {
   // Filtrado
   public filtro = {
     activo: 'true',
-    parametro: ''
+    parametro: '',
+    fechaDesde: '',
+    fechaHasta: ''
   }
 
   // Ordenar
@@ -98,7 +100,9 @@ export class PedidosyaComponent implements OnInit {
     listarPedidosYa(): void {
       this.pedidosYaService.listarPedidosYa( 
         this.ordenar.direccion,
-        this.ordenar.columna
+        this.ordenar.columna,
+        this.filtro.fechaDesde,
+        this.filtro.fechaHasta
         )
       .subscribe({
         next: ({pedidos}) => {
@@ -109,6 +113,7 @@ export class PedidosyaComponent implements OnInit {
           });
           this.total = totalTMP;
           this.showModalPedidosYa = false;
+          this.paginaActual = 1;
           this.alertService.close();
         },
         error: ({error}) => this.alertService.errorApi(error.msg)
@@ -201,7 +206,6 @@ export class PedidosyaComponent implements OnInit {
 
     // Filtrar por Parametro
     filtrarParametro(parametro: string): void{
-      console.log(parametro);
       this.paginaActual = 1;
       this.filtro.parametro = parametro;
     }
