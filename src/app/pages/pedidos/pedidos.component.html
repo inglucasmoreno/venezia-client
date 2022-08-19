@@ -1,0 +1,153 @@
+<!-- Modal: Detalles de pedido -->
+<app-modal [showModal]="showModal">
+  <div class="text-white flex rounded-t items-center bg-primary-800 p-2 justify-between">
+      <h1> Detalles de pedido </h1>
+      <button class="focus:outline-none" (click)="showModal = false">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>            
+      </button>
+  </div>
+  <div class="p-2 text-sm">
+      <div class="flex items-center justify-between">
+          <h1 class="px-2"> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.createdAt | fecha }} </h1>
+          <p class="px-2 mt-1"> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
+      </div>
+      <p class="p-2"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
+      <p class="px-2 mt-1 font-semibold text-lg"> Listado de productos </p>
+      <div class="max-h-screen overflow-y-auto">
+          <div *ngFor="let producto of productos" class="border shadow p-2 my-2 border-gray-300 mx-2">
+              <p class="font-semibold"> {{ producto.descripcion }} </p>
+              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
+              <p class="text-sm"> Cantidad: {{ producto.cantidad }} </p>
+              <p class="text-sm"> Precio: ${{ producto.precio | moneda }} </p>
+          </div>
+      </div>
+  </div> 
+</app-modal>
+
+<!-- Listado de pedidos -->
+<div *ngIf="pedidos?.length > 0" class="md:max-w-7xl mx-auto gsap-contenido">
+  <app-tarjeta-lista>
+    <div class="container mx-auto">
+        <div>
+            <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
+                <div class="ml-2 text-white">
+                    <h2 class="text-2xl leading-tight">
+                        Listado de pedidos
+                    </h2>
+                    <p> Total de pedidos: {{ pedidos.length }} </p>
+                </div>
+            </div>
+            <div class="md:flex md:items-center md:justify-between px-4 py-2">
+                <div class="my-2 flex sm:flex-row flex-col">
+                    <div class="flex flex-row mb-1 sm:mb-0">
+                        <div class="relative">
+                        </div>
+                    </div>
+                    <div class="block relative">
+                    </div>
+                    <select (change)="paginaActual = 1" class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+                        <option value="10"> 10 elementos </option>
+                        <option value="20"> 20 elementos </option>
+                        <option value="50"> 50 elementos </option>
+                        <option value="100"> 100 elementos </option>
+                    </select>
+                </div>
+            </div>
+            <div class="px-4 py-2 overflow-x-auto">
+                <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
+                    <table class="min-w-full leading-normal">
+                        <thead>
+                            <tr class="border">
+                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('createdAt')" class="cursor-pointer w-max flex items-center focus:outline-none">
+                                        <span> Fecha de pedido </span>
+                                        <span class="ml-2 text-gray-600">    
+                                            <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'createdAt'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('mayorista.descripcion')" class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Mayorista </span>
+                                        <span class="ml-2 text-gray-600">    
+                                            <svg *ngIf="ordenar.columna == 'mayorista.descripcion' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'mayorista.descripcion' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'mayorista.descripcion'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('mayorista.activo')" class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Estado </span>
+                                        <span class="ml-2 text-gray-600">    
+                                            <svg *ngIf="ordenar.columna == 'mayorista.activo' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'mayorista.activo' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'mayorista.activo'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('precio_total')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                        <span>
+                                            Precio total                                               
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'precio_total' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'precio_total' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'precio_total'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                    Accion                                              
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="pedidos">
+                            <tr class="animate__animated animate__fadeIn" *ngFor="let pedido of pedidos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                                <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                                        {{ pedido.createdAt | fecha }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                                        {{ pedido.mayorista.descripcion }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                                        {{ pedido.activo ? 'Pendiente' : 'Atendido' }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap">
+                                        ${{ pedido.precio_total | moneda }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-2 border-b border-gray-200 text-xs text-center">
+                                    <span class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                                        <app-boton-tabla (click)="seleccionarPedido(pedido)" title="Detalles del pedido">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            </svg>
+                                        </app-boton-tabla>
+                                    </span>
+                              </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      <div *ngIf="pedidos.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+            <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
+      </div> 
+    </div>          
+  </app-tarjeta-lista>
+</div>
+

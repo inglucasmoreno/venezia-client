@@ -23,6 +23,7 @@ import { CajasHistorialComponent } from './caja/cajas-historial.component';
 import { VentasActivasComponent } from './ventas/ventas-activas.component';
 import { PedidosyaComponent } from './pedidosya/pedidosya.component';
 import { PedidosyaHistorialComponent } from './pedidosya/pedidosya-historial.component';
+import { PedidosComponent } from './pedidos/pedidos.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { PedidosyaHistorialComponent } from './pedidosya/pedidosya-historial.com
     VentasActivasComponent,
     PedidosyaComponent,
     PedidosyaHistorialComponent,
+    PedidosComponent,
   ],
   imports: [
     CommonModule,
