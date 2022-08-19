@@ -80,6 +80,25 @@ export class PedidosComponent implements OnInit {
     })
   }
 
+  // Confirmar pedido
+  confirmarPedido(pedido: any): void {
+    this.alertService.question({ msg: 'Confirmar pedido', buttonText: 'Confirmar' })
+    .then(({isConfirmed}) => {  
+      if (isConfirmed) {
+        this.alertService.loading();
+        this.ventasMayoristasService.actualizarVenta(pedido._id, {activo: false}).subscribe({
+          next: () => {
+            this.alertService.loading();
+            this.listarPedidos();
+          },
+          error: ({error}) => {
+            this.alertService.errorApi(error.message);
+          }
+        })
+      }
+    });
+  }
+
   // Filtrar Activo/Inactivo
   filtrarActivos(activo: any): void{
     this.paginaActual = 1;
