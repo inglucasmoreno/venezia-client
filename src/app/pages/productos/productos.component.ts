@@ -159,12 +159,11 @@ constructor(private productosService: ProductosService,
 
   verificacion(): boolean {
     
-    const { descripcion, unidad_medida, balanza, precio, precio_mayorista } = this.productoForm;
+    const { descripcion, unidad_medida, balanza, precio } = this.productoForm;
 
     const condicion = descripcion.trim() === '' ||
                       (unidad_medida.trim() === '' && balanza === 'false') ||
-                      precio === 0 || precio === null ||
-                      precio_mayorista < 0 || precio_mayorista === null 
+                      precio === 0 || precio === null
     
     if(condicion) return true
     else return false

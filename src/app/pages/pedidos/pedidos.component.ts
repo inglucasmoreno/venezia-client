@@ -15,6 +15,7 @@ export class PedidosComponent implements OnInit {
 
   // Pedidos
   public pedidos: any[] = null;
+  public pedidosPendientes: any[] = [];
   public pedidoSeleccionado: any = null;
   public productos: any[] = [];
   public showModal: boolean = false;
@@ -52,6 +53,8 @@ export class PedidosComponent implements OnInit {
       next: ({ventas}) => {
         this.pedidos = ventas;
         console.log(ventas);
+        this.pedidosPendientes = ventas.filter( pedido => pedido.activo );
+        this.productosParaElaboracion();
         this.alertService.close();
       },
       error: ({error}) => {
@@ -96,6 +99,14 @@ export class PedidosComponent implements OnInit {
           }
         })
       }
+    });
+  }
+
+  // Productos para elaboracion
+  productosParaElaboracion(): void {
+    console.log(this.pedidosPendientes);
+    this.pedidosPendientes.map( pedido => {
+      console.log(pedido);
     });
   }
 

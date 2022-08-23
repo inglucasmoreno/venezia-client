@@ -52,12 +52,22 @@
                 </select>
             </div>
             <div class="w-1/2 ml-4">
+                <p class="font-semibold"> Mayoristas </p>
+                <select [(ngModel)]="permisos.mayoristas" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="MAYORISTAS_NOT_ACCESS"> Sin acceso </option>
+                    <option value="MAYORISTAS_ALL"> Permiso total </option>
+                </select>       
+            </div>   
+        </div>
+        <div class="flex items-center text-sm p-2">
+            <div class="w-1/2">
                 <p class="font-semibold"> Cierre de caja </p>
                 <select [(ngModel)]="permisos.cajas" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
                     <option value="CAJAS_NOT_ACCESS"> Sin acceso </option>
                     <option value="CAJAS_ALL"> Permiso total </option>
-                </select>       
-            </div>   
+                </select>  
+            </div>
+            <div class="w-1/2 ml-4"></div>   
         </div>
     </div>
     <div class="p-2">

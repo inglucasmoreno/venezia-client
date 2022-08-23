@@ -24,6 +24,7 @@ export class EditarUsuarioComponent implements OnInit {
     productos: 'PRODUCTOS_NOT_ACCESS',
     unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
     pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+    mayoristas: 'MAYORISTAS_NOT_ACCESS',
     cajas: 'CAJAS_NOT_ACCESS'
   };
 
@@ -112,6 +113,9 @@ export class EditarUsuarioComponent implements OnInit {
 
       // PedidosYa
       (permiso === 'PEDIDOSYA_ALL' || permiso === 'PEDIDOSYA_READ') ? this.permisos.pedidosYa = permiso : null;
+
+      // Mayoristas
+      (permiso === 'MAYORISTAS_ALL' || permiso === 'MAYORISTAS_READ') ? this.permisos.mayoristas = permiso : null;
     
       // Cierre de cajas
       (permiso === 'CAJAS_ALL' || permiso === 'CAJAS_READ') ? this.permisos.cajas = permiso : null;
@@ -173,6 +177,7 @@ export class EditarUsuarioComponent implements OnInit {
         productos: 'PRODUCTOS_READ',
         unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
         pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+        mayoristas: 'MAYORISTAS_NOT_ACCESS',
         cajas: 'CAJAS_ALL',
       }
     }
@@ -212,6 +217,12 @@ export class EditarUsuarioComponent implements OnInit {
     if(this.permisos.pedidosYa !== 'PEDIDOSYA_NOT_ACCESS'){
       permisos.push('PEDIDOSYA_NAV');
       permisos.push(this.permisos.pedidosYa);
+    }
+
+    // Seccion mayoristas
+    if(this.permisos.mayoristas !== 'MAYORISTAS_NOT_ACCESS'){
+      permisos.push('MAYORISTAS_NAV');
+      permisos.push(this.permisos.mayoristas);
     }
 
     // Seccion cajas

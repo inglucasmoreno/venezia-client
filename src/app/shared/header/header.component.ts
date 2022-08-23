@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { AuthService } from '../../services/auth.service';
 import { items } from './items';
+import { itemsMayoristas } from './items-mayoristas';
 
 @Component({
   selector: 'app-header',
@@ -13,9 +14,11 @@ export class HeaderComponent implements OnInit {
 
   // Items
   public items: any[];
+  public itemsMayoristas: any[];
  
   // Flags - Navegacion
   public administrador = false;
+  public showMayoristas = false;
 
   // Permisos para navegacion
   public permiso_usuarios = true;
@@ -26,6 +29,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     // console.log(this.authService.usuario);
     this.items = items;
+    this.itemsMayoristas = itemsMayoristas;
   }
   
   // Habilitacion de navegacion

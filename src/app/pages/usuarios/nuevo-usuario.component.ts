@@ -23,7 +23,8 @@ export class NuevoUsuarioComponent implements OnInit {
     productos: 'PRODUCTOS_NOT_ACCESS',
     unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
     pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
-    cajas: 'CAJAS_NOT_ACCESS'
+    mayoristas: 'MAYORISTAS_NOT_ACCESS',
+    cajas: 'CAJAS_NOT_ACCESS',
   };
 
   // Modals
@@ -126,6 +127,7 @@ export class NuevoUsuarioComponent implements OnInit {
         productos: 'PRODUCTOS_READ',
         unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
         pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+        mayoristas: 'MAYORISTAS_NOT_ACCESS',
         cajas: 'CAJAS_ALL',
       }
     }
@@ -165,6 +167,12 @@ export class NuevoUsuarioComponent implements OnInit {
     if(this.permisos.pedidosYa !== 'PEDIDOSYA_NOT_ACCESS'){
       permisos.push('PEDIDOSYA_NAV');
       permisos.push(this.permisos.pedidosYa);
+    }
+
+    // Seccion mayoristas
+    if(this.permisos.mayoristas !== 'MAYORISTAS_NOT_ACCESS'){
+      permisos.push('MAYORISTAS_NAV');
+      permisos.push(this.permisos.mayoristas);
     }
 
     // Seccion cajas
