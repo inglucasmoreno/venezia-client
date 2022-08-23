@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AlertService } from 'src/app/services/alert.service';
 import { DataService } from 'src/app/services/data.service';
 import { VentasMayoristasService } from '../../services/ventas-mayoristas.service';
-import gsap from 'gsap';
 import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-pedidos',
@@ -13,12 +13,18 @@ import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayori
 })
 export class PedidosComponent implements OnInit {
 
+  // Etapa
+  public etapa = 'pedidos';
+
   // Pedidos
   public pedidos: any[] = null;
   public pedidosPendientes: any[] = [];
   public pedidoSeleccionado: any = null;
   public productos: any[] = [];
   public showModal: boolean = false;
+
+  // Productos
+  public productosPendientes:any[] = [];
 
   // Paginacion
   public paginaActual: number = 1;
@@ -52,7 +58,6 @@ export class PedidosComponent implements OnInit {
     this.ventasMayoristasService.listarVentas(this.ordenar.direccion, this.ordenar.columna).subscribe({
       next: ({ventas}) => {
         this.pedidos = ventas;
-        console.log(ventas);
         this.pedidosPendientes = ventas.filter( pedido => pedido.activo );
         this.productosParaElaboracion();
         this.alertService.close();
@@ -104,10 +109,41 @@ export class PedidosComponent implements OnInit {
 
   // Productos para elaboracion
   productosParaElaboracion(): void {
-    console.log(this.pedidosPendientes);
-    this.pedidosPendientes.map( pedido => {
-      console.log(pedido);
-    });
+    this.ventasMayoristasProductosService.listarProductos(1,'descripcion', '', 'true').subscribe({
+      next: ({productos}) => {
+        
+        let productoTMP = productos;
+
+        this.productosPendientes = [];
+        
+        const agregados = [];
+        
+        productoTMP.map( producto => {
+          if(!agregados.includes(producto.producto._id)){
+            agregados.push(producto.producto._id);
+            this.productosPendientes.push(producto);
+          }else{
+            this.productosPendientes.map( elemento => {
+              if(elemento.producto._id === producto.producto._id){
+                elemento.cantidad += producto.cantidad; 
+              }
+            })
+          }
+          console.log(agregados.includes(producto.producto._id));
+        });
+        
+        console.log(agregados);
+      
+      },
+      
+      error: ({error}) => this.alertService.errorApi(error.message)
+    
+    })
+  }
+
+  // Cambiar etapa
+  cambiarEtapa(): void {
+    this.etapa = this.etapa === 'productos' ? 'pedidos' : 'productos';  
   }
 
   // Filtrar Activo/Inactivo
