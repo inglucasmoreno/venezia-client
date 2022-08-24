@@ -3,7 +3,6 @@ import { AlertService } from 'src/app/services/alert.service';
 import { DataService } from 'src/app/services/data.service';
 import { VentasMayoristasService } from '../../services/ventas-mayoristas.service';
 import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
-import gsap from 'gsap';
 
 @Component({
   selector: 'app-pedidos',
@@ -49,7 +48,6 @@ export class PedidosComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataService.ubicacionActual = 'Dashboard - Mis pedidos';
-    gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
     this.listarPedidos();
   }
 
