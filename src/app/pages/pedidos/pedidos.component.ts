@@ -20,6 +20,7 @@ export class PedidosComponent implements OnInit {
   public showModal: boolean = false;
   public showModalEnvio: boolean = false;
   public showModalCompletar: boolean = false;
+  public showModalCompletarDeuda: boolean = false;
 
   // Repartidores
   public repartidores: any[] = [];
@@ -33,6 +34,7 @@ export class PedidosComponent implements OnInit {
   public montoRecibido = 0;
   public estadoPago = 'Total'; // Total - Deuda
   public montoDeuda = null;
+  public totalCompletar = 0;
 
   // Productos
   public productosPendientes:any[] = [];
@@ -96,6 +98,7 @@ export class PedidosComponent implements OnInit {
           this.productosParaElaboracion();
           this.showModalEnvio = false;
           this.showModalCompletar = false;
+          this.showModalCompletarDeuda = false;
           this.alertService.close();
         },
         error: ({error}) => {
@@ -223,6 +226,35 @@ export class PedidosComponent implements OnInit {
         this.alertService.errorApi(error.message);
       }
     })
+  }
+
+  // Abrir modal - Cancelar deuda
+  abrirCancelarDeuda(pedido): void {
+    this.pedidoSeleccionado = pedido;
+    this.totalCompletar = this.dataService.redondear(pedido.deuda_monto + pedido.monto_recibido, 2);
+    this.showModalCompletarDeuda = true;
+  }
+
+  // Cancelar deuda
+  cancelarDeuda(): void {
+    this.alertService.question({ msg: 'Completar pedido', buttonText: 'Completar', cancelarText: 'Regresar' })
+    .then(({isConfirmed}) => {  
+      if (isConfirmed) {
+        this.alertService.loading();
+        this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
+          estado: 'Completado',
+          monto_recibido: this.totalCompletar,
+          deuda_monto: 0,
+          deuda: false
+        }).subscribe({
+          next: () => {
+            this.totalCompletar = 0;
+            this.listarPedidos();
+          },
+          error: ({ error }) => this.alertService.errorApi(error.message)
+        }) 
+      }
+    });   
   }
 
   // Completar pedido
