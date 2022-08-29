@@ -8,34 +8,34 @@ const base_url = environment.base_url;
 @Injectable({
   providedIn: 'root'
 })
-export class MayoristasService {
+export class RepartidoresService {
 
   constructor(private http: HttpClient) {}
 
-  // Mayoristas por ID
-  getMayorista(id: string): Observable<any> {
-    return this.http.get(`${base_url}/mayoristas/${ id }`,{ 
+  // Nuevo repartidor
+  nuevoRepartidor(data: any): Observable<any> {
+    return this.http.post(`${base_url}/repartidores`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
   };
 
-  // Nuevo mayorista
-  nuevoMayorista(data: any): Observable<any> {
-    return this.http.post(`${base_url}/mayoristas`, data, {
+  // Repartidor por ID
+  getRepartidor(id: string): Observable<any> {
+    return this.http.get(`${base_url}/repartidores/${ id }`,{ 
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
   };
 
-  // Listar mayoristas
-  listarMayoristas(
+  // Listar repartidores
+  listarRepartidores(
     direccion: number = 1,
     columna: string = 'descripcion'  
   ): Observable<any> {
-    return this.http.get(`${base_url}/mayoristas`, {
+    return this.http.get(`${base_url}/repartidores`, {
       params: {
         direccion: String(direccion),
         columna
@@ -46,9 +46,9 @@ export class MayoristasService {
     });
   }
 
-  // Actualizar mayorista
-  actualizarMayorista(id:string, data: any): Observable<any> {
-    return this.http.put(`${base_url}/mayoristas/${id}`, data, {
+  // Actualizar repartidor
+  actualizarRepartidor(id:string, data: any): Observable<any> {
+    return this.http.put(`${base_url}/repartidores/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }

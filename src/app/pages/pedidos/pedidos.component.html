@@ -1,7 +1,91 @@
+
+<!-- Modal: Completar pedido -->
+<app-modal [showModal]="showModalCompletar">
+    <div>
+        <div class="bg-primary-800 text-white flex items-center justify-between p-2 rounded-t">
+            <h1> Completando pedido - Nro {{ pedidoSeleccionado?.numero }} </h1>
+            <button (click)="showModalCompletar = false" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>                   
+            </button>
+        </div>
+    </div>
+    <div class="text-sm">
+        <div class="p-2">
+            <p class="font-semibold text-md"> Estado de pago </p>
+            <div class="flex items-center mt-2">
+                <select [(ngModel)]="estadoPago" class="p-2 focus:outline-none border rounded border-gray-400">
+                    <option value="Total"> Pago total </option>
+                    <option value="Deuda"> Pago parcial (Deuda) </option>
+                </select>
+            </div> 
+        </div>
+        <div class="p-2 md:flex md:items-center">
+            <div>
+                <p class="font-semibold text-md"> Monto recibido </p>
+                <div class="flex items-center">
+                    <input [(ngModel)]="montoRecibido" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
+                    <button (click)="completarPedido()" title="Completar pedido" class="border md:hidden border-gray-400 focus:outline-none hover:text-green-700 rounded p-2 ml-2 shadow mt-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>                    
+                    </button>
+                </div> 
+            </div>
+            <div *ngIf="estadoPago === 'Deuda'" class="ml-2">
+                <p class="font-semibold text-md"> Monto deuda </p>
+                <div class="flex items-center">
+                    <input [(ngModel)]="montoDeuda" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
+                </div> 
+            </div>
+            <div class="hidden md:inline">
+                <p class="text-white"> adsas </p>
+                <button (click)="completarPedido()" title="Completar pedido" class="border border-gray-400 focus:outline-none hover:text-green-700 rounded p-2 ml-2 shadow mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>                    
+                </button>
+            </div>
+        </div>
+        <p class="mt-2 px-2 font-semibold text-lg"> Listado de productos </p>
+        <div class="max-h-screen overflow-y-auto">
+            <div (click)="productoNoEntregado(producto)" *ngFor="let producto of productos" [ngClass]="{'bg-green-100 border-green-300':producto.entregado, 'bg-red-100 border-red-300': !producto.entregado}" class="border cursor-pointer shadow p-2 my-2 border-gray-300 mx-2">
+                <p class="font-semibold"> {{ producto.descripcion }} </p>
+                <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
+                <p class="text-sm"> Cantidad: {{ producto.cantidad }} </p>
+                <p class="text-sm"> Precio: ${{ producto.precio | moneda }} </p>
+            </div>
+        </div>
+    </div>
+</app-modal>
+
+<!-- Modal: Enviar pedido -->
+<app-modal-small [showModal]="showModalEnvio">
+    <div>
+        <div class="bg-primary-800 text-white flex items-center justify-between p-2 rounded-t">
+            <h1> Enviando pedido - Nro {{ pedidoSeleccionado?.numero }} </h1>
+            <button (click)="showModalEnvio = false" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>                   
+            </button>
+        </div>
+    </div>
+    <div class="p-2 text-sm">
+        <p class="font-semibold"> Listado de repartidores </p>
+        <select [(ngModel)]="repartidor" class="p-2 border focus:outline-none border-gray-400 rounded w-full mt-2">
+            <option value=""> Seleccionar repartidor </option>
+            <option [value]="repartidor._id" *ngFor="let repartidor of repartidores"> {{ repartidor.descripcion }} </option>
+        </select>
+        <button (click)="enviarPedido()" class="p-2 shadow w-full bg-secondaryColor text-white mt-4 rounded focus:outline-none"> Enviar pedido </button>
+    </div>
+</app-modal-small>
+
 <!-- Modal: Detalles de pedido -->
 <app-modal [showModal]="showModal">
   <div class="text-white flex rounded-t items-center bg-primary-800 p-2 justify-between">
-      <h1> Detalles de pedido </h1>
+      <h1> Detalles de pedido - Nro {{ pedidoSeleccionado?.numero }} </h1>
       <button class="focus:outline-none" (click)="showModal = false">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -14,7 +98,13 @@
           <p class="px-2 mt-1"> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
       </div>
       <p class="p-2"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
-      <p class="p-2"> <span class="font-semibold"> Estado: </span> <span class="border p-1 rounded font-semibold text-xs" [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': pedidoSeleccionado?.activo, 'bg-green-100 border-green-300 text-green-700': !pedidoSeleccionado?.activo}"> {{ pedidoSeleccionado?.activo ? 'Pendiente' : 'Confirmado' }} </span> </p>
+      <p class="p-2"> 
+        <span class="font-semibold"> Estado: </span> 
+        <span class="border p-1 rounded font-semibold text-xs" [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': pedidoSeleccionado?.estado === 'Pendiente', 'bg-green-100 border-green-300 text-green-700': pedidoSeleccionado?.estado === 'Completado', 'bg-orange-100 border-orange-300 text-orange-700': pedidoSeleccionado?.estado === 'Cancelado', 'bg-blue-100 border-blue-300 text-blue-700': pedidoSeleccionado?.estado === 'Enviado', 'bg-red-100 border-red-300 text-red-700': pedidoSeleccionado?.estado === 'Deuda'}"> 
+            {{ pedidoSeleccionado?.estado }} 
+        </span> 
+        <span class="bg-gray-100 font-semibold text-xs p-1 rounded border ml-1 border-gray-300" *ngIf="pedidoSeleccionado?.repartidor._id !== '333333333333333333333333'"> {{ pedidoSeleccionado?.repartidor.descripcion }} </span>
+      </p>
       <p class="px-2 mt-1 font-semibold text-lg"> Listado de productos </p>
       <div class="max-h-screen overflow-y-auto">
           <div *ngFor="let producto of productos" class="border shadow p-2 my-2 border-gray-300 mx-2">
@@ -37,7 +127,7 @@
                     <h2 class="text-2xl leading-tight">
                         {{ etapa === 'productos' ? 'Productos pendientes' : 'Listado de pedidos' }}
                     </h2>
-                    <p *ngIf="etapa === 'pedidos'"> Total de pedidos: {{ pedidos.length }} </p>
+                    <p *ngIf="etapa === 'pedidos'"> Total de pedidos: {{ pedidos?.length }} </p>
                 </div>
                 <button [ngClass]="{'bg-red-50 text-red-700 border-red-300' : etapa === 'productos'}" (click)="cambiarEtapa()" [title]="etapa === 'pedidos' ? 'Productos' : 'Pedidos'" class="bg-white border focus:outline-none hover:text-secondaryColor p-2 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -49,9 +139,12 @@
                 <div class="my-2 flex sm:flex-row flex-col">
                     <div class="flex flex-row mb-1 sm:mb-0">
                         <div class="relative">
-                            <select #txtActivo (change)="filtrarActivos(txtActivo.value)" class="h-full text-sm rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
-                                <option value='true'> Pedientes </option>
-                                <option value='false'> Confirmados </option>
+                            <select [(ngModel)]="filtro.estado" class="h-full text-sm rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                                <option value='Pendiente'> Pedientes </option>
+                                <option value='Enviado'> Enviados </option>
+                                <option value='Cancelado'> Cancelados </option>
+                                <option value='Deuda'> Deudas </option>
+                                <option value='Completado'> Completados </option>
                                 <option value=''> Todos </option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -96,6 +189,16 @@
                                     </div>
                                 </th>
                                 <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('numero')" class="cursor-pointer flex items-center justify-center focus:outline-none">
+                                        <span> Número </span>
+                                        <span class="ml-2 text-gray-600">    
+                                            <svg *ngIf="ordenar.columna == 'numero' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'numero' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'numero'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                </th>
+                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
                                     <div (click)="ordenarPorColumna('mayorista.descripcion')" class="cursor-pointer flex items-center focus:outline-none">
                                         <span> Mayorista </span>
                                         <span class="ml-2 text-gray-600">    
@@ -133,10 +236,15 @@
                             </tr>
                         </thead>
                         <tbody *ngIf="pedidos">
-                            <tr class="animate__animated animate__fadeIn" *ngFor="let pedido of pedidos | filtroPedido:filtro.parametro:filtro.activo | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                            <tr class="animate__animated animate__fadeIn" *ngFor="let pedido of pedidos | filtroPedido:filtro.parametro:filtro.estado | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
                                 <td class="px-5 py-4 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 w-max whitespace-no-wrap">
                                         {{ pedido.createdAt | fecha }}
+                                    </p>
+                                </td>
+                                <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 text-center whitespace-no-wrap">
+                                        {{ pedido.numero }}
                                     </p>
                                 </td>
                                 <td class="px-5 py-4 border-b border-gray-200 text-xs">
@@ -144,21 +252,32 @@
                                         {{ pedido.mayorista.descripcion }}
                                     </p>
                                 </td>
-                                <td class="px-5 py-4 border-b border-gray-200 text-xs">
-                                    <p [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': pedido.activo, 'bg-green-100 border-green-300 text-green-700': !pedido.activo}" class="text-gray-900 font-semibold p-1 rounded border w-max whitespace-no-wrap">
-                                        {{ pedido.activo ? 'Pendiente' : 'Confirmado' }}
-                                    </p>
+                                <td class="px-5 py-4 border-b border-gray-200 w-max text-xs">
+                                    <div class="flex items-center">
+                                        <span [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': pedido.estado === 'Pendiente', 'bg-green-100 border-green-300 text-green-700': pedido.estado === 'Completado', 'bg-orange-100 border-orange-300 text-orange-700': pedido.estado === 'Cancelado', 'bg-blue-100 border-blue-300 text-blue-700': pedido.estado === 'Enviado', 'bg-red-100 border-red-300 text-red-700': pedido.estado === 'Deuda'}" class="text-gray-900 font-semibold p-1 rounded border w-max whitespace-no-wrap">
+                                            {{ pedido.estado }}
+                                        </span>
+                                        <span *ngIf="pedido.repartidor._id !== '333333333333333333333333'" class="bg-gray-100 p-1 rounded ml-2 font-semibold border border-gray-300 text-xs"> {{ pedido.repartidor.descripcion }} </span>
+                                    </div>
                                 </td>
                                 <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 whitespace-no-wrap">
                                         ${{ pedido.precio_total | moneda }}
                                     </p>
                                 </td>
-                                <td class="px-5 py-2 flex items-center justify-center border-b border-gray-200 text-xs text-center">
-                                    <span *ngIf="pedido?.activo" (click)="confirmarPedido(pedido)" class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
-                                        <app-boton-tabla title="Confirmar pedido">
+                                <td class="px-5 py-3 flex items-center justify-center border-b border-gray-200 text-xs text-center">
+                                    <span *ngIf="pedido.estado === 'Enviado'" (click)="abrirCompletarPedido(pedido)" class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                                        <app-boton-tabla title="Completar pedido">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </app-boton-tabla>
+                                    </span>
+                                    <span *ngIf="pedido.estado === 'Pendiente'" (click)="abrirEnviarPedido(pedido)" class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                                        <app-boton-tabla title="Enviar pedido">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
                                             </svg>
                                         </app-boton-tabla>
                                     </span>
@@ -169,6 +288,13 @@
                                             </svg>
                                         </app-boton-tabla>
                                     </span>
+                                    <span *ngIf="pedido.estado !== 'Cancelado' && pedido.estado !== 'Completado'" class="flex items-center justify-center ml-2 text-gray-900 whitespace-no-wrap">
+                                        <app-boton-tabla (click)="cancelarPedido(pedido)" title="Cancelar pedido">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                              </svg>
+                                        </app-boton-tabla>
+                                    </span>
                               </td>
                             </tr>
                         </tbody>
@@ -176,7 +302,7 @@
                 </div>
             </div>
         </div>
-      <div *ngIf="pedidos.length > cantidadItems && etapa ===  'pedidos'" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+      <div *ngIf="pedidos?.length > cantidadItems && etapa ===  'pedidos'" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
             <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
       </div> 
     </div>  

@@ -9,14 +9,14 @@ export class AlertService {
   constructor() { }
   
   // Alerta - Pregunta
-  question({ msg, buttonText }): any {
+  question({ msg, buttonText, cancelarText = 'Cancelar' }): any {
     return Swal.fire({
       title: '¿Estas seguro?',
       text: msg,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: buttonText,
-      cancelButtonText: 'Cancelar', 
+      cancelButtonText: cancelarText, 
       confirmButtonColor: '#A31D1E'
     });
   }

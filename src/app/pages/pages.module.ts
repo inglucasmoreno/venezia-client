@@ -25,6 +25,7 @@ import { PedidosyaComponent } from './pedidosya/pedidosya.component';
 import { PedidosyaHistorialComponent } from './pedidosya/pedidosya-historial.component';
 import { PedidosComponent } from './pedidos/pedidos.component';
 import { MayoristasComponent } from './mayoristas/mayoristas.component';
+import { RepartidoresComponent } from './repartidores/repartidores.component';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import { MayoristasComponent } from './mayoristas/mayoristas.component';
     PedidosyaHistorialComponent,
     PedidosComponent,
     MayoristasComponent,
+    RepartidoresComponent,
   ],
   imports: [
     CommonModule,

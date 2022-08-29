@@ -24,6 +24,7 @@ import { PedidosyaComponent } from './pedidosya/pedidosya.component';
 import { PedidosyaHistorialComponent } from './pedidosya/pedidosya-historial.component';
 import { PedidosComponent } from './pedidos/pedidos.component';
 import { MayoristasComponent } from './mayoristas/mayoristas.component';
+import { RepartidoresComponent } from './repartidores/repartidores.component';
 
 const routes: Routes = [
     {
@@ -60,6 +61,7 @@ const routes: Routes = [
             { path: 'pedidosya/historial', data: { permisos: 'PEDIDOSYA_NAV' }, canActivate: [PermisosGuard], component: PedidosyaHistorialComponent },
             
             // Mayoristas
+            { path: 'repartidores', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: RepartidoresComponent },
             { path: 'mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: MayoristasComponent },
             { path: 'pedidos', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosComponent },
 

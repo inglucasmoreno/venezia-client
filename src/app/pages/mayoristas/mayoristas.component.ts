@@ -17,6 +17,7 @@ public permisos = { all: false };
 
 // Modal
 public showModalMayorista = false;
+public showModalNuevoMayorista = false;
 public showModalPassword = false;
 
 // Estado formulario 
@@ -27,6 +28,7 @@ public idMayorista: string = '';
 public mayoristas: any = [];
 public mayoristaSeleccionado: any;
 public descripcion: string = '';
+
 public mayoristasForm: any = {  
   descripcion: '',
   telefono: '',
@@ -74,6 +76,7 @@ constructor(private mayoristasService: MayoristasService,
 
   // Abrir modal
   abrirModal(estado: string, mayorista: any = null): void {
+    
     window.scrollTo(0,0);
     this.reiniciarFormulario();
     
@@ -87,10 +90,10 @@ constructor(private mayoristasService: MayoristasService,
  
     this.idMayorista = '';
     
-    if(estado === 'editar') this.getMayorista(mayorista);
-    else this.showModalMayorista = true;
+    this.getMayorista(mayorista);
 
     this.estadoFormulario = estado;  
+  
   }
 
   // Traer datos de mayorista
@@ -117,20 +120,27 @@ constructor(private mayoristasService: MayoristasService,
     .subscribe( ({ mayoristas }) => {
       this.mayoristas = mayoristas;
       this.showModalMayorista = false;
+      this.showModalNuevoMayorista = false;
       this.alertService.close();
     }, (({error}) => {
       this.alertService.errorApi(error.msg);
     }));
   }
 
-  // Actualizar mayorista
-  actualizarMayorista(): void {
+  // Nuevo mayorista
+  nuevoMayorista(): void {
 
     const { descripcion, telefono, direccion, email, confirm } = this.mayoristasForm;
 
     // Verificacion: Descripción vacia
     if(descripcion.trim() === ""){
       this.alertService.info('Debes colocar una descripción');
+      return;
+    }
+
+    // Verificacion: email vacia
+    if(email.trim() === ""){
+      this.alertService.info('Debes colocar un correo electrónico');
       return;
     }
 
@@ -146,9 +156,75 @@ constructor(private mayoristasService: MayoristasService,
       return;
     }
 
+    // Verificacion: contraseña
+    if(this.password.trim() === ""){
+      this.alertService.info('Debes colocar una contraseña');
+      return;
+    }
+
+    // Verificacion: repetir contraseña
+    if(this.repetir.trim() === ""){
+      this.alertService.info('Debes repetir la contraseña');
+      return;
+    }
+
+    // Verificacion: Las contraseñas debe coindicir
+    if(this.password.trim() !== this.repetir.trim()){
+      this.alertService.info('Las contraseñas debe coindicir');
+      return;
+    }
+    
+    this.alertService.loading();
+
+    // Ajustando
+    const data = {
+      descripcion,
+      telefono,
+      direccion,
+      email,
+      password: this.password,
+      repetir: this.repetir,
+      confirm: confirm === 'true' ? true : false, 
+      creatorUser: this.authService.usuario.userId,
+      updatorUser: this.authService.usuario.userId,
+    }
+
+    this.mayoristasService.nuevoMayorista(data).subscribe({
+      next: () => {
+        this.listarMayoristas();
+      },
+      error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+
+  }
+
+
+  // Actualizar mayorista
+  actualizarMayorista(): void {
+
+    const { descripcion, telefono, direccion, email, confirm } = this.mayoristasForm;
+
+    // Verificacion: Descripción vacia
+    if(descripcion.trim() === ""){
+      this.alertService.info('Debes colocar una descripción');
+      return;
+    }
+
     // Verificacion: email vacia
     if(email.trim() === ""){
       this.alertService.info('Debes colocar un correo electrónico');
+      return;
+    }
+
+    // Verificacion: telefono vacio
+    if(telefono.trim() === ""){
+      this.alertService.info('Debes colocar un telefono');
+      return;
+    }
+
+    // Verificacion: direccion vacia
+    if(direccion.trim() === ""){
+      this.alertService.info('Debes colocar una dirección');
       return;
     }
 
@@ -163,8 +239,6 @@ constructor(private mayoristasService: MayoristasService,
       confirm: confirm === 'true' ? true : false, 
       updatorUser: this.authService.usuario.userId,
     }
-
-    console
 
     this.mayoristasService.actualizarMayorista(this.idMayorista, data).subscribe(() => {
       this.listarMayoristas();
@@ -204,6 +278,29 @@ constructor(private mayoristasService: MayoristasService,
     this.showModalPassword = true;
   }
 
+  // Abrir nuevo mayorista
+  abrirNuevoMayorista(): void {
+
+    window.scrollTo(0,0);
+    this.reiniciarFormulario();
+    
+    this.mayoristasForm = {  
+      descripcion: '',
+      telefono: '',
+      direccion: '',
+      email: '',
+      confirm: 'true'
+    } 
+
+    this.password = '';
+    this.repetir = '';
+
+    this.idMayorista = '';
+
+    this.showModalNuevoMayorista = true;
+
+  }
+
   // Actualizar password
   actualizarPassword(): void {
 
@@ -238,7 +335,9 @@ constructor(private mayoristasService: MayoristasService,
       direccion: '',
       email: '',
       confirm: 'false'
-    }   
+    };
+    this.password = '';
+    this.repetir = '';   
   }
 
   // Filtrar Activo/Inactivo
