@@ -32,13 +32,21 @@ export class VentasMayoristasService {
 
   // Listar ventas
   listarVentas(
-    direccion: number = -1,
-    columna: string = 'createdAt'  
+    direccion : number = 1, 
+    columna: string = 'apellido_nombre',
+    desde: number = 0,
+    registerpp: number = 10,
+    estado: string = '',
+    parametro: string = ''  
   ): Observable<any> {
     return this.http.get(`${base_url}/ventas-mayoristas`, {
       params: {
         direccion: String(direccion),
-        columna
+        columna,
+        desde,
+        registerpp,
+        estado,
+        parametro    
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -49,6 +57,15 @@ export class VentasMayoristasService {
   // Actualizar venta
   actualizarVenta(id:string, data: any): Observable<any> {
     return this.http.put(`${base_url}/ventas-mayoristas/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }  
+
+  // Generar detalles de pedido - PDF
+  generarDetallesPDF(id:string): Observable<any> {
+    return this.http.get(`${base_url}/ventas-mayoristas/detalles-pedido/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }

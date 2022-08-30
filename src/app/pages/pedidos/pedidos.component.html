@@ -157,7 +157,14 @@
             ${{ pedidoSeleccionado?.deuda_monto | moneda }} 
         </span>
       </p>
-      <p class="px-2 mt-1 font-semibold text-lg"> Listado de productos </p>
+      <div class="flex items-center justify-between">
+          <p class="px-2 mt-1 font-semibold text-lg"> Listado de productos </p>
+          <button (click)="imprimirDetalles(pedidoSeleccionado)" title="Imprimir detalle" class="mr-2 border border-gray-300 focus:outline-none shadow p-2 rounded hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+        </button>
+      </div>
       <div class="max-h-screen overflow-y-auto">
           <div *ngFor="let producto of productos" [ngClass]="{'bg-green-100 border-green-300': ((pedidoSeleccionado?.estado === 'Deuda' || pedidoSeleccionado?.estado === 'Completado') && producto.entregado), 'bg-red-100 border-red-300': ((pedidoSeleccionado?.estado === 'Deuda' || pedidoSeleccionado?.estado === 'Completado') && !producto.entregado)}" class="border shadow p-2 my-2 border-gray-300 mx-2">
               <p class="font-semibold"> {{ producto.descripcion }} </p>
@@ -179,9 +186,9 @@
                     <h2 class="text-2xl leading-tight">
                         {{ etapa === 'productos' ? 'Productos pendientes' : 'Listado de pedidos' }}
                     </h2>
-                    <p *ngIf="etapa === 'pedidos'"> Total de pedidos: {{ pedidos?.length }} </p>
+                    <p *ngIf="etapa === 'pedidos'"> Total de pedidos: {{ totalItems }} </p>
                 </div>
-                <button [ngClass]="{'bg-red-50 text-red-700 border-red-300' : etapa === 'productos'}" (click)="cambiarEtapa()" [title]="etapa === 'pedidos' ? 'Productos' : 'Pedidos'" class="bg-white border focus:outline-none hover:text-secondaryColor p-2 rounded">
+                <button [ngClass]="{'bg-yellow-50 text-yellow-700 border-yellow-300' : etapa === 'productos'}" (click)="cambiarEtapa()" [title]="etapa === 'pedidos' ? 'Productos' : 'Pedidos'" class="bg-white border focus:outline-none hover:text-yellow-700 p-2 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                     </svg>                  
@@ -191,7 +198,7 @@
                 <div class="my-2 flex sm:flex-row flex-col">
                     <div class="flex flex-row mb-1 sm:mb-0">
                         <div class="relative">
-                            <select [(ngModel)]="filtro.estado" class="h-full text-sm rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                            <select [(ngModel)]="filtro.estado" (change)="cambiarPagina(1)" class="h-full text-sm rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
                                 <option value='Pendiente'> Pedientes </option>
                                 <option value='Enviado'> Enviados </option>
                                 <option value='Cancelado'> Cancelados </option>
@@ -214,10 +221,10 @@
                                 </path>
                             </svg>
                         </span>
-                        <input #txtParametro placeholder="Buscar" (keyup)="filtrarParametro(txtParametro.value)" class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                        <input [(ngModel)]="filtro.parametro" placeholder="Buscar" (change)="cambiarPagina(1)" class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
                         />
                     </div>
-                    <select (change)="paginaActual = 1" class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+                    <select (change)="cambiarCantidadItems()" class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
                         <option value="10"> 10 elementos </option>
                         <option value="20"> 20 elementos </option>
                         <option value="50"> 50 elementos </option>
@@ -226,6 +233,14 @@
                 </div>
             </div>
             <div *ngIf="etapa === 'pedidos'"  class="px-4 py-2 overflow-x-auto">
+                <p *ngIf="filtro.estado === 'Deuda' || filtro.estado === ''" class="text-sm pb-4 font-semibold"> 
+                    <span class="bg-green-50 p-1 text-green-700  rounded border border-green-200">
+                        Total ingresos: ${{ totalIngresos | moneda }} 
+                    </span>
+                    <span class="bg-red-50 p-1 text-red-700 ml-2 rounded border border-red-200">
+                        Total deuda: ${{ totalDeuda | moneda }} 
+                    </span>
+                </p>   
                 <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
                     <table class="min-w-full leading-normal">
                         <thead>
@@ -288,7 +303,7 @@
                             </tr>
                         </thead>
                         <tbody *ngIf="pedidos">
-                            <tr class="animate__animated animate__fadeIn" *ngFor="let pedido of pedidos | filtroPedido:filtro.parametro:filtro.estado | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                            <tr class="animate__animated animate__fadeIn" *ngFor="let pedido of pedidos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
                                 <td class="px-5 py-4 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 w-max whitespace-no-wrap">
                                         {{ pedido.createdAt | fecha }}
@@ -361,8 +376,8 @@
                 </div>
             </div>
         </div>
-      <div *ngIf="pedidos?.length > cantidadItems && etapa ===  'pedidos'" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
-            <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
+      <div *ngIf="etapa ===  'pedidos'" class="px-5 py-5 text-sm mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+            <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="cambiarPagina($event)"></pagination-controls>
       </div> 
     </div>  
     <div *ngIf="etapa === 'productos'">

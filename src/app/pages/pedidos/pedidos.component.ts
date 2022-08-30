@@ -4,6 +4,9 @@ import { DataService } from 'src/app/services/data.service';
 import { VentasMayoristasService } from '../../services/ventas-mayoristas.service';
 import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
 import { RepartidoresService } from 'src/app/services/repartidores.service';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-pedidos',
@@ -35,13 +38,17 @@ export class PedidosComponent implements OnInit {
   public estadoPago = 'Total'; // Total - Deuda
   public montoDeuda = null;
   public totalCompletar = 0;
+  public totalDeuda = 0;
+  public totalIngresos = 0;
 
   // Productos
   public productosPendientes:any[] = [];
 
-  // Paginacion
-  public paginaActual: number = 1;
-  public cantidadItems: number = 10;
+	// Paginacion
+  public totalItems: number;
+  public desde: number = 0;
+	public paginaActual: number = 1;
+	public cantidadItems: number = 10;
 
   // Filtrado
   public filtro = {
@@ -72,9 +79,19 @@ export class PedidosComponent implements OnInit {
     this.repartidoresService.listarRepartidores().subscribe({
       next: ({ repartidores }) => {
         this.repartidores = repartidores;
-        this.ventasMayoristasService.listarVentas(this.ordenar.direccion, this.ordenar.columna).subscribe({
-          next: ({ventas}) => {
+        this.ventasMayoristasService.listarVentas(
+          this.ordenar.direccion,
+          this.ordenar.columna,
+          this.desde,
+          this.cantidadItems,
+          this.filtro.estado,
+          this.filtro.parametro          
+        ).subscribe({
+          next: ({ventas, totalItems, totalDeuda, totalIngresos}) => {
             this.pedidos = ventas;
+            this.totalDeuda = totalDeuda;
+            this.totalItems = totalItems;
+            this.totalIngresos = totalIngresos;
             this.pedidosPendientes = ventas.filter( pedido => pedido.activo );
             this.productosParaElaboracion();
             this.showModalEnvio = false;
@@ -91,9 +108,19 @@ export class PedidosComponent implements OnInit {
 
   listarPedidos(): void {
     this.alertService.loading();
-      this.ventasMayoristasService.listarVentas(this.ordenar.direccion, this.ordenar.columna).subscribe({
-        next: ({ventas}) => {
+      this.ventasMayoristasService.listarVentas(
+        this.ordenar.direccion,
+        this.ordenar.columna,
+        this.desde,
+        this.cantidadItems,
+        this.filtro.estado,
+        this.filtro.parametro
+        ).subscribe({
+        next: ({ventas, totalItems, totalDeuda, totalIngresos}) => {
           this.pedidos = ventas;
+          this.totalItems = totalItems;
+          this.totalDeuda = totalDeuda;
+          this.totalIngresos = totalIngresos;
           this.pedidosPendientes = ventas.filter( pedido => pedido.activo );
           this.productosParaElaboracion();
           this.showModalEnvio = false;
@@ -334,6 +361,18 @@ export class PedidosComponent implements OnInit {
 
   }
 
+  // Imprimir detalles
+  imprimirDetalles(pedido: any): void {
+    this.alertService.loading();
+    this.ventasMayoristasService.generarDetallesPDF(pedido._id).subscribe({
+      next: () => {
+        this.alertService.close();
+        window.open(`${base_url}/pdf/detalles_pedido.pdf`,'_blank');
+      },
+      error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
   // Cambiar etapa
   cambiarEtapa(): void {
     this.etapa = this.etapa === 'productos' ? 'pedidos' : 'productos';  
@@ -349,6 +388,20 @@ export class PedidosComponent implements OnInit {
   ordenarPorColumna(columna: string){
     this.ordenar.columna = columna;
     this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1; 
+    this.alertService.loading();
+    this.listarPedidos();
+  }
+
+  // Cambiar cantidad de items
+  cambiarCantidadItems(): void {
+    this.paginaActual = 1
+    this.cambiarPagina(1);
+  }
+
+  // Paginacion - Cambiar pagina
+  cambiarPagina(nroPagina): void {
+    this.paginaActual = nroPagina;
+    this.desde = (this.paginaActual - 1) * this.cantidadItems;
     this.alertService.loading();
     this.listarPedidos();
   }
