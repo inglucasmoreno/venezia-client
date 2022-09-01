@@ -12,7 +12,10 @@
         </div>
     </div>
     <div class="p-3 text-sm">
-        <p> <span class="font-semibold"> Mayorista: </span> <span> {{ pedidoSeleccionado?.mayorista.descripcion }} </span> </p>    
+        <div class="md:flex md:items-center md:justify-between">
+            <p> <span class="font-semibold"> Mayorista: </span> <span> {{ pedidoSeleccionado?.mayorista.descripcion }} </span> </p>
+            <p> <span class="font-semibold"> Precio total: </span> <span> ${{ pedidoSeleccionado?.precio_total | moneda }} </span> </p>
+        </div>
         <div class="mt-2">
             <p class="font-semibold bg-gray-100 p-2 border border-gray-300"> Estado actual de pedido </p>
             <p class="pb-1 pt-2"> <span class="font-semibold"> Monto recibido: </span> <span> ${{ pedidoSeleccionado?.monto_recibido | moneda }} </span> </p>
@@ -38,9 +41,9 @@
         </div>
     </div>
     <div class="text-sm">
-        <div class="text-sm px-2 pt-2 pb-1">
-            <span class="font-semibold"> Mayorista: </span>
-            <span> {{ pedidoSeleccionado?.mayorista.descripcion }} </span>
+        <div class="text-sm px-2 pt-2 pb-1 md:flex md:items-center md:justify-between">
+            <p> <span class="font-semibold"> Mayorista: </span> <span> {{ pedidoSeleccionado?.mayorista.descripcion }} </span> </p>
+            <p class="mt-1 md:mt-1"> <span class="font-semibold"> Precio total: </span> <span> ${{ pedidoSeleccionado?.precio_total | moneda }} </span> </p>
         </div>
         <div class="p-2">
             <p class="font-semibold text-md"> Estado de pago </p>
@@ -55,7 +58,7 @@
             <div>
                 <p class="font-semibold text-md"> Monto recibido </p>
                 <div class="flex items-center">
-                    <input [(ngModel)]="montoRecibido" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
+                    <input [(ngModel)]="montoRecibido" (keyup.enter)="completarPedido()" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
                     <button (click)="completarPedido()" title="Completar pedido" class="border md:hidden border-gray-400 focus:outline-none hover:text-green-700 rounded p-2 ml-2 shadow mt-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -66,7 +69,7 @@
             <div *ngIf="estadoPago === 'Deuda'" class="ml-2">
                 <p class="font-semibold text-md"> Monto deuda </p>
                 <div class="flex items-center">
-                    <input [(ngModel)]="montoDeuda" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
+                    <input (keyup.enter)="completarPedido()" [(ngModel)]="montoDeuda" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
                 </div> 
             </div>
             <div class="hidden md:inline">
