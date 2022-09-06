@@ -166,7 +166,7 @@
                             </tr>
                         </thead>
                         <tbody *ngIf="ventas">
-                            <tr class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | filtroVentas:filtro.parametro:filtro.pedidosYa:filtro.facturacion | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                            <tr [ngClass]="{'bg-blue-50': (venta.forma_pago[0].descripcion  === 'Débito' || venta.forma_pago[0].descripcion  === 'Crédito' || venta.forma_pago[0].descripcion  === 'Mercado pago') && venta.comprobante === 'Normal' && venta.forma_pago.length === 1}" class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | filtroVentas:filtro.parametro:filtro.pedidosYa:filtro.facturacion | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
                                 <td class="px-5 py-3 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 w-max whitespace-no-wrap">
                                         {{ venta.createdAt | fecha }}

@@ -180,8 +180,18 @@ export class VentasComponent implements OnInit {
   
   // Seleccionando forma de pago
   seleccionarFormaPago(): void {
+
+    if(!this.multiples_formasPago && (this.formaPago === 'Crédito' || this.formaPago === 'Débito' || this.formaPago === 'Mercado pago')){
+      this.comprobante = 'Fiscal';    
+    }
+
     this.pedidosya_comprobante = '';
     this.calcularPrecio();
+  }
+
+  // Cambiar tipo de comprobante - Almacenar
+  cambiarTipoComprobante(): void {
+    this.almacenamientoLocalStorage();
   }
 
   // Calcular precio de venta
@@ -191,14 +201,11 @@ export class VentasComponent implements OnInit {
     this.productos.map(producto => {
       precioTMP += producto.precio;
     })
-    
-    console.log(this.dataService.redondear(precioTMP, 2));
-
+  
     // Precio sin adicionales ni descuentos
     this.precio_total_limpio = this.dataService.redondear(precioTMP, 2);
 
     if(this.formasPago.length === 0){ // Forma de pago unica
-      console.log('Forma de pago unica')
       // Con adicional por credito => precio total + 10% : Sin adicional por credito
       this.formaPago === 'Crédito' 
       ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2) 
@@ -450,6 +457,7 @@ export class VentasComponent implements OnInit {
     localStorage.setItem('precio_total', JSON.stringify(this.precio_total));
     localStorage.setItem('precio_total_limpio', JSON.stringify(this.precio_total_limpio));  
     localStorage.setItem('productos', JSON.stringify(this.productos));
+    localStorage.setItem('comprobante', JSON.stringify(this.comprobante));
     localStorage.setItem('productoActual', JSON.stringify(this.productoActual));
     localStorage.setItem('vuelto', JSON.stringify(this.vuelto));
     localStorage.setItem('pagaCon', JSON.stringify(this.pagaCon));
@@ -465,7 +473,8 @@ export class VentasComponent implements OnInit {
   recuperarLocalStorage(): void {
     this.precio_total = localStorage.getItem('precio_total') ? JSON.parse(localStorage.getItem('precio_total')) : 0;  
     this.precio_total_limpio = localStorage.getItem('precio_total_limpio') ? JSON.parse(localStorage.getItem('precio_total_limpio')) : 0; 
-    this.productos = localStorage.getItem('productos') ? JSON.parse(localStorage.getItem('productos')) : [];    
+    this.productos = localStorage.getItem('productos') ? JSON.parse(localStorage.getItem('productos')) : [];
+    this.comprobante = localStorage.getItem('comprobante') ? JSON.parse(localStorage.getItem('comprobante')) : 'Normal';    
     this.productoActual = localStorage.getItem('productoActual') ? JSON.parse(localStorage.getItem('productoActual')) : null;
     this.vuelto = localStorage.getItem('vuelto') ? JSON.parse(localStorage.getItem('vuelto')) : 0;
     this.pagaCon = localStorage.getItem('pagaCon') ? JSON.parse(localStorage.getItem('pagaCon')) : null;

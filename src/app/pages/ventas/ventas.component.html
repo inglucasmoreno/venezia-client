@@ -20,7 +20,7 @@
     <div>
       <p class="font-semibold text-sm"> Tipo de comprobante </p>
       <div class="flex items-center">
-        <select [(ngModel)]="comprobante" class="w-1/2 mt-2 text-sm border p-2 bg-white focus:outline-none border-gray-300 rounded">
+        <select [(ngModel)]="comprobante" (change)="cambiarTipoComprobante()" class="w-1/2 mt-2 text-sm border p-2 bg-white focus:outline-none border-gray-300 rounded">
           <option value="Normal"> Normal </option>
           <option value="Fiscal"> Guia de despacho </option>
         </select>
