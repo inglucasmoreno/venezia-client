@@ -14,6 +14,9 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class CajaComponent implements OnInit {
 
+  // Flag
+  public flagCajaCerrada: boolean = false;
+
   // Caja
   public valoresCaja: any;
   public efectivoEnCaja: number = 0;
@@ -90,7 +93,14 @@ export class CajaComponent implements OnInit {
         this.showModalSaldoInicial = false;
         this.showModalIngresosGastos = false;
         this.calculosFinales();
-        this.alertService.close();
+      
+        if(this.flagCajaCerrada){
+          this.flagCajaCerrada = false;
+          this.alertService.success('Cierre de caja correcto');
+        }else{
+          this.alertService.close();
+        }
+      
       },
       error: ({error}) => this.alertService.errorApi(error.message)
     });
@@ -149,6 +159,7 @@ export class CajaComponent implements OnInit {
               next: () => {
                 this.efectivoEnCajaReal = null;
                 this.tesoreria = null;
+                this.flagCajaCerrada = true;
                 this.calculosIniciales();
               },
               error: ({error}) => this.alertService.errorApi(error.message)
@@ -241,7 +252,6 @@ export class CajaComponent implements OnInit {
   }
 
   calculosFinales(): void {
-    console.log('Calculos finales');
     this.diferencia = this.efectivoEnCajaReal - this.efectivoEnCaja; 
     this.saldoProximaCaja = this.efectivoEnCajaReal - this.tesoreria;
   }

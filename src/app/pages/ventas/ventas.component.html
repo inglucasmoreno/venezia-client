@@ -131,9 +131,11 @@
         </div>
         
         <!-- Modo: Codigo -->
-        <div *ngIf="modo === 'codigo'" class="p-5">
-          <input (keyup.enter)="productoPorCodigo()" [(ngModel)]="codigo" type="text" placeholder="Código de producto" class="p-2 border text-sm focus:outline-none w-1/2 text-center border-gray-300 shadow">
-          <button (click)="productoPorCodigo()" class="ml-4 focus:outline-none bg-secondaryColor text-sm text-white p-2 rounded shadow"> Agregar producto </button>
+        <div>
+          <div *ngIf="modo === 'codigo'" class="p-5">
+            <input (keyup.enter)="productoPorCodigo()" appAutoFocus [(ngModel)]="codigo" type="text" placeholder="Código de producto" class="p-2 border text-sm focus:outline-none w-1/2 text-center border-gray-300 shadow">
+            <button (click)="productoPorCodigo()" class="ml-4 focus:outline-none bg-secondaryColor text-sm text-white p-2 rounded shadow"> Agregar producto </button>
+          </div>
         </div>
 
         <!-- Modo: Buscador -->

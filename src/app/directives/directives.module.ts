@@ -1,18 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PermisosDirective } from './permisos.directive';
+import { AutoFocusDirective } from './auto-focus.directive';
 
 
 
 @NgModule({
   declarations: [
-    PermisosDirective
+    PermisosDirective,
+    AutoFocusDirective
   ],
   imports: [
     CommonModule
   ],
   exports: [
-    PermisosDirective
+    PermisosDirective,
+    AutoFocusDirective
   ]
 })
 export class DirectivesModule { }
