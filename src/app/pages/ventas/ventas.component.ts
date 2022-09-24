@@ -48,6 +48,7 @@ export class VentasComponent implements OnInit {
 
   // Agregando productos
   public codigo: string = '';
+  public precio: number = null;
   public productoActual: any;
   public productos: any[] = [];
   public cantidad: number = null;
@@ -165,6 +166,43 @@ export class VentasComponent implements OnInit {
       }
       this.productos.unshift(nuevoProducto);
     }
+
+    this.calcularPrecio();
+    this.reiniciarValores();
+    this.alertService.close();
+
+  }
+
+  // Agregar producto - Modo precio
+  agregarProductoConPrecio(producto: any): void {
+
+    // Verificacion de cantidad correcta - Si viene desde buscador
+    if(this.precio === null || this.precio <= 0){
+      this.alertService.info('Debe colocar un precio válido');
+      return;
+    }
+
+    this.productoActual = producto;
+    this.productoActual.cantidad = 0;
+    this.productoActual.precio_final = this.precio;
+
+    const nuevoProducto = {
+      productoTMP: this.productoActual,
+      producto: producto._id,
+      balanza: producto.balanza,
+      descripcion: producto.descripcion,
+      unidad_medida: producto.unidad_medida.descripcion,
+      cantidad: 0,
+      creatorUser: this.authService.usuario.userId,
+      updatorUser: this.authService.usuario.userId,
+      precio: this.precio,
+      precio_unitario: producto.precio
+    }
+
+    console.log(producto);
+    this.productos.unshift(nuevoProducto);
+
+    console.log(this.productos);
 
     this.calcularPrecio();
     this.reiniciarValores();
@@ -327,7 +365,7 @@ export class VentasComponent implements OnInit {
     if(modo === 'codigo'){
       this.codigo = '';
       this.productosBuscador = [];
-    }else if(modo === 'buscador'){
+    }else if(modo === 'buscador' || modo === 'precio'){
       this.listarProductos();  
     }
   }
@@ -502,6 +540,7 @@ export class VentasComponent implements OnInit {
   reiniciarValores(): void {
     this.codigo = '';
     this.cantidad = null;
+    this.precio = null;
     this.agregandoProducto = false;
     this.filtroBuscador.parametro = '';
     this.reiniciarPaginador();

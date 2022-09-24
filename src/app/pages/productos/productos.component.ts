@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
+import { InicializacionService } from 'src/app/services/inicializacion.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { UnidadMedidaService } from 'src/app/services/unidad-medida.service';
-import { UnidadMedidaComponent } from '../unidad-medida/unidad-medida.component';
 
 @Component({
   selector: 'app-productos',
@@ -14,11 +14,20 @@ import { UnidadMedidaComponent } from '../unidad-medida/unidad-medida.component'
 })
 export class ProductosComponent implements OnInit {
 
+// Flag y mensaje de estado
+public flag_productos_importados = false;
+public mensaje = '';
+
+// Archivos para importacion
+public file: any;
+public archivoSubir: any;
+
 // Permisos de usuarios login
 public permisos = { all: false };
 
 // Modal
 public showModalProducto = false;
+public showModalImportarProductos = false;
 
 // Estado formulario
 public estadoFormulario = 'crear';
@@ -60,8 +69,9 @@ public ordenar = {
 }
 
 constructor(private productosService: ProductosService,
+            private inicializacionService: InicializacionService,
             private unidadMedidaService: UnidadMedidaService,
-            private authService: AuthService,
+            public authService: AuthService,
             private alertService: AlertService,
             private dataService: DataService) { }
 
@@ -299,6 +309,52 @@ constructor(private productosService: ProductosService,
       precio: null,
       precio_mayorista: null
     }
+  }
+
+  // Capturando archivo de importacion
+  capturarArchivo(event: any): void {
+    if(event.target.files[0]){
+      // Se capatura el archivo
+      this.archivoSubir = event.target.files[0];
+  
+      // Se verifica el formato - Debe ser un excel
+      const formato = this.archivoSubir.type.split('/')[1];
+      const condicion = formato !== 'vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  
+      if(condicion){
+        this.file = null;
+        this.archivoSubir = null;
+        return this.alertService.info('Debes seleccionar un archivo de excel');      
+      }
+    }
+  }
+
+  // Abrir modal de importacion de productos
+  abrirImportarProductos(): void {
+    this.file = null;
+    this.showModalImportarProductos = true;
+  }  
+
+  // Importar productos
+  importarProductos(): void {
+
+    if(!this.file) return this.alertService.info('Debe seleccionar un archivo de excel');
+
+    this.alertService.loading();
+    const formData =  new FormData();
+    formData.append('file', this.archivoSubir); // FormData -> key = 'file' y value = Archivo
+
+    this.inicializacionService.importarProductos(formData, this.authService.usuario.userId).subscribe({
+      next: ({msg}) => {
+        this.mensaje = msg;
+        this.flag_productos_importados = true;
+        this.listarProductos();        
+      },
+      error: ({error}) => {
+        this.alertService.errorApi(error.message);
+      }
+    })
+
   }
 
   // Filtrar Activo/Inactivo

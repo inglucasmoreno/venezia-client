@@ -110,23 +110,40 @@
      
       <div class="border border-gray-300 rounded-t shadow">
         <div class="flex items-center justify-between rounded-t bg-primary-800 p-2">
-          <h1 class="text-xl ml-1 text-white"> {{ modo === 'codigo' ? 'Ingresar por código' : 'Buscador de productos' }} </h1>
+          <h1 *ngIf="modo === 'codigo'" class="text-xl ml-1 text-white"> Ingresar por código </h1>
+          <h1 *ngIf="modo === 'buscador'" class="text-xl ml-1 text-white"> Buscador de productos </h1>
+          <h1 *ngIf="modo === 'precio'" class="text-xl ml-1 text-white"> Ingresar producto </h1>
+
+          <!-- <h1 class="text-xl ml-1 text-white"> {{ modo === 'codigo' ? 'Ingresar por código' : 'Buscador de productos' }} </h1> -->
           <div>
             
+            <!-- Modo codigo -->
             <button (click)="modoBusqueda('codigo')" title="Modo código" class="border border-gray-300 rounded p-2 focus:outline-none bg-white hover:text-secondaryColor">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
               </svg> 
             </button>
           
-            <button (click)="!agregandoProducto ? modoBusqueda('buscador') : reiniciarValores()" title="Modo buscador" class="border border-gray-300 rounded p-2 ml-2 focus:outline-none bg-white hover:text-secondaryColor">
+            <!-- Modo buscador -->
+            <button *ngIf="false" (click)="!agregandoProducto ? modoBusqueda('buscador') : reiniciarValores()" title="Modo buscador" class="border border-gray-300 rounded p-2 ml-2 focus:outline-none bg-white hover:text-secondaryColor">
               <svg *ngIf="!agregandoProducto" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
               </svg>  
-              <svg *ngIf="agregandoProducto" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg *ngIf="agregandoProducto && modo === 'buscador'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>  
-            </button>          
+            </button>
+            
+            <!-- Modo precio -->
+            <button (click)="!agregandoProducto ? modoBusqueda('precio') : reiniciarValores()" title="Modo precio" class="border border-gray-300 rounded p-2 ml-2 focus:outline-none bg-white hover:text-secondaryColor">       
+              <svg *ngIf="!agregandoProducto" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              </svg>
+              <svg *ngIf="agregandoProducto && modo === 'precio'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>  
+            </button>
+
           </div>
         </div>
         
@@ -161,6 +178,7 @@
             </div>
         </div>
 
+        <!-- Modo buscador - Agregando producto -->
         <div *ngIf="agregandoProducto && modo === 'buscador'">
           <div class="flex items-center justify-between p-4">
             <div>
@@ -177,7 +195,48 @@
             </div>
           </div>     
         </div>
-      
+
+        <!-- Modo: Precio -->
+        <div *ngIf="modo === 'precio' && !agregandoProducto" class="p-5 text-left">
+          <input (keyup)="reiniciarPaginador()" [(ngModel)]="filtroBuscador.parametro" type="text" class="border text-sm shadow border-gray-300 focus:outline-none p-2 w-full rounded" placeholder="Descripción o Código">
+            <div *ngFor="let producto of productosBuscador | filtroProductos:filtroBuscador.parametro:filtroBuscador.activo | paginate: {itemsPerPage: cantidadItemsBuscador, currentPage: paginaActualBuscador}">
+              <div class="border-b flex items-center justify-between p-2 mt-4 text-sm">
+                <div>
+                  <p> {{ producto.descripcion }}  </p> 
+                  <p class="text-gray-500 text-xs"> ${{ producto.precio | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
+                </div>
+                <div class="flex items-center">
+                  <button (click)="seleccionarProducto(producto)" title="Agregar producto" class="border focus:outline-none border-gray-300 hover:text-secondaryColor ml-2 p-2 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>                    
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="productosBuscador.length > cantidadItemsBuscador" class="p-2 mt-5 bg-white text-sm flex flex-col xs:flex-row items-center xs:justify-between">
+              <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActualBuscador = $event"></pagination-controls>
+            </div>
+        </div>
+
+        <!-- Modo precios - Agregando producto -->
+        <div *ngIf="agregandoProducto && modo === 'precio'">
+          <div class="flex items-center justify-between p-4">
+            <div>
+              <p> {{ productoSeleccionado.descripcion }}  </p> 
+              <p class="text-gray-500 text-xs"> ${{ productoSeleccionado.precio | moneda }} x {{ productoSeleccionado.unidad_medida.descripcion }} </p>
+            </div>
+            <div class="flex items-center">
+              <input (keyup.enter)="agregarProductoConPrecio(productoSeleccionado)" [(ngModel)]="precio" type="number" min="1" class="border p-2 text-sm focus:outline-none w-28 border-gray-300 rounded" placeholder="Precio">
+              <button (click)="agregarProductoConPrecio(productoSeleccionado)" title="Agregar producto" class="border focus:outline-none border-gray-300 hover:text-green-700 ml-2 p-2 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>          
+              </button>
+            </div>
+          </div>     
+        </div>
+
       </div>  
 
       <div *ngIf="productoActual && modo === 'codigo'" class="border border-gray-300 rounded-t shadow mt-4">
