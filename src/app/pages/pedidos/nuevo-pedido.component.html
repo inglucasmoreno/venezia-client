@@ -12,7 +12,7 @@
       <div class="max-h-screen overflow-y-auto">
           <div *ngIf="!productoSeleccionado" class="p-4">
               <input [(ngModel)]="filtro.parametro" type="text" class="p-2 border focus:outline-none text-sm border-primary-400" placeholder="Buscador">
-              <div (click)="seleccionarProducto(producto)" *ngFor="let producto of productos | filtroProductos:this.filtro.parametro:'true'" class="my-3 border cursor-pointer hover:border-secondaryColor text-sm border-gray-300 p-2 rounded">
+              <div (click)="seleccionarProducto(producto)" *ngFor="let producto of productos | filtroProductos:this.filtro.parametro:'true'" class="my-3 border cursor-pointer hover:bg-red-50 hover:border-red-200 text-sm border-gray-300 p-2 rounded">
                   <h3 class="font-semibold"> {{ producto.descripcion }} </h3>
                   <p class="text-xs"> ${{ producto.precio_mayorista | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
               </div>
