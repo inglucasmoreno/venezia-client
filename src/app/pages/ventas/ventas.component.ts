@@ -182,6 +182,21 @@ export class VentasComponent implements OnInit {
       return;
     }
 
+    let repetido = false;
+
+    // Verificacion - El producto esta cargado
+    this.productos.map( productoRec => {
+      if(productoRec.productoTMP._id === producto._id) repetido = true;
+    })
+
+    console.log(this.productos);
+
+    if(repetido){
+      this.alertService.info('El producto ya se encuentra cargado');
+      this.precio = null;
+      return;
+    }
+
     this.productoActual = producto;
     this.productoActual.cantidad = 0;
     this.productoActual.precio_final = this.precio;
@@ -199,10 +214,7 @@ export class VentasComponent implements OnInit {
       precio_unitario: producto.precio
     }
 
-    console.log(producto);
     this.productos.unshift(nuevoProducto);
-
-    console.log(this.productos);
 
     this.calcularPrecio();
     this.reiniciarValores();
@@ -249,7 +261,6 @@ export class VentasComponent implements OnInit {
       ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2) 
       : this.precio_total = this.dataService.redondear(precioTMP, 2);
     }else{
-      console.log('Forma de pago multimple')
     }
 
     // Se almacenan los valores en el localstorage
@@ -409,8 +420,6 @@ export class VentasComponent implements OnInit {
     this.formasPago = this.formasPago.filter(elemento => elemento.descripcion !== formaPago.descripcion);
     
     this.itemsFormasPago = [];  
-
-    console.log(this.formasPago);
 
     let efectivo = false;
     let debito = false;
