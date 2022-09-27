@@ -111,7 +111,7 @@
                 <div *ngIf="filtro.pedidosYa === 'PedidosYa - Efectivo'" class="font-semibold border-l-8 border-orange-500 w-full mt-2 md:mt-0 bg-orange-100 md:ml-4 text-orange-700 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa - Efectivo:  ${{ montoTotalPedidosYaEfectivo | moneda }} </div>     
               </div>
             <div class="px-4 py-2 mt-2 overflow-x-auto">
-                <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
+                <div class="inline-block max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
                     <table class="min-w-full leading-normal">
                         <thead>
                             <tr class="border">
@@ -165,8 +165,8 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody *ngIf="ventas">
-                            <tr [ngClass]="{'bg-blue-50': (venta.forma_pago[0].descripcion  === 'Débito' || venta.forma_pago[0].descripcion  === 'Crédito' || venta.forma_pago[0].descripcion  === 'Mercado pago') && venta.comprobante === 'Normal' && venta.forma_pago.length === 1}" class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | filtroVentas:filtro.parametro:filtro.pedidosYa:filtro.facturacion | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                        <tbody  *ngIf="ventas">
+                            <tr [ngClass]="{'bg-blue-50': (venta.forma_pago[0].descripcion  === 'Débito' || venta.forma_pago[0].descripcion  === 'Crédito' || venta.forma_pago[0].descripcion  === 'Mercado pago') && venta.comprobante === 'Normal' && venta.forma_pago.length === 1}" class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | filtroVentas:filtro.parametro:filtro.pedidosYa:filtro.facturacion">
                                 <td class="px-5 py-3 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 w-max whitespace-no-wrap">
                                         {{ venta.createdAt | fecha }}
@@ -178,43 +178,43 @@
                                     </p>
                                 </td>
                                 <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                  <div class="flex items-center">
-                                      <div [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}" class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
-                                          {{ venta.comprobante !== 'Fiscal' ? venta.comprobante : 'Guia de despacho' }}
-                                      </div>
-                                      <div [ngClass]="{'bg-orange-100 text-orange-700 border-orange-300':venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo', 'bg-yellow-100 text-yellow-700 border-yellow-300':venta.forma_pago[0].descripcion === 'PedidosYa'}" *ngIf="venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo'" class="p-1 ml-2 w-max border rounded font-semibold">
-                                          PedidosYA - #{{ venta.pedidosya_comprobante }}
-                                      </div>
-                                  </div>
-                              </td>
+                                    <div class="flex items-center">
+                                        <div [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}" class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
+                                            {{ venta.comprobante !== 'Fiscal' ? venta.comprobante : 'Guia de despacho' }}
+                                        </div>
+                                        <div [ngClass]="{'bg-orange-100 text-orange-700 border-orange-300':venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo', 'bg-yellow-100 text-yellow-700 border-yellow-300':venta.forma_pago[0].descripcion === 'PedidosYa'}" *ngIf="venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo'" class="p-1 ml-2 w-max border rounded font-semibold">
+                                            PedidosYA - #{{ venta.pedidosya_comprobante }}
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                  <p class="text-gray-900 whitespace-no-wrap capitalize">
-                                      {{ venta.creatorUser.apellido.toLowerCase() }} {{ venta.creatorUser.nombre.toLowerCase() }} 
-                                  </p>
+                                    <p class="text-gray-900 whitespace-no-wrap capitalize">
+                                        {{ venta.creatorUser.apellido.toLowerCase() }} {{ venta.creatorUser.nombre.toLowerCase() }} 
+                                    </p>
                                 </td>
                                 <td class="px-5 py-2 border-b flex items-center justify-center border-gray-200 text-xs text-center">
-                                  <p class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
-                                      <app-boton-tabla (click)="abrirModalDetalles(venta)" title="Detalles de venta">
+                                    <p class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                                        <app-boton-tabla (click)="abrirModalDetalles(venta)" title="Detalles de venta">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                                         </svg>
-                                      </app-boton-tabla>
-                                      <app-boton-tabla (click)="comprobanteElectronico(venta)" class="ml-2" title="Imprimir comprobante">
-                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                              <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                          </svg>
-                                      </app-boton-tabla>
-                                  </p>
-                              </td>
+                                        </app-boton-tabla>
+                                        <app-boton-tabla (click)="comprobanteElectronico(venta)" class="ml-2" title="Imprimir comprobante">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                            </svg>
+                                        </app-boton-tabla>
+                                    </p>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        <div *ngIf="ventas.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+        <!-- <div *ngIf="ventas.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
             <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
-        </div>
+        </div> -->
     </div>
   </app-tarjeta-lista>
 </div>

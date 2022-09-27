@@ -99,7 +99,7 @@
                   </div>
               </div>
               <div class="px-4 py-2 overflow-x-auto">
-                  <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
+                  <div class="inline-block max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
                       <table class="min-w-full leading-normal">
                           <thead>
                               <tr class="border">
@@ -143,7 +143,7 @@
                               </tr>
                           </thead>
                           <tbody *ngIf="unidades">
-                              <tr class="animate__animated animate__fadeIn" *ngFor="let unidad of unidades | filtroUnidadMedida:filtro.parametro:filtro.activo | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                              <tr class="animate__animated animate__fadeIn" *ngFor="let unidad of unidades | filtroUnidadMedida:filtro.parametro:filtro.activo">
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
                                           {{ unidad.descripcion }}
@@ -175,9 +175,9 @@
                   </div>
               </div>
           </div>
-          <div *ngIf="unidades.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+          <!-- <div *ngIf="unidades.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
               <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
-          </div>
+          </div> -->
       </div>
     </app-tarjeta-lista>
 </div>

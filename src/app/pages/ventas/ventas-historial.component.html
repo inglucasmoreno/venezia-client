@@ -138,7 +138,7 @@
 
               <!-- Tabla de ventas -->
               <div class="px-4 py-2 mt-2 overflow-x-auto">
-                  <div class="inline-block max-h-screen overflow-y-auto min-w-full overflow-hidden pb-5">
+                  <div class="inline-block max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
                       <table class="min-w-full leading-normal">
                           <thead>
                               <tr class="border">
@@ -193,7 +193,7 @@
                               </tr>
                           </thead>
                           <tbody *ngIf="ventas">
-                              <tr [ngClass]="{'bg-blue-50': (venta.forma_pago[0].descripcion  === 'Débito' || venta.forma_pago[0].descripcion  === 'Crédito' || venta.forma_pago[0].descripcion  === 'Mercado pago') && venta.comprobante === 'Normal' && venta.forma_pago.length === 1}" class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | filtroVentas:filtro.parametro:filtro.pedidosYa:filtro.facturacion | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                              <tr [ngClass]="{'bg-blue-50': (venta.forma_pago[0].descripcion  === 'Débito' || venta.forma_pago[0].descripcion  === 'Crédito' || venta.forma_pago[0].descripcion  === 'Mercado pago') && venta.comprobante === 'Normal' && venta.forma_pago.length === 1}" class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | filtroVentas:filtro.parametro:filtro.pedidosYa:filtro.facturacion">
                                   <td class="px-5 py-3 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
                                           {{ venta.createdAt | fecha }}
@@ -239,9 +239,9 @@
                   </div>
               </div>
           </div>
-          <div *ngIf="ventas.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+          <!-- <div *ngIf="ventas.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
               <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
-          </div>
+          </div> -->
       </div>
     </app-tarjeta-lista>
 </div>

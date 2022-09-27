@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                <div class="inline-block max-h-screen overflow-y-auto border border-gray-200 min-w-full shadow rounded-lg overflow-hidden">
+                <div class="inline-block max-h-96 overflow-y-auto border border-gray-200 min-w-full shadow rounded-lg overflow-hidden">
                     <table class="min-w-full leading-normal">
                         <thead>
                             <tr>
@@ -130,7 +130,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="animate__animated animate__fadeIn" *ngFor="let usuario of usuarios | filtroUsuarios:filtro.parametro:filtro.activo | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual}">
+                            <tr class="animate__animated animate__fadeIn" *ngFor="let usuario of usuarios | filtroUsuarios:filtro.parametro:filtro.activo">
                                 <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <div class="text-gray-900 whitespace-no-wrap">
                                         <div *ngIf="usuario.role == 'USER_ROLE'" class="bg-orange-100 flex items-center font-semibold text-orange-500 text-2xl justify-center w-10 h-10 rounded-full shadow border border-orange-200" src="assets/img/usuarios/usuario_estandar.png" alt="Avatar">
@@ -184,8 +184,8 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="usuarios.length > cantidadItems" class="px-5 py-5 bg-white border-t text-sm flex shadow flex-col xs:flex-row items-center xs:justify-between">
+        <!-- <div *ngIf="usuarios.length > cantidadItems" class="px-5 py-5 bg-white border-t text-sm flex shadow flex-col xs:flex-row items-center xs:justify-between">
             <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
-        </div>
+        </div> -->
     </div>
 </app-tarjeta-lista>
