@@ -106,7 +106,6 @@ export class VentasComponent implements OnInit {
       return;
     } 
 
-    this.alertService.loading();
     this.productosService.getProductoParametro(this.codigo).subscribe({
       next: ({producto}) => {
         this.agregarProducto(producto);
@@ -189,8 +188,6 @@ export class VentasComponent implements OnInit {
       if(productoRec.productoTMP._id === producto._id) repetido = true;
     })
 
-    console.log(this.productos);
-
     if(repetido){
       this.alertService.info('El producto ya se encuentra cargado');
       this.precio = null;
@@ -213,7 +210,7 @@ export class VentasComponent implements OnInit {
       precio: this.precio,
       precio_unitario: producto.precio
     }
-
+    
     this.productos.unshift(nuevoProducto);
 
     this.calcularPrecio();

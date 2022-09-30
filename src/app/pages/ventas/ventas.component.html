@@ -125,14 +125,14 @@
             </button>
           
             <!-- Modo buscador -->
-            <button (click)="(!agregandoProducto || modo !== 'buscador') ? modoBusqueda('buscador') : reiniciarValores()" title="Modo cantidad" class="border border-gray-300 rounded p-2 ml-2 focus:outline-none bg-white hover:text-secondaryColor">
+            <!-- <button (click)="(!agregandoProducto || modo !== 'buscador') ? modoBusqueda('buscador') : reiniciarValores()" title="Modo cantidad" class="border border-gray-300 rounded p-2 ml-2 focus:outline-none bg-white hover:text-secondaryColor">
               <svg *ngIf="!agregandoProducto || modo !== 'buscador'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
               </svg>
               <svg *ngIf="agregandoProducto && modo === 'buscador'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>  
-            </button>
+            </button> -->
             
             <!-- Modo precio -->
             <button (click)="(!agregandoProducto || modo !== 'precio') ? modoBusqueda('precio') : reiniciarValores()" title="Modo precio" class="border border-gray-300 rounded p-2 ml-2 focus:outline-none bg-white hover:text-secondaryColor">       
@@ -156,7 +156,7 @@
         </div>
 
         <!-- Modo: Buscador -->
-        <div *ngIf="modo === 'buscador' && !agregandoProducto" class="p-5 text-left">
+        <!-- <div *ngIf="modo === 'buscador' && !agregandoProducto" class="p-5 text-left">
           <input (keyup)="reiniciarPaginador()" [(ngModel)]="filtroBuscador.parametro" type="text" class="border text-sm shadow border-gray-300 focus:outline-none p-2 w-full rounded" placeholder="Descripción o Código">
           <div class="max-h-96 overflow-y-auto mt-4 border border-gray-300">
             <div (click)="seleccionarProducto(producto)" class="hover:bg-red-50 cursor-pointer" *ngFor="let producto of productosBuscador | filtroProductos:filtroBuscador.parametro:filtroBuscador.activo">
@@ -165,23 +165,13 @@
                   <p> {{ producto.descripcion }}  </p> 
                   <p class="text-gray-500 text-xs"> ${{ producto.precio | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
                 </div>
-                <!-- <div class="flex items-center">
-                  <button (click)="seleccionarProducto(producto)" title="Agregar producto" class="border focus:outline-none border-gray-300 hover:text-secondaryColor ml-2 p-2 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>                    
-                  </button>
-                </div> -->
               </div>
             </div>
           </div>  
-          <!-- <div *ngIf="productosBuscador.length > cantidadItemsBuscador" class="p-2 mt-5 bg-white text-sm flex flex-col xs:flex-row items-center xs:justify-between">
-            <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActualBuscador = $event"></pagination-controls>
-          </div> -->
-        </div>
+        </div> -->
 
         <!-- Modo buscador - Agregando producto -->
-        <div *ngIf="agregandoProducto && modo === 'buscador'">
+        <!-- <div *ngIf="agregandoProducto && modo === 'buscador'">
           <div class="flex items-center justify-between p-4">
             <div>
               <p> {{ productoSeleccionado.descripcion }}  </p> 
@@ -196,7 +186,7 @@
               </button>
             </div>
           </div>     
-        </div>
+        </div> -->
 
         <!-- Modo: Precio -->
         <div *ngIf="modo === 'precio' && !agregandoProducto" class="p-5 text-left">
