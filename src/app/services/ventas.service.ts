@@ -38,8 +38,8 @@ export class VentasService {
     registerpp: number = 10,
     activo: string = '',
     parametro: string = '',
-    fechaDesde: '',
-    fechaHasta: '',
+    fechaDesde,
+    fechaHasta,
     tipoComprobante: string = '',
     pedidosYa: string = ''
   ): Observable<any> {

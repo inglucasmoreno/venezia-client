@@ -37,14 +37,16 @@ export class VentasHistorialComponent implements OnInit {
   public montoTotalPedidosYaApp:number = 0;
   public productos: any[] = [];
   
-  // Paginacion
-  public paginaActual: number = 1;
-  public cantidadItems: number = 10;
+	// Paginacion
+  public totalItems: number;
+  public desde: number = 0;
+	public paginaActual: number = 1;
+	public cantidadItems: number = 10;
   
   // Filtrado
   public filtro = {
-    facturacion: 'todos',
-    pedidosYa: 'todos',
+    facturacion: '',
+    pedidosYa: '',
     parametro: '',
     fechaDesde: '',
     fechaHasta: ''
@@ -74,24 +76,42 @@ export class VentasHistorialComponent implements OnInit {
   
     // Listar ventas
     listarVentas(): void {
-      // this.alertService.loading();
-      // this.ventasService.listarVentas( 
-      //   this.ordenar.direccion,
-      //   this.ordenar.columna,
-      //   'todo',
-      //   this.filtro.fechaDesde,
-      //   this.filtro.fechaHasta
-      //   )
-      // .subscribe( ({ ventas }) => {
-      //   this.inicio === true ? this.inicio = false : null;
-      //   this.ventas = ventas;
-      //   this.calculoMontoTotal();
-      //   this.showModalDetalle = false;
-      //   this.paginaActual = 1;
-      //   this.alertService.close();
-      // }, (({error}) => {
-      //   this.alertService.errorApi(error.msg);
-      // }));
+      this.alertService.loading();
+      this.ventasService.listarVentas( 
+        this.ordenar.direccion,
+        this.ordenar.columna,
+        this.desde,
+        this.cantidadItems,
+        '',
+        this.filtro.parametro,
+        this.filtro.fechaDesde,
+        this.filtro.fechaHasta,
+        this.filtro.facturacion,
+        this.filtro.pedidosYa
+        )
+      .subscribe( ({ 
+        ventas, 
+        totalItems, 
+        totalVentas, 
+        totalFacturado, 
+        totalPedidosYa,
+        totalPedidosYaOnline,
+        totalPedidosYaEfectivo
+       }) => {
+        this.inicio === true ? this.inicio = false : null;
+        this.ventas = ventas;
+        this.montoTotalPedidosYa = totalPedidosYa,
+        this.totalItems = totalItems;
+        this.montoTotalFacturado = totalFacturado;
+        this.montoTotal = totalVentas;
+        this.montoTotalPedidosYaApp = totalPedidosYaOnline;
+        this.montoTotalPedidosYaEfectivo = totalPedidosYaEfectivo;
+        // this.calculoMontoTotal();
+        this.showModalDetalle = false;
+        this.alertService.close();
+      }, (({error}) => {
+        this.alertService.errorApi(error.msg);
+      }));
     }
     
 
@@ -184,6 +204,20 @@ export class VentasHistorialComponent implements OnInit {
     ordenarPorColumna(columna: string){
       this.ordenar.columna = columna;
       this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1; 
+      this.alertService.loading();
+      this.listarVentas();
+    }
+
+    // Cambiar cantidad de items
+    cambiarCantidadItems(): void {
+      this.paginaActual = 1
+      this.cambiarPagina(1);
+    }
+
+    // Paginacion - Cambiar pagina
+    cambiarPagina(nroPagina): void {
+      this.paginaActual = nroPagina;
+      this.desde = (this.paginaActual - 1) * this.cantidadItems;
       this.alertService.loading();
       this.listarVentas();
     }

@@ -96,10 +96,10 @@ export class VentasActivasComponent implements OnInit {
         this.ventas = ventas;
         this.montoTotalPedidosYa = totalPedidosYa,
         this.totalItems = totalItems;
-        this.montoTotalFacturado = totalFacturado,
+        this.montoTotalFacturado = totalFacturado;
         this.montoTotal = totalVentas;
-        this.montoTotalPedidosYaApp = totalPedidosYaOnline,
-        this.montoTotalPedidosYaEfectivo = totalPedidosYaEfectivo
+        this.montoTotalPedidosYaApp = totalPedidosYaOnline;
+        this.montoTotalPedidosYaEfectivo = totalPedidosYaEfectivo;
         // this.calculoMontoTotal();
         this.showModalDetalle = false;
         this.alertService.close();
@@ -174,7 +174,6 @@ export class VentasActivasComponent implements OnInit {
       this.ventasService.getVenta(venta._id).subscribe(({venta, productos}) => {
         window.scrollTo(0,0);
         this.ventaSeleccionada = venta;
-        console.log(productos);
         this.productos = productos;
         this.showModalDetalle = true;
         this.alertService.close();
