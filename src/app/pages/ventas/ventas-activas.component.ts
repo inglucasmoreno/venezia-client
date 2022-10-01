@@ -34,14 +34,16 @@ export class VentasActivasComponent implements OnInit {
   public montoTotalPedidosYaApp:number = 0;
   public productos: any[] = [];
   
-  // Paginacion
-  public paginaActual: number = 1;
-  public cantidadItems: number = 10;
-  
+	// Paginacion
+  public totalItems: number;
+  public desde: number = 0;
+	public paginaActual: number = 1;
+	public cantidadItems: number = 10;
+
   // Filtrado
   public filtro = {
-    facturacion: 'todos',
-    pedidosYa: 'todos',
+    facturacion: '',
+    pedidosYa: '',
     parametro: '',
   }
   
@@ -73,11 +75,32 @@ export class VentasActivasComponent implements OnInit {
       this.ventasService.listarVentas( 
         this.ordenar.direccion,
         this.ordenar.columna,
-        'true'
+        this.desde,
+        this.cantidadItems,
+        'true',
+        this.filtro.parametro,
+        '',
+        '',
+        this.filtro.facturacion,
+        this.filtro.pedidosYa
         )
-      .subscribe( ({ ventas }) => {
+      .subscribe( ({ 
+          ventas, 
+          totalItems, 
+          totalVentas, 
+          totalFacturado, 
+          totalPedidosYa,
+          totalPedidosYaOnline,
+          totalPedidosYaEfectivo
+        }) => {
         this.ventas = ventas;
-        this.calculoMontoTotal();
+        this.montoTotalPedidosYa = totalPedidosYa,
+        this.totalItems = totalItems;
+        this.montoTotalFacturado = totalFacturado,
+        this.montoTotal = totalVentas;
+        this.montoTotalPedidosYaApp = totalPedidosYaOnline,
+        this.montoTotalPedidosYaEfectivo = totalPedidosYaEfectivo
+        // this.calculoMontoTotal();
         this.showModalDetalle = false;
         this.alertService.close();
       }, (({error}) => {
@@ -125,25 +148,25 @@ export class VentasActivasComponent implements OnInit {
     }
 
     // Calculo de monto total
-    calculoMontoTotal(): void {
-      let montoTotalTMP = 0;
-      let montoTotalFacturadoTMP = 0;
-      let montoTotalPedidosYaTMP = 0;
-      let montoTotalPedidosYaEfectivoTMP = 0;
-      let montoTotalPedidosYaAppTMP = 0;
-      this.ventas.map((venta: any) => {
-        montoTotalTMP += venta.precio_total;  
-        if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;  
-        if(venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaTMP += venta.precio_total;   
-        if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaAppTMP += venta.precio_total;   
-        if(venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaEfectivoTMP += venta.precio_total; 
-      });
-      this.montoTotal = montoTotalTMP;
-      this.montoTotalFacturado = montoTotalFacturadoTMP;
-      this.montoTotalPedidosYa = montoTotalPedidosYaTMP;
-      this.montoTotalPedidosYaEfectivo = montoTotalPedidosYaEfectivoTMP;
-      this.montoTotalPedidosYaApp = montoTotalPedidosYaAppTMP;
-    }
+    // calculoMontoTotal(): void {
+    //   let montoTotalTMP = 0;
+    //   let montoTotalFacturadoTMP = 0;
+    //   let montoTotalPedidosYaTMP = 0;
+    //   let montoTotalPedidosYaEfectivoTMP = 0;
+    //   let montoTotalPedidosYaAppTMP = 0;
+    //   this.ventas.map((venta: any) => {
+    //     montoTotalTMP += venta.precio_total;  
+    //     if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;  
+    //     if(venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaTMP += venta.precio_total;   
+    //     if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaAppTMP += venta.precio_total;   
+    //     if(venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaEfectivoTMP += venta.precio_total; 
+    //   });
+    //   this.montoTotal = montoTotalTMP;
+    //   this.montoTotalFacturado = montoTotalFacturadoTMP;
+    //   this.montoTotalPedidosYa = montoTotalPedidosYaTMP;
+    //   this.montoTotalPedidosYaEfectivo = montoTotalPedidosYaEfectivoTMP;
+    //   this.montoTotalPedidosYaApp = montoTotalPedidosYaAppTMP;
+    // }
   
     // Abrir modal - Detalles de venta
     abrirModalDetalles(venta: any): void {
@@ -176,6 +199,20 @@ export class VentasActivasComponent implements OnInit {
     ordenarPorColumna(columna: string){
       this.ordenar.columna = columna;
       this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1; 
+      this.alertService.loading();
+      this.listarVentas();
+    }
+
+    // Cambiar cantidad de items
+    cambiarCantidadItems(): void {
+      this.paginaActual = 1
+      this.cambiarPagina(1);
+    }
+
+    // Paginacion - Cambiar pagina
+    cambiarPagina(nroPagina): void {
+      this.paginaActual = nroPagina;
+      this.desde = (this.paginaActual - 1) * this.cantidadItems;
       this.alertService.loading();
       this.listarVentas();
     }

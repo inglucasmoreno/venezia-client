@@ -74,24 +74,24 @@ export class VentasHistorialComponent implements OnInit {
   
     // Listar ventas
     listarVentas(): void {
-      this.alertService.loading();
-      this.ventasService.listarVentas( 
-        this.ordenar.direccion,
-        this.ordenar.columna,
-        'todo',
-        this.filtro.fechaDesde,
-        this.filtro.fechaHasta
-        )
-      .subscribe( ({ ventas }) => {
-        this.inicio === true ? this.inicio = false : null;
-        this.ventas = ventas;
-        this.calculoMontoTotal();
-        this.showModalDetalle = false;
-        this.paginaActual = 1;
-        this.alertService.close();
-      }, (({error}) => {
-        this.alertService.errorApi(error.msg);
-      }));
+      // this.alertService.loading();
+      // this.ventasService.listarVentas( 
+      //   this.ordenar.direccion,
+      //   this.ordenar.columna,
+      //   'todo',
+      //   this.filtro.fechaDesde,
+      //   this.filtro.fechaHasta
+      //   )
+      // .subscribe( ({ ventas }) => {
+      //   this.inicio === true ? this.inicio = false : null;
+      //   this.ventas = ventas;
+      //   this.calculoMontoTotal();
+      //   this.showModalDetalle = false;
+      //   this.paginaActual = 1;
+      //   this.alertService.close();
+      // }, (({error}) => {
+      //   this.alertService.errorApi(error.msg);
+      // }));
     }
     
 

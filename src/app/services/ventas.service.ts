@@ -32,18 +32,28 @@ export class VentasService {
 
   // Listar ventas
   listarVentas(
-    direccion: number = -1,
+    direccion : number = -1, 
     columna: string = 'createdAt',
-    activo = 'todo',
-    fechaDesde = '',
-    fechaHasta = '',
+    desde: number = 0,
+    registerpp: number = 10,
+    activo: string = '',
+    parametro: string = '',
+    fechaDesde: '',
+    fechaHasta: '',
+    tipoComprobante: string = '',
+    pedidosYa: string = ''
   ): Observable<any> {
     return this.http.get(`${base_url}/ventas`, {
       params: {
+        columna,
+        desde,
+        registerpp,
+        parametro,
         direccion: String(direccion),
+        tipoComprobante,
+        pedidosYa,
         fechaDesde,
         fechaHasta,
-        columna,
         activo
       },
       headers: {

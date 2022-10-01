@@ -121,6 +121,12 @@ export class CajaComponent implements OnInit {
       return;
     }
 
+    // Cantidad de productos
+    if(this.cantidad_ventas <= 0){
+      this.alertService.info('No puede cerrar una caja sin ventas');
+      return;
+    }    
+
     // Cierre de caja
     this.alertService.question({ msg: 'Generando cierre de caja', buttonText: 'Completar' })
         .then(({isConfirmed}) => {  
