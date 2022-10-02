@@ -178,8 +178,8 @@ export class VentasHistorialComponent implements OnInit {
     abrirModalDetalles(venta: any): void {
       this.alertService.loading();
       this.ventasService.getVenta(venta._id).subscribe(({venta, productos}) => {
+        window.scrollTo(0,0);
         this.ventaSeleccionada = venta;
-        console.log(productos);
         this.productos = productos;
         this.showModalDetalle = true;
         this.alertService.close();
