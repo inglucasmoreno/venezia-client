@@ -147,7 +147,7 @@ export class VentasHistorialComponent implements OnInit {
           this.alertService.loading();
           this.ventasService.actualizarFacturacion(_id, {precio_total, updatorUser: this.authService.usuario.userId }).subscribe({
             next: () => this.listarVentas(),
-            error: (error) => this.alertService.errorApi(error.message)
+            error: ({error}) => this.alertService.errorApi(error.message)
           })
         }
       });  
