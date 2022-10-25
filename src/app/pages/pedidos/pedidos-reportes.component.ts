@@ -117,7 +117,6 @@ export class PedidosReportesComponent implements OnInit {
         this.totalDeuda = totalDeuda;
         this.totalItems = totalItems;
         this.alertService.close();
-        console.log(ventas);
       }, error: ({error}) => this.alertService.errorApi(error.message)
     });
   }
@@ -140,6 +139,7 @@ export class PedidosReportesComponent implements OnInit {
       next: ({productos}) => {
         this.productos = productos;
         this.showModal = true;
+        window.scrollTo(0,0);
         this.alertService.close();
       },
       error: ({error}) => {

@@ -163,6 +163,7 @@ export class PedidosComponent implements OnInit {
       this.pedidoSeleccionado._id
     ).subscribe({
       next: ({productos}) => {
+        window.scrollTo(0,0);
         this.productoSeleccionado = null;
         this.nuevaCantidad = null;
         this.productos = productos;
@@ -185,12 +186,6 @@ export class PedidosComponent implements OnInit {
   // Enviar pedido
   enviarPedido(pedido: any): void {
 
-    // Verificacion - Repartidor vacio
-    // if(this.repartidor.trim() === ''){
-    //   this.alertService.info('Debe seleccionar un repartidor');
-    //   return;
-    // }
-
     this.pedidoSeleccionado = pedido;
 
     this.alertService.question({ msg: '¿Quieres enviar el pedido?', buttonText: 'Enviar' })
@@ -210,6 +205,7 @@ export class PedidosComponent implements OnInit {
           })
         }
       });
+
   }
 
   // Productos para elaboracion
@@ -267,7 +263,7 @@ export class PedidosComponent implements OnInit {
   }
 
   // Listar productos de pedido
-  listarProductosNuevos(): void {
+  listarProductos(): void {
     this.ventasMayoristasProductosService.listarProductos(
       1,
       'descripcion',
@@ -526,7 +522,7 @@ export class PedidosComponent implements OnInit {
   }
 
  // Listado de productos
-  listarProductos(): void {
+  listarProductosNuevos(): void {
     this.productosService.listarProductos().subscribe({
       next: ({productos}) => {
         this.productos = productos.filter( producto => producto.precio_mayorista );
@@ -571,8 +567,6 @@ export class PedidosComponent implements OnInit {
     this.productos.find( elemento => {
       if(elemento.producto._id === this.nuevoProductoSeleccionado._id){
         repetido = true;
-        elemento.cantidad += this.dataService.redondear(this.nuevoProductoCantidad, 2);
-        elemento.precio += this.dataService.redondear(this.nuevoProductoSeleccionado.precio_mayorista * this.nuevoProductoCantidad, 2);
       }
     });
 
@@ -623,6 +617,8 @@ export class PedidosComponent implements OnInit {
             activo: true
           }).subscribe({
             next: () => {
+              this.showModalNuevoProducto = false;
+              this.showModal = true;
               this.listarPedidos();
             }, error: ({error}) => this.alertService.errorApi(error.message)
           })
