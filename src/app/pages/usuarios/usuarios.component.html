@@ -133,6 +133,9 @@
                             <tr class="animate__animated animate__fadeIn" *ngFor="let usuario of usuarios | filtroUsuarios:filtro.parametro:filtro.activo">
                                 <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <div class="text-gray-900 whitespace-no-wrap">
+                                        <div *ngIf="usuario.role == 'DELIVERY_ROLE'" class="bg-green-100 flex items-center font-semibold text-green-500 text-2xl justify-center w-10 h-10 rounded-full shadow border border-green-200" src="assets/img/usuarios/usuario_estandar.png" alt="Avatar">
+                                            R
+                                        </div>
                                         <div *ngIf="usuario.role == 'USER_ROLE'" class="bg-orange-100 flex items-center font-semibold text-orange-500 text-2xl justify-center w-10 h-10 rounded-full shadow border border-orange-200" src="assets/img/usuarios/usuario_estandar.png" alt="Avatar">
                                             E
                                         </div>

@@ -34,12 +34,12 @@ public mayoristasForm: any = {
   telefono: '',
   direccion: '',
   email: '',
-  confirm: 'false'
+  confirm: 'true'
 }
 
 // Contraseña
-public password = '';
-public repetir = '';
+public password = 'demo';
+public repetir = 'demo';
 
 // Paginacion
 public paginaActual: number = 1;
@@ -85,7 +85,7 @@ constructor(private mayoristasService: MayoristasService,
       telefono: '',
       direccion: '',
       email: '',
-      confirm: 'false'
+      confirm: 'true'
     } 
  
     this.idMayorista = '';
@@ -292,8 +292,8 @@ constructor(private mayoristasService: MayoristasService,
       confirm: 'true'
     } 
 
-    this.password = '';
-    this.repetir = '';
+    this.password = 'demo';
+    this.repetir = 'demo';
 
     this.idMayorista = '';
 
@@ -334,10 +334,10 @@ constructor(private mayoristasService: MayoristasService,
       telefono: '',
       direccion: '',
       email: '',
-      confirm: 'false'
+      confirm: 'true'
     };
-    this.password = '';
-    this.repetir = '';   
+    this.password = 'demo';
+    this.repetir = 'demo';   
   }
 
   // Filtrar Activo/Inactivo

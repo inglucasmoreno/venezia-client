@@ -57,6 +57,24 @@ export class VentasMayoristasProductosService {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  } 
+
+  // Eliminar producto
+  eliminarProducto(id:string): Observable<any> {
+    return this.http.delete(`${base_url}/ventas-mayoristas-productos/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+  
+  // Generar PDF - Productos pendientes
+  generarPDF(): Observable<any> {
+    return this.http.get(`${base_url}/ventas-mayoristas-productos/productos-pendientes/pdf`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  } 
 
 }

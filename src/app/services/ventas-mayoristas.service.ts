@@ -37,7 +37,11 @@ export class VentasMayoristasService {
     desde: number = 0,
     registerpp: number = 10,
     estado: string = '',
-    parametro: string = ''  
+    parametro: string = '',
+    repartidor: string = '',
+    mayorista: string = '',
+    fechaDesde: string = '',
+    fechaHasta: string = '',  
   ): Observable<any> {
     return this.http.get(`${base_url}/ventas-mayoristas`, {
       params: {
@@ -46,7 +50,11 @@ export class VentasMayoristasService {
         desde,
         registerpp,
         estado,
-        parametro    
+        parametro,
+        repartidor,
+        mayorista,
+        fechaDesde,
+        fechaHasta   
       },
       headers: {
         'Authorization': localStorage.getItem('token')

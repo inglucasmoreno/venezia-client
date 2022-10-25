@@ -26,6 +26,7 @@ import { PedidosComponent } from './pedidos/pedidos.component';
 import { MayoristasComponent } from './mayoristas/mayoristas.component';
 import { RepartidoresComponent } from './repartidores/repartidores.component';
 import { NuevoPedidoComponent } from './pedidos/nuevo-pedido.component';
+import { PedidosReportesComponent } from './pedidos/pedidos-reportes.component';
 
 const routes: Routes = [
     {
@@ -66,6 +67,7 @@ const routes: Routes = [
             { path: 'mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: MayoristasComponent },
             { path: 'pedidos', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosComponent },
             { path: 'nuevo-pedido', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoPedidoComponent },
+            { path: 'pedidos-reportes', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosReportesComponent },
 
             // Cajas
             { path: 'caja', data: { permisos: 'CAJAS_NAV' }, canActivate: [PermisosGuard], component: CajaComponent },

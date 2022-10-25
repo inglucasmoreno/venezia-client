@@ -5,6 +5,8 @@ import { VentasMayoristasService } from '../../services/ventas-mayoristas.servic
 import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
 import { RepartidoresService } from 'src/app/services/repartidores.service';
 import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/services/auth.service';
+import { ProductosService } from 'src/app/services/productos.service';
 
 const base_url = environment.base_url;
 
@@ -24,10 +26,14 @@ export class PedidosComponent implements OnInit {
   public showModalEnvio: boolean = false;
   public showModalCompletar: boolean = false;
   public showModalCompletarDeuda: boolean = false;
+  public showModalProductosPendientes: boolean = false;
+  public showModalNuevoProducto = false;
 
   // Repartidores
   public repartidores: any[] = [];
   public repartidor = '';
+
+  public repartidorLogin;
 
   // Pedidos
   public pedidos: any[] = null;
@@ -40,9 +46,17 @@ export class PedidosComponent implements OnInit {
   public totalCompletar = 0;
   public totalDeuda = 0;
   public totalIngresos = 0;
+  public totalMonto = 0;
+  public productoSeleccionado: any = null;
+  public nuevaCantidad: number = null;
 
   // Productos
   public productosPendientes:any[] = [];
+
+  // Nuevo producto
+  public nuevoProductoSeleccionado: any;
+  public nuevoProductoCantidad: any = null;
+  public listaProductos: any[] = [];
 
 	// Paginacion
   public totalItems: number;
@@ -53,7 +67,8 @@ export class PedidosComponent implements OnInit {
   // Filtrado
   public filtro = {
     estado: 'Pendiente',
-    parametro: ''
+    parametro: '',
+    parametroProductos: ''
   }
 
   // Ordenar
@@ -63,12 +78,15 @@ export class PedidosComponent implements OnInit {
   }
 
   constructor(private ventasMayoristasService: VentasMayoristasService,
+              public authService: AuthService,
+              private productosService: ProductosService,
               private ventasMayoristasProductosService: VentasMayoristasProductosService,
               private repartidoresService: RepartidoresService,
               private dataService: DataService,
               private alertService: AlertService) { }
 
   ngOnInit(): void {
+    this.repartidorLogin = this.authService.usuario.role === 'DELIVERY_ROLE' ? this.authService.usuario.userId : '';
     this.dataService.ubicacionActual = 'Dashboard - Pedidos';
     this.cargaInicial();
   }
@@ -85,10 +103,12 @@ export class PedidosComponent implements OnInit {
           this.desde,
           this.cantidadItems,
           this.filtro.estado,
-          this.filtro.parametro          
+          this.filtro.parametro,
+          this.repartidorLogin
         ).subscribe({
-          next: ({ventas, totalItems, totalDeuda, totalIngresos}) => {
+          next: ({ventas, totalItems, totalDeuda, totalIngresos, totalMonto}) => {
             this.pedidos = ventas;
+            this.totalMonto = totalMonto;
             this.totalDeuda = totalDeuda;
             this.totalItems = totalItems;
             this.totalIngresos = totalIngresos;
@@ -103,7 +123,7 @@ export class PedidosComponent implements OnInit {
         });
       },
       error: ({ error }) => this.alertService.errorApi(error.message)
-    }); 
+    });
   }
 
   listarPedidos(): void {
@@ -114,19 +134,18 @@ export class PedidosComponent implements OnInit {
         this.desde,
         this.cantidadItems,
         this.filtro.estado,
-        this.filtro.parametro
+        this.filtro.parametro,
+        this.repartidorLogin
         ).subscribe({
-        next: ({ventas, totalItems, totalDeuda, totalIngresos}) => {
+        next: ({ventas, totalItems, totalDeuda, totalIngresos, totalMonto}) => {
           this.pedidos = ventas;
           this.totalItems = totalItems;
           this.totalDeuda = totalDeuda;
+          this.totalMonto = totalMonto;
           this.totalIngresos = totalIngresos;
+          this.productoSeleccionado = null;
           this.pedidosPendientes = ventas.filter( pedido => pedido.activo );
           this.productosParaElaboracion();
-          this.showModalEnvio = false;
-          this.showModalCompletar = false;
-          this.showModalCompletarDeuda = false;
-          this.alertService.close();
         },
         error: ({error}) => {
           this.alertService.errorApi(error.message);
@@ -144,6 +163,8 @@ export class PedidosComponent implements OnInit {
       this.pedidoSeleccionado._id
     ).subscribe({
       next: ({productos}) => {
+        this.productoSeleccionado = null;
+        this.nuevaCantidad = null;
         this.productos = productos;
         this.showModal = true;
         this.alertService.close();
@@ -162,43 +183,46 @@ export class PedidosComponent implements OnInit {
   }
 
   // Enviar pedido
-  enviarPedido(): void {
+  enviarPedido(pedido: any): void {
 
     // Verificacion - Repartidor vacio
-    if(this.repartidor.trim() === ''){
-      this.alertService.info('Debe seleccionar un repartidor');
-      return;
-    }
+    // if(this.repartidor.trim() === ''){
+    //   this.alertService.info('Debe seleccionar un repartidor');
+    //   return;
+    // }
 
-    this.alertService.loading();  
+    this.pedidoSeleccionado = pedido;
 
-    const data = {
-      estado: 'Enviado',
-      repartidor: this.repartidor  
-    }
+    this.alertService.question({ msg: '¿Quieres enviar el pedido?', buttonText: 'Enviar' })
+      .then(({isConfirmed}) => {
+        if (isConfirmed) {
+          this.alertService.loading();
 
-    this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, data).subscribe({
-      next: () => {
-        this.repartidor = '';
-        this.pedidoSeleccionado = null;
-        this.listarPedidos();
-      },
-      error: ({error}) => this.alertService.errorApi(error.message)
-    })
-  
+          const data = { estado: 'Enviado' };
+
+          this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, data).subscribe({
+            next: () => {
+              this.repartidor = '';
+              this.pedidoSeleccionado = null;
+              this.listarPedidos();
+            },
+            error: ({error}) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
   }
 
   // Productos para elaboracion
   productosParaElaboracion(): void {
     this.ventasMayoristasProductosService.listarProductos(1,'descripcion', '', 'true').subscribe({
       next: ({productos}) => {
-        
+
         let productoTMP = productos;
 
         this.productosPendientes = [];
-        
+
         const agregados = [];
-        
+
         productoTMP.map( producto => {
           if(!agregados.includes(producto.producto._id)){
             agregados.push(producto.producto._id);
@@ -206,22 +230,28 @@ export class PedidosComponent implements OnInit {
           }else{
             this.productosPendientes.map( elemento => {
               if(elemento.producto._id === producto.producto._id){
-                elemento.cantidad += producto.cantidad; 
+                elemento.cantidad += producto.cantidad;
               }
             })
           }
-        });      
+        });
+
+        this.showModalEnvio = false;
+        this.showModalCompletar = false;
+        this.showModalCompletarDeuda = false;
+        this.alertService.close();
+
       },
-      
+
       error: ({error}) => this.alertService.errorApi(error.message)
-    
+
     })
   }
 
   // Cancelar pedido
   cancelarPedido(pedido: any): void {
     this.alertService.question({ msg: 'Cancelando pedido', buttonText: 'Cancelar pedido', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {  
+    .then(({isConfirmed}) => {
       if (isConfirmed) {
         this.alertService.loading();
         this.ventasMayoristasService.actualizarVenta(pedido._id, { estado: 'Cancelado', activo: false }).subscribe({
@@ -233,11 +263,11 @@ export class PedidosComponent implements OnInit {
           }
         })
       }
-    });    
+    });
   }
 
   // Listar productos de pedido
-  listarProductos(): void {
+  listarProductosNuevos(): void {
     this.ventasMayoristasProductosService.listarProductos(
       1,
       'descripcion',
@@ -245,8 +275,8 @@ export class PedidosComponent implements OnInit {
     ).subscribe({
       next: ({productos}) => {
         this.productos = productos;
-        this.showModalCompletar = true;  
-        this.calculoMonto(); 
+        this.showModalCompletar = true;
+        this.calculoMonto();
         this.alertService.close();
       },
       error: ({error}) => {
@@ -265,7 +295,7 @@ export class PedidosComponent implements OnInit {
   // Cancelar deuda
   cancelarDeuda(): void {
     this.alertService.question({ msg: 'Completar pedido', buttonText: 'Completar', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {  
+    .then(({isConfirmed}) => {
       if (isConfirmed) {
         this.alertService.loading();
         this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
@@ -279,9 +309,9 @@ export class PedidosComponent implements OnInit {
             this.listarPedidos();
           },
           error: ({ error }) => this.alertService.errorApi(error.message)
-        }) 
+        })
       }
-    });   
+    });
   }
 
   // Completar pedido
@@ -296,7 +326,7 @@ export class PedidosComponent implements OnInit {
 
   // Producto no entregado
   productoNoEntregado(producto): void {
-    
+
     this.alertService.loading();
 
     const data = { entregado: producto.entregado ? false : true }
@@ -334,7 +364,7 @@ export class PedidosComponent implements OnInit {
     }
 
     this.alertService.question({ msg: 'Completando pedido', buttonText: 'Completar', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {  
+    .then(({isConfirmed}) => {
       if (isConfirmed) {
 
         const data = {
@@ -343,21 +373,21 @@ export class PedidosComponent implements OnInit {
           deuda: this.estadoPago === 'Total' ? false : true,
           deuda_monto: this.estadoPago === 'Total' ? 0 : this.montoDeuda,
         }
-    
+
         this.alertService.loading();
-    
+
         this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, data).subscribe({
           next: () => {
             this.estadoPago = 'Total';
             this.montoRecibido = null;
             this.montoDeuda = null;
             this.listarPedidos();
-          },  
+          },
           error: ({ error }) => this.alertService.errorApi(error.message)
         })
-        
+
       }
-    }); 
+    });
 
   }
 
@@ -375,7 +405,31 @@ export class PedidosComponent implements OnInit {
 
   // Cambiar etapa
   cambiarEtapa(): void {
-    this.etapa = this.etapa === 'productos' ? 'pedidos' : 'productos';  
+    // this.etapa = this.etapa === 'productos' ? 'pedidos' : 'productos';
+    this.showModalProductosPendientes = true;
+  }
+
+  // Generar PDF
+  generarPDF(): void {
+    this.alertService.loading();
+    this.ventasMayoristasProductosService.generarPDF().subscribe({
+      next: () => {
+        this.alertService.close();
+        window.open(`${base_url}/pdf/productos_pendientes.pdf`,'_blank');
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  // Seleccionar nuevo producto
+  seleccionarNuevoProducto(producto: any): void {
+    this.nuevoProductoSeleccionado = producto;
+    this.nuevoProductoCantidad = producto.cantidad;
+  }
+
+  // Seleccionar producto
+  seleccionarProducto(producto: any): void {
+    this.productoSeleccionado = producto;
+    this.nuevaCantidad = producto.cantidad;
   }
 
   // Filtrar por Parametro
@@ -384,10 +438,213 @@ export class PedidosComponent implements OnInit {
     this.filtro.parametro = parametro;
   }
 
+  // Eliminar producto
+  eliminarProducto(): void {
+    this.alertService.question({ msg: 'Eliminando producto', buttonText: 'Eliminar', cancelarText: 'Regresar' })
+    .then(({isConfirmed}) => {
+      if (isConfirmed) {
+        this.alertService.loading();
+
+        // Se elimina el producto
+        this.ventasMayoristasProductosService.eliminarProducto(this.productoSeleccionado._id).subscribe({
+          next: ({producto}) => {
+            const nuevoPrecioPedido = this.pedidoSeleccionado.precio_total - this.productoSeleccionado.precio;
+            this.productos = this.productos.filter( elemento => elemento._id !== producto._id );
+
+            // Se actualiza el pedido
+            this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id,{
+              precio_total: nuevoPrecioPedido,
+              activo: true
+            }).subscribe({
+              next: () => {
+                this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
+                this.listarPedidos();
+              }, error: ({error}) => {
+                this.alertService.errorApi(error.message);
+              }
+            })
+
+          },error: ({error}) => this.alertService.errorApi(error.message)
+        })
+      }
+    });
+  }
+
+  // Actualizar producto
+  actualizarProducto(): void {
+
+    if(!this.nuevaCantidad || this.nuevaCantidad < 0){
+      this.alertService.info('Debe colocar una cantidad valida');
+      return;
+    }
+
+    this.alertService.question({ msg: 'Actualizar producto', buttonText: 'Actualizar', cancelarText: 'Regresar' })
+    .then(({isConfirmed}) => {
+      if (isConfirmed) {
+
+        this.alertService.loading();
+
+        const nuevoPrecio = this.nuevaCantidad * this.productoSeleccionado.precio_unitario;
+
+        // Se actualizar el producto
+        this.ventasMayoristasProductosService.actualizarProducto(this.productoSeleccionado._id, {
+          precio: nuevoPrecio,
+          cantidad: this.nuevaCantidad
+        }).subscribe({
+          next: () => {
+
+            const nuevoPrecioPedido = this.pedidoSeleccionado.precio_total - this.productoSeleccionado.precio + nuevoPrecio;
+
+            // Se actualizar el pedido
+            this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id,{
+              precio_total: nuevoPrecioPedido,
+              activo: true
+            }).subscribe({
+
+              next: () => {
+
+                this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
+
+                // Se actualizar el producto en la interfaz
+                this.productos.map( elemento => {
+                  if(elemento._id === this.productoSeleccionado._id){
+                    elemento.precio = nuevoPrecio,
+                    elemento.cantidad = this.nuevaCantidad
+                  }
+                })
+
+                this.listarPedidos();
+
+              }, error: ({error}) => this.alertService.errorApi(error.message)
+            })
+
+          }, error: ({error}) => this.alertService.errorApi(error.message)
+        })
+
+      }
+    });
+  }
+
+ // Listado de productos
+  listarProductos(): void {
+    this.productosService.listarProductos().subscribe({
+      next: ({productos}) => {
+        this.productos = productos.filter( producto => producto.precio_mayorista );
+        this.alertService.close();
+      },
+      error: ({error}) => {
+        this.alertService.errorApi(error.message);
+      }
+    });
+  }
+
+  // Abrir modal nuevo producto
+  abrirModalNuevoProducto(): void {
+    this.alertService.loading();
+    this.productosService.listarProductos().subscribe({
+      next: ({productos}) => {
+        this.listaProductos = productos.filter( producto => producto.precio_mayorista );
+        this.nuevoProductoSeleccionado = null;
+        this.nuevoProductoCantidad = null;
+        this.showModal = false;
+        this.filtro.parametroProductos = '';
+        this.showModalNuevoProducto = true;
+        this.alertService.close();
+      },
+      error: ({error}) => {
+        this.alertService.errorApi(error.message);
+      }
+    });
+  }
+
+  // Agregar producto
+  agregarProducto(): void {
+
+    if(!this.nuevoProductoCantidad || this.nuevoProductoCantidad < 0){
+      this.alertService.info("Debe colocar una cantidad válida");
+      return;
+    }
+
+    let repetido = false;
+
+    // Verificacion: Producto repetido
+    this.productos.find( elemento => {
+      if(elemento.producto._id === this.nuevoProductoSeleccionado._id){
+        repetido = true;
+        elemento.cantidad += this.dataService.redondear(this.nuevoProductoCantidad, 2);
+        elemento.precio += this.dataService.redondear(this.nuevoProductoSeleccionado.precio_mayorista * this.nuevoProductoCantidad, 2);
+      }
+    });
+
+    // Producto repetido
+    if(repetido){
+      this.alertService.info('El producto ya se encuentra cargado');
+      return;
+    }
+
+    // Se agrega si el producto no esta cargado en el carrito
+    if(!repetido){
+
+      this.alertService.loading();
+
+      const dataProducto = {
+        ventas_mayorista: this.pedidoSeleccionado._id,
+        producto: this.nuevoProductoSeleccionado,
+        descripcion: this.nuevoProductoSeleccionado.descripcion,
+        precio_unitario: this.nuevoProductoSeleccionado.precio_mayorista,
+        repartido: this.pedidoSeleccionado.repartidor,
+        precio: this.nuevoProductoSeleccionado.precio_mayorista * this.nuevoProductoCantidad,
+        unidad_medida: this.nuevoProductoSeleccionado.unidad_medida._id,
+        entregado: true,
+        unidad_medida_descripcion: this.nuevoProductoSeleccionado.unidad_medida.descripcion,
+        cantidad: this.nuevoProductoCantidad,
+        precio_total: this.dataService.redondear(this.nuevoProductoSeleccionado.precio_mayorista * this.nuevoProductoCantidad, 2),
+        creatorUser: this.pedidoSeleccionado.mayorista,
+        updatorUser: this.pedidoSeleccionado.mayorista
+      }
+  
+      // Agregando producto
+      this.ventasMayoristasProductosService.nuevoProducto(dataProducto).subscribe({
+        next: ({producto}) => {
+
+          this.productos.unshift(producto);
+
+          // Calculo de precio
+          let precioTMP = 0;
+          this.productos.map( elemento => {
+            precioTMP += elemento.precio;
+          })
+
+          this.pedidoSeleccionado.precio_total = precioTMP;
+
+          // Se actualizar el pedido
+          this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id,{
+            precio_total: this.pedidoSeleccionado.precio_total,
+            activo: true
+          }).subscribe({
+            next: () => {
+              this.listarPedidos();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+        }, error: ({error}) => this.alertService.errorApi(error.message)
+      })
+      
+    } 
+
+    this.filtro.parametro = '';
+
+  }
+
+  // Cerrar seleccion de nuevo producto
+  cerrarSeleccionNuevoProducto(): void {
+    this.showModalNuevoProducto = false;
+    this.showModal = true;
+  }
+
   // Ordenar por columna
   ordenarPorColumna(columna: string){
     this.ordenar.columna = columna;
-    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1; 
+    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
     this.alertService.loading();
     this.listarPedidos();
   }

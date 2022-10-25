@@ -182,6 +182,18 @@ export class EditarUsuarioComponent implements OnInit {
       }
     }
 
+    if(role === 'DELIVERY_ROLE'){
+      this.permisos = {
+        usuarios: 'USUARIOS_NOT_ACCESS',
+        ventas: 'VENTAS_NOT_ACCESS',
+        productos: 'PRODUCTOS_NOT_ACCESS',
+        unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
+        pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
+        mayoristas: 'MAYORISTAS_ALL',
+        cajas: 'CAJAS_NOT_ACCESS',
+      }
+    }
+
   }
 
   // Se arma el arreglo de permisos

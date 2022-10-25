@@ -6,6 +6,7 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { VentasMayoristasService } from 'src/app/services/ventas-mayoristas.service';
 import gsap from 'gsap';
 import { MayoristasService } from 'src/app/services/mayoristas.service';
+import { UsuariosService } from 'src/app/services/usuarios.service';
 
 @Component({
   selector: 'app-nuevo-pedido',
@@ -32,10 +33,14 @@ public mayoristas: any[] = [];
 public paginaActual: number = 1;
 public cantidadItems: number = 10;
 
+// Repartidores
+public repartidor: string = '';
+public repartidores: any[] = [];
+
 // Filtrado
 public filtro = {
   activo: 'true',
-  parametro: ''
+  parametro: '',
 }
 
 // Ordenar
@@ -45,8 +50,9 @@ public ordenar = {
 }
 
 constructor(private dataService: DataService,
-            private authService: AuthService,
+            public authService: AuthService,
             private alertService: AlertService,
+            private usuarioService: UsuariosService,
             private mayoristasService: MayoristasService,
             private ventasMayoristasService: VentasMayoristasService,
             private productosService: ProductosService) { }
@@ -58,8 +64,19 @@ ngOnInit(): void {
   this.alertService.loading();
   this.mayoristasService.listarMayoristas().subscribe({
     next: ({mayoristas}) => {
-      this.mayoristas = mayoristas;
+      this.mayoristas = mayoristas.filter( mayorista => mayorista.activo );
+      
+      // Listado de repartidores
+      this.usuarioService.listarUsuarios().subscribe({
+        next: ({usuarios}) => {
+          this.repartidores = usuarios.filter( usuario =>  usuario.role === 'DELIVERY_ROLE' );
+          console.log(this.repartidores);
+        }, error: ({error}) => this.alertService.errorApi(error.message)
+      })
+      
       this.listarProductos();
+
+
     },
     error: ({error}) => this.alertService.errorApi(error.message)
   })
@@ -82,7 +99,7 @@ listarProductos(): void {
 agregarProducto(): void {
 
   if(!this.cantidad || this.cantidad < 0){
-    this.alertService.info("Debe colocar una cantidad");
+    this.alertService.info("Debe colocar una cantidad válida");
     return;
   }
 
@@ -103,6 +120,7 @@ agregarProducto(): void {
       producto: this.productoSeleccionado, 
       descripcion: this.productoSeleccionado.descripcion,
       precio_unitario: this.productoSeleccionado.precio_mayorista,
+      repartido: this.authService.usuario.userId,
       precio: this.productoSeleccionado.precio_mayorista * this.cantidad,
       unidad_medida: this.productoSeleccionado.unidad_medida._id,
       entregado: true,
@@ -113,7 +131,8 @@ agregarProducto(): void {
       updatorUser: this.mayorista
     }
   );
-
+  
+  this.filtro.parametro = '';
   this.calculoPrecio();
   this.cerrarSeleccion();
 
@@ -142,6 +161,7 @@ calculoPrecio(): void {
 
 // Recuperar info del localStorage
 recuperarLocalStorage(): void {
+  this.repartidor = localStorage.getItem('repartidor') && this.carrito.length !== 0 ? JSON.parse(localStorage.getItem('repartidor')) : ''; 
   this.precioCarrito = localStorage.getItem('precioCarrito') ? JSON.parse(localStorage.getItem('precioCarrito')) : 0; 
   this.carrito = localStorage.getItem('carrito') ? JSON.parse(localStorage.getItem('carrito')) : []; 
   this.mayorista = localStorage.getItem('mayorista') && this.carrito.length !== 0 ? JSON.parse(localStorage.getItem('mayorista')) : ''; 
@@ -149,6 +169,7 @@ recuperarLocalStorage(): void {
 
 // Almacenar en localStorage
 almacenarLocalStorage(): void {
+  localStorage.setItem('repartidor', JSON.stringify(this.repartidor));
   localStorage.setItem('mayorista', JSON.stringify(this.mayorista));
   localStorage.setItem('precioCarrito', JSON.stringify(this.precioCarrito));
   localStorage.setItem('carrito', JSON.stringify(this.carrito));
@@ -156,6 +177,17 @@ almacenarLocalStorage(): void {
 
 // Crear nuevo pedido
 crearPedido(): void {
+
+  if(this.repartidor.trim() === '' && this.authService.usuario.role !== 'DELIVERY_ROLE'){
+    this.alertService.info('Debe seleccionar un repartidor');
+    return;
+  }
+
+  if(this.mayorista.trim() === ''){
+    this.alertService.info('Debe seleccionar un mayorista');
+    return;
+  }
+
   this.alertService.question({ msg: 'Enviando pedido', buttonText: 'Enviar' })
       .then(({isConfirmed}) => {  
       if(isConfirmed){
@@ -165,7 +197,7 @@ crearPedido(): void {
         const data = {
           pedido: {
             mayorista: this.mayorista,
-            repartidor: '333333333333333333333333', // Repartido por defecto -> 'Sin repartidor'
+            repartidor: this.authService.usuario.role === 'DELIVERY_ROLE' ? this.authService.usuario.userId : this.repartidor,
             deuda: false,
             deuda_monto: 0,
             estado: 'Pendiente',
@@ -193,6 +225,11 @@ crearPedido(): void {
 // Abrir modal
 abrirModal(): void {
 
+  if(this.repartidor.trim() === '' && this.authService.usuario.role !== 'DELIVERY_ROLE'){
+    this.alertService.info('Debe seleccionar un repartidor');
+    return;
+  }
+
   if(this.mayorista.trim() === ''){
     this.alertService.info('Debe seleccionar un mayorista');
     return;
@@ -212,6 +249,7 @@ cerrarSeleccion(): void {
 // Reiniciar pedido
 reiniciarPedido(): void {
   this.productoSeleccionado = null;
+  this.repartidor = '';
   this.mayorista = '';
   this.carrito = [];
   this.cantidad = null;
