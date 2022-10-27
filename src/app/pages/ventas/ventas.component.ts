@@ -46,6 +46,8 @@ export class VentasComponent implements OnInit {
 
   public diferenciaPago = 0;
 
+  public proximo_nro_factura: string = null;
+
   // Agregando productos
   public codigo: string = '';
   public precio: number = null;
@@ -267,6 +269,7 @@ export class VentasComponent implements OnInit {
 
   // Abrir modal - Completar venta
   abrirModalVenta(): void {
+    this.proximo_nro_factura = null;
     this.showModalVenta = true;
   }
 
@@ -535,6 +538,17 @@ export class VentasComponent implements OnInit {
       'PedidosYa',
       'PedidosYa - Efectivo'
     ];
+  }
+
+  // Proximo numero de factura
+  proximoNroFactura(): void {
+    this.alertService.loading();
+    this.ventasService.proximoNroFactura('B').subscribe({
+      next: ({nro_factura}) => {
+        this.proximo_nro_factura = nro_factura;
+        this.alertService.close();
+      },error: ({error}) => this.alertService.errorApi(error.message)
+    })
   }
 
   // Reiniciar paginador

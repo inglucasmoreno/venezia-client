@@ -89,4 +89,13 @@ export class VentasService {
     });
   };
 
+  // Proximo numero de factura
+  proximoNroFactura(tipo_factura: string): Observable<any> {
+    return this.http.get(`${base_url}/ventas/ultimo/nro/factura/${tipo_factura}`,{
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
 }

@@ -17,13 +17,29 @@
     </div>
   </div>
   <div class="px-4 py-2 mt-1">
-    <div>
-      <p class="font-semibold text-sm"> Tipo de comprobante </p>
-      <div class="flex items-center">
-        <select [(ngModel)]="comprobante" (change)="cambiarTipoComprobante()" class="w-1/2 mt-2 text-sm border p-2 bg-white focus:outline-none border-gray-300 rounded">
-          <option value="Normal"> Normal </option>
-          <option value="Fiscal"> Guia de despacho </option>
-        </select>
+    <div class="flex items-center">
+      <div class="w-1/2">
+        <p class="font-semibold text-sm"> Tipo de comprobante </p>
+        <div class="flex items-center">
+          <select [(ngModel)]="comprobante" (change)="cambiarTipoComprobante()" class="w-full mt-2 text-sm border p-2 bg-white focus:outline-none border-gray-300 rounded">
+            <option value="Normal"> Normal </option>
+            <option value="Fiscal"> Guia de despacho </option>
+          </select>
+        </div>
+      </div>
+      <div *ngIf="comprobante === 'Fiscal'" class="w-1/2 ml-2">
+        <p class="text-sm text-white"> Proximo numero de factura </p>
+        <div class="flex items-center mb-3 md:mb-0">
+          <button (click)="proximoNroFactura()" title="Buscar proximo numero de factura" class="p-2 rounded border md:mt-2 border-gray-400 focus:outline-none hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
+            </svg>          
+          </button>
+          <p *ngIf="proximo_nro_factura" class="md:text-sm w-full text-xs rounded bg-gray-100 p-2 border border-gray-300 text-center font-semibold ml-2 md:mt-2">
+            {{ proximo_nro_factura }}
+          </p>
+        </div>
+
       </div>
     </div>
     <div class="mt-2">
