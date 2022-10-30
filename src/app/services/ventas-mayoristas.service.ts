@@ -78,6 +78,6 @@ export class VentasMayoristasService {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
-
+  } 
+  
 }

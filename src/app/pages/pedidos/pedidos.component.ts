@@ -7,6 +7,7 @@ import { RepartidoresService } from 'src/app/services/repartidores.service';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProductosService } from 'src/app/services/productos.service';
+import { UsuariosService } from 'src/app/services/usuarios.service';
 
 const base_url = environment.base_url;
 
@@ -23,6 +24,7 @@ export class PedidosComponent implements OnInit {
 
   // Modal
   public showModal: boolean = false;
+  public showModalListadoPreparacion: boolean = false;
   public showModalEnvio: boolean = false;
   public showModalCompletar: boolean = false;
   public showModalCompletarDeuda: boolean = false;
@@ -32,8 +34,9 @@ export class PedidosComponent implements OnInit {
   // Repartidores
   public repartidores: any[] = [];
   public repartidor = '';
-
   public repartidorLogin;
+  public repartidoresLista: any[] = [];
+  public repartidorSeleccionado: string = '';
 
   // Pedidos
   public pedidos: any[] = null;
@@ -79,6 +82,7 @@ export class PedidosComponent implements OnInit {
 
   constructor(private ventasMayoristasService: VentasMayoristasService,
               public authService: AuthService,
+              public usuariosService: UsuariosService,
               private productosService: ProductosService,
               private ventasMayoristasProductosService: VentasMayoristasProductosService,
               private repartidoresService: RepartidoresService,
@@ -635,6 +639,43 @@ export class PedidosComponent implements OnInit {
   cerrarSeleccionNuevoProducto(): void {
     this.showModalNuevoProducto = false;
     this.showModal = true;
+  }
+
+  // Generar listado de preparacion
+  generarListadoPreparacion(): void {
+    
+    this.alertService.loading();
+  
+    if(this.repartidorSeleccionado === ''){
+      this.ventasMayoristasProductosService.generarPreparacionPedidosPDF().subscribe({
+        next: () => {
+          window.open(`${base_url}/pdf/productos_preparacion_pedidos.pdf`,'_blank');
+          this.alertService.close();
+        }, error: ({error}) => this.alertService.errorApi(error.message)
+      })
+    }else{
+      this.ventasMayoristasProductosService.generarPreparacionPedidosPorRepartidorPDF(this.repartidorSeleccionado).subscribe({
+        next: () => {
+          window.open(`${base_url}/pdf/productos_preparacion_pedidos_por_repartidor.pdf`,'_blank');
+          this.alertService.close();
+        }, error: ({error}) => this.alertService.errorApi(error.message)
+      })
+    }
+
+  }
+
+  // Abrir preparacion pedidos
+  abrirPreparacionPedidos(): void{
+    this.alertService.loading();
+    this.repartidorSeleccionado = '';
+    this.usuariosService.listarUsuarios().subscribe({
+      next: ({usuarios}) => {
+        this.repartidoresLista = usuarios.filter( usuario => usuario.role === 'DELIVERY_ROLE' );
+        this.showModalListadoPreparacion = true;
+        this.alertService.close();
+      }, error: ({error}) => this.alertService.errorApi(error.message)   
+    })
+
   }
 
   // Ordenar por columna

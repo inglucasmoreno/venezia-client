@@ -75,6 +75,24 @@ export class VentasMayoristasProductosService {
         'Authorization': localStorage.getItem('token')
       }
     });
+  }
+  
+  // Generar lista de preparacion de pedidos - PDF
+  generarPreparacionPedidosPDF(): Observable<any> {
+    return this.http.get(`${base_url}/ventas-mayoristas-productos/preparacion-pedidos/pdf`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  } 
+  
+  // Generar lista de preparacion de pedidos x repartidor - PDF
+  generarPreparacionPedidosPorRepartidorPDF(repartidor: string): Observable<any> {
+    return this.http.get(`${base_url}/ventas-mayoristas-productos/preparacion-pedidos/pdf/${repartidor}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
   } 
 
 }
