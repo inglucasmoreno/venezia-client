@@ -28,6 +28,8 @@ import { MayoristasComponent } from './mayoristas/mayoristas.component';
 import { RepartidoresComponent } from './repartidores/repartidores.component';
 import { NuevoPedidoComponent } from './pedidos/nuevo-pedido.component';
 import { PedidosReportesComponent } from './pedidos/pedidos-reportes.component';
+import { PedidosGastosComponent } from './pedidos-gastos/pedidos-gastos.component';
+import { PedidosGastosTiposComponent } from './pedidos-gastos/pedidos-gastos-tipos.component';
 
 
 @NgModule({
@@ -53,6 +55,8 @@ import { PedidosReportesComponent } from './pedidos/pedidos-reportes.component';
     RepartidoresComponent,
     NuevoPedidoComponent,
     PedidosReportesComponent,
+    PedidosGastosComponent,
+    PedidosGastosTiposComponent,
   ],
   imports: [
     CommonModule,

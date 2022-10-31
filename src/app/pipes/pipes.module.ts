@@ -12,6 +12,7 @@ import { FiltroPedidosyaPipe } from './filtro-pedidosya.pipe';
 import { FiltroPedidoPipe } from './filtro-pedido.pipe';
 import { FiltroMayoristasPipe } from './filtro-mayoristas.pipe';
 import { FiltroRepartidoresPipe } from './filtro-repartidores.pipe';
+import { FiltroMayoristasGastosTiposPipe } from './filtro-mayoristas-gastos-tipos.pipe';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { FiltroRepartidoresPipe } from './filtro-repartidores.pipe';
     FiltroPedidoPipe,
     FiltroMayoristasPipe,
     FiltroRepartidoresPipe,
+    FiltroMayoristasGastosTiposPipe,
   ],
   imports: [
     CommonModule
@@ -43,7 +45,8 @@ import { FiltroRepartidoresPipe } from './filtro-repartidores.pipe';
     FiltroPedidosyaPipe,
     FiltroPedidoPipe,
     FiltroMayoristasPipe,
-    FiltroRepartidoresPipe
+    FiltroRepartidoresPipe,
+    FiltroMayoristasGastosTiposPipe,
   ]
 })
 export class PipesModule { }

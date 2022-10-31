@@ -70,7 +70,6 @@ ngOnInit(): void {
       this.usuarioService.listarUsuarios().subscribe({
         next: ({usuarios}) => {
           this.repartidores = usuarios.filter( usuario =>  usuario.role === 'DELIVERY_ROLE' );
-          console.log(this.repartidores);
         }, error: ({error}) => this.alertService.errorApi(error.message)
       })
       

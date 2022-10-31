@@ -2,29 +2,30 @@ import { Component, OnInit } from '@angular/core';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
-import { UnidadMedidaService } from 'src/app/services/unidad-medida.service';
+import { MayoristasTiposGastosService } from 'src/app/services/mayoristas-tipos-gastos.service';
+import gsap from 'gsap';
 
 @Component({
-  selector: 'app-unidad-medida',
-  templateUrl: './unidad-medida.component.html',
+  selector: 'app-pedidos-gastos-tipos',
+  templateUrl: './pedidos-gastos-tipos.component.html',
   styles: [
   ]
 })
-export class UnidadMedidaComponent implements OnInit {
+export class PedidosGastosTiposComponent implements OnInit {
 
   // Permisos de usuarios login
   public permisos = { all: false };
 
   // Modal
-  public showModalUnidad = false;
+  public showModalTipo = false;
 
   // Estado formulario 
   public estadoFormulario = 'crear';
 
-  // Unidad
-  public idUnidad: string = '';
-  public unidades: any = [];
-  public unidadSeleccionada: any;
+  // Tipo
+  public idTipo: string = '';
+  public tipos: any = [];
+  public tipoSeleccionado: any;
   public descripcion: string = '';
 
   // Paginacion
@@ -43,67 +44,68 @@ export class UnidadMedidaComponent implements OnInit {
     columna: 'descripcion'
   }
 
-  constructor(private unidadMedidaService: UnidadMedidaService,
-    private authService: AuthService,
+  constructor(private tiposService: MayoristasTiposGastosService,
+    public authService: AuthService,
     private alertService: AlertService,
     private dataService: DataService) { }
 
   ngOnInit(): void {
-    this.dataService.ubicacionActual = 'Dashboard - Unidades de medida';
+    gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
+    this.dataService.ubicacionActual = 'Dashboard - Tipos de gastos';
     this.permisos.all = this.permisosUsuarioLogin();
     this.alertService.loading();
-    this.listarUnidades();
+    this.listarTipos();
   }
 
   // Asignar permisos de usuario login
   permisosUsuarioLogin(): boolean {
-    return this.authService.usuario.permisos.includes('UNIDAD_MEDIDA_ALL') || this.authService.usuario.role === 'ADMIN_ROLE';
+    return this.authService.usuario.permisos.includes('MAYORISTAS_ALL') || this.authService.usuario.role === 'ADMIN_ROLE';
   }
 
   // Abrir modal
-  abrirModal(estado: string, unidad: any = null): void {
+  abrirModal(estado: string, tipo: any = null): void {
     window.scrollTo(0, 0);
     this.reiniciarFormulario();
     this.descripcion = '';
-    this.idUnidad = '';
+    this.idTipo = '';
 
-    if (estado === 'editar') this.getUnidad(unidad);
-    else this.showModalUnidad = true;
+    if (estado === 'editar') this.getTipo(tipo);
+    else this.showModalTipo = true;
 
     this.estadoFormulario = estado;
   }
 
-  // Traer datos de unidad
-  getUnidad(unidad: any): void {
+  // Traer datos de tipo
+  getTipo(tipo: any): void {
     this.alertService.loading();
-    this.idUnidad = unidad._id;
-    this.unidadSeleccionada = unidad;
-    this.unidadMedidaService.getUnidad(unidad._id).subscribe(({ unidad }) => {
-      this.descripcion = unidad.descripcion;
+    this.idTipo = tipo._id;
+    this.tipoSeleccionado = tipo;
+    this.tiposService.getTipo(tipo._id).subscribe(({ tipo }) => {
+      this.descripcion = tipo.descripcion;
       this.alertService.close();
-      this.showModalUnidad = true;
+      this.showModalTipo = true;
     }, ({ error }) => {
       this.alertService.errorApi(error);
     });
   }
 
-  // Listar unidades
-  listarUnidades(): void {
-    this.unidadMedidaService.listarUnidades(
+  // Listar tipos
+  listarTipos(): void {
+    this.tiposService.listarTipos(
       this.ordenar.direccion,
       this.ordenar.columna
     )
-      .subscribe(({ unidades }) => {
-        this.unidades = unidades;
-        this.showModalUnidad = false;
+      .subscribe(({ tipos }) => {
+        this.tipos = tipos;
+        this.showModalTipo = false;
         this.alertService.close();
       }, (({ error }) => {
         this.alertService.errorApi(error.msg);
       }));
   }
 
-  // Nueva unidad
-  nuevaUnidad(): void {
+  // Nuevo tipo
+  nuevoTipo(): void {
 
     // Verificacion: Descripción vacia
     if (this.descripcion.trim() === "") {
@@ -119,16 +121,16 @@ export class UnidadMedidaComponent implements OnInit {
       updatorUser: this.authService.usuario.userId,
     }
 
-    this.unidadMedidaService.nuevaUnidad(data).subscribe(() => {
-      this.listarUnidades();
+    this.tiposService.nuevoTipo(data).subscribe(() => {
+      this.listarTipos();
     }, ({ error }) => {
       this.alertService.errorApi(error.message);
     });
 
   }
 
-  // Actualizar unidad
-  actualizarUnidad(): void {
+  // Actualizar tipo
+  actualizarTipo(): void {
 
     // Verificacion: Descripción vacia
     if (this.descripcion.trim() === "") {
@@ -143,23 +145,17 @@ export class UnidadMedidaComponent implements OnInit {
       updatorUser: this.authService.usuario.userId,
     }
 
-    this.unidadMedidaService.actualizarUnidad(this.idUnidad, data).subscribe(() => {
-      this.listarUnidades();
+    this.tiposService.actualizarTipo(this.idTipo, data).subscribe(() => {
+      this.listarTipos();
     }, ({ error }) => {
       this.alertService.errorApi(error.message);
     });
   }
 
   // Actualizar estado Activo/Inactivo
-  actualizarEstado(unidad: any): void {
+  actualizarEstado(tipo: any): void {
 
-    const { _id, activo } = unidad;
-
-    // Unidades no modificables
-    if (unidad._id === '000000000000000000000000' || unidad._id === '111111111111111111111111') {
-      this.alertService.info('No se puede modificar esta unidad');
-      return;
-    }
+    const { _id, activo } = tipo;
 
     if (!this.permisos.all) return this.alertService.info('Usted no tiene permiso para realizar esta acción');
 
@@ -167,9 +163,9 @@ export class UnidadMedidaComponent implements OnInit {
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
           this.alertService.loading();
-          this.unidadMedidaService.actualizarUnidad(_id, { activo: !activo }).subscribe(() => {
+          this.tiposService.actualizarTipo(_id, { activo: !activo }).subscribe(() => {
             this.alertService.loading();
-            this.listarUnidades();
+            this.listarTipos();
           }, ({ error }) => {
             this.alertService.close();
             this.alertService.errorApi(error.message);
@@ -201,7 +197,8 @@ export class UnidadMedidaComponent implements OnInit {
     this.ordenar.columna = columna;
     this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
     this.alertService.loading();
-    this.listarUnidades();
+    this.listarTipos();
   }
+
 
 }

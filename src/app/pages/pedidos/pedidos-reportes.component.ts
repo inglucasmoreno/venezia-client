@@ -7,7 +7,6 @@ import { UsuariosService } from 'src/app/services/usuarios.service';
 import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
 import { VentasMayoristasService } from 'src/app/services/ventas-mayoristas.service';
 import gsap from 'gsap';
-import { ProductosService } from 'src/app/services/productos.service';
 
 @Component({
   selector: 'app-pedidos-reportes',
