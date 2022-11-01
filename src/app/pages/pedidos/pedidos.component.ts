@@ -352,14 +352,27 @@ export class PedidosComponent implements OnInit {
   // Completar pedido
   completarPedido(): void {
 
-    // Verificaciones
-    if(!this.montoRecibido || this.montoRecibido < 0){
+    // Verificaciones: Monto recibido invalido
+    if(this.montoRecibido < 0){
       this.alertService.info('Debe colocar un monto recibido');
       return;
     }
 
-    if(this.estadoPago === 'Deuda' && (!this.montoDeuda ||this.montoDeuda < 0) ){
+    // Verificacion: Monto de deuda invalido
+    if(this.estadoPago === 'Deuda' && (!this.montoDeuda || this.montoDeuda < 0) ){
       this.alertService.info('Debe colocar el monto adeudado');
+      return;
+    }
+
+    // Verificacion: Saldo a pagar mayor que saldo total -> Sin deuda
+    if((this.totalMonto < this.montoRecibido) && this.estadoPago !== 'Deuda'){
+      this.alertService.info('El monto recibido no puede ser mayor al total');
+      return;
+    }
+
+    // Verificacion: Saldo a pagar mayor que saldo total -> Con deuda
+    if((this.totalMonto < (this.montoRecibido + this.montoDeuda)) && this.estadoPago === 'Deuda'){
+      this.alertService.info('El monto recibido + deuda no puede ser mayor al total');
       return;
     }
 
