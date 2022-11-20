@@ -1,4 +1,184 @@
+<!-- Modal: Reportes - Cajas acumuladas -->
+<app-modal [showModal]="showModalAcumuladas">
+  <div class="text-white flex items-center justify-between bg-primary-800 p-2 rounded-t">
+    <h1> Reporte de cajas - Acumuladas </h1>
+    <button (click)="showModalAcumuladas = false" class="focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>      
+    </button>
+  </div>
+  <div class="border text-sm borde-gray-300 rounded-t h-full">
+    <div class="px-2">
 
+      <div class="mt-2">
+        <h1 class="bg-gray-100 p-2 border border-gray-300 rounded text-center font-semibold"> Rango de fechas </h1>
+        <div class="flex items-center w-full mt-2">
+          <div class="w-1/2 text-center p-2">
+            <p class="font-semibold"> Desde </p>
+            <p> {{ fechaDesde !== '' ? fechaDesdeMostrar : 'Inicio del sistema' }} </p>
+          </div>
+          <div class="w-1/2 ml-2 text-center p-2">
+            <p class="font-semibold"> Hasta </p>
+            <p> {{ fechaHasta !== '' ? fechaHastaMostrar : 'El día de hoy' }} </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <div class="mt-2">
+          <div class="flex items-center bg-gray-100 rounded border font-semibold border-gray-300 justify-between p-2">
+            <p class="flex items-center">  
+              <span class="ml-1"> Cantidad de ventas </span>       
+            </p>
+            <p> {{ reportes?.cantidad_ventas }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="flex items-center">  
+              <span class="text-green-500 font-semibold"> (+) </span>
+              <span class="ml-1"> Total balanza </span>       
+            </p>
+            <p> ${{ reportes?.total_balanza | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="flex items-center">  
+              <span class="text-green-500 font-semibold"> (+) </span>
+              <span class="ml-1"> Total no balanza </span>       
+            </p>
+            <p> ${{ reportes?.total_no_balanza | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="flex items-center">  
+              <span class="text-green-500 font-semibold"> (+) </span>
+              <span class="ml-1"> Total adicional por crédito </span>       
+            </p>
+            <p> ${{ reportes?.total_adicional_credito | moneda }} </p>
+          </div>
+          <div (click)="showFacturado = !showFacturado" class="my-2 cursor-pointer font-semibold bg-gray-100 p-2 rounded border border-gray-300">
+            <div class="flex items-center justify-between">
+              <p> Total en ventas </p>
+              <p> ${{ reportes?.total_ventas | moneda }} </p>
+            </div> 
+            <div *ngIf="showFacturado" class="flex text-blue-700 bg-blue-100 border mt-2 border-blue-300 p-2 items-center justify-between">
+              <p> Guia de despacho </p>
+              <p> ${{ reportes?.total_facturado | moneda }} </p>
+            </div>             
+          </div>
+          <div>
+            <div class="flex items-center justify-between p-2">
+              <p class="flex items-center">  
+                <span class="text-green-500 font-semibold"> (+) </span>
+                <span class="ml-1"> Otros ingresos </span>      
+              </p>
+              <p> ${{ reportes?.otros_ingresos | moneda }} </p>
+            </div> 
+            <div class="flex items-center cursor-pointer justify-between p-2">
+              <p class="flex items-center">  
+                <span class="text-red-500 font-semibold"> (-) </span>
+                <span class="ml-1"> Otros gastos </span>      
+              </p>
+              <p class="text-red-500"> -${{ reportes?.otros_gastos | moneda }} </p>
+            </div>  
+            <div class="flex items-center justify-between p-2">
+              <p class="flex items-center">  
+                <span class="text-red-500 font-semibold"> (-) </span>
+                <span class="ml-1"> PedidosYa - Online </span>       
+              </p>
+              <p class="text-red-500"> -${{ reportes?.total_pedidosYa | moneda }} </p>
+            </div>  
+            <div (click)="showPostnet = !showPostnet" class="flex cursor-pointer items-center justify-between p-2">
+              <div class="flex items-center">  
+                <span class="text-red-500 font-semibold"> (-) </span>
+                <div class="ml-1 flex items-center"> 
+                  <span>
+                    Total postnet 
+                  </span>
+                  <span *ngIf="showPostnet" class="p-1 ml-2 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 bg-gray-100 border border-gray-400 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>      
+                  </span>
+                  <span *ngIf="!showPostnet" class="p-1 ml-2 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 bg-gray-100 border border-gray-400 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                    </svg>   
+                  </span>
+                </div>       
+              </div>
+              <p class="text-red-500"> -${{ (reportes?.total_debito + reportes?.total_credito + reportes?.total_mercadopago) | moneda }} </p>
+            </div>  
+            <div *ngIf="showPostnet" class="bg-red-100 border text-xs border-red-300">
+              <div class="flex items-center justify-between p-2">
+                <p class="flex items-center">  
+                  <span class="text-red-500 font-semibold"> (-) </span>
+                  <span class="ml-1"> Débito </span>       
+                </p>
+                <p class="text-red-500"> -${{ reportes?.total_debito | moneda }} </p>
+              </div>  
+              <div class="flex items-center justify-between p-2">
+                <p class="flex items-center">  
+                  <span class="text-red-500 font-semibold"> (-) </span>
+                  <span class="ml-1"> Crédito </span>       
+                </p>
+                <p class="text-red-500"> -${{ reportes?.total_credito | moneda }} </p>
+              </div>  
+              <div class="flex items-center justify-between p-2">
+                <p class="flex items-center">  
+                  <span class="text-red-500 font-semibold"> (-) </span>
+                  <span class="ml-1"> Mercado pago </span>       
+                </p>
+                <p class="text-red-500"> -${{ reportes?.total_mercadopago | moneda }} </p>
+              </div>            
+            </div>
+          </div>
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+            <p> Total efectivo en caja (Sistema) </p>
+            <p> ${{ reportes?.total_efectivo_en_caja | moneda }} </p>
+          </div>
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+            <p> Total efectivo en caja (Real) </p>
+            <p> ${{ reportes?.total_efectivo_en_caja_real | moneda }} </p>
+          </div>
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+            <p> Tesoreria </p>
+            <p> ${{ reportes?.tesoreria | moneda }} </p>
+          </div>
+          <div [ngClass]="{'text-red-500':cajaSeleccionada?.diferencia < 0}" class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+            <p> Diferencia </p>
+            <p> ${{ reportes?.diferencia | moneda }} </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Modal: Reportes - Seleccion de fechas -->
+<app-modal [showModal]="showModalReportes">
+  <div class="text-white flex items-center justify-between bg-primary-800 p-2 rounded-t">
+    <h1> Reporte de cajas </h1>
+    <button (click)="showModalReportes = false" class="focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>      
+    </button>
+  </div>
+  <div class="p-2 text-sm">
+    <div class="flex items-center">
+      <div class="w-1/2">
+        <p class="font-semibold"> Fecha desde </p>
+        <input [(ngModel)]="fechaDesde" type="date" class="w-full border rounded border-gray-300 focus:outline-none p-2">
+      </div>
+      <div class="w-1/2 ml-2">
+        <p class="font-semibold"> Fecha desde </p>
+        <input [(ngModel)]="fechaHasta" type="date" class="w-full rounded border border-gray-300 focus:outline-none p-2">
+      </div>
+    </div>
+    <button (click)="generarReporte()" class="border border-gray-300 mt-2 p-2 focus:outline-none hover:text-secondaryColor rounded w-full bg-gray-100 font-semibold">
+      Generar reporte
+    </button>  
+  </div>
+</app-modal>
 
 <!-- Modal: Detalles de caja -->
 <app-modal [showModal]="showModalCaja">
@@ -194,23 +374,36 @@
     <app-tarjeta-lista>
       <div class="container mx-auto">
           <div>
-              <div class="flex items-center bg-primary-800 text-white px-4 py-3 rounded-t">
+              <div class="flex items-center justify-between bg-primary-800 text-white px-4 py-3 rounded-t">
+                <div class="flex items-center">
                   <app-boton-regresar routerLink="/dashboard/caja"></app-boton-regresar>
                   <div class="ml-3">
                       <h2 class="text-2xl leading-tight">
                           Listado de cajas
                       </h2>
-                      <p> Total de cajas: {{ cajas.length }} </p>
+                      <p> Total de cajas: {{ totalItems }} </p>
                   </div>
+                </div>
+                <button (click)="abrirModalReportes()" *ngIf="authService.usuario.role === 'ADMIN_ROLE'" title="Reporte de cajas" class="hover:text-secondaryColor focus:outline-none rounded p-2 bg-white text-primary-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>                  
+                </button>
               </div>
-              <div class="md:flex md:items-center px-4 py-3">
-                <input (keyup)="paginaActual = 1" [(ngModel)]="filtro.parametro" type="text" class="p-2 border text-sm focus:outline-none border-gray-400 rounded" placeholder="Usuario creador">
-                <!-- <select (change)="paginaActual = 1" class="bg-white p-2 text-sm focus:outline-none w-max ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
-                    <option value="10"> 10 elementos </option>
-                    <option value="20"> 20 elementos </option>
-                    <option value="50"> 50 elementos </option>
-                    <option value="100"> 100 elementos </option>
-                </select> -->
+              <div class="md:flex md:items-center text-sm px-4 py-3">
+                <input (change)="cambiarPagina(1)" [(ngModel)]="filtro.parametro" type="text" class="p-2 md:w-auto border text-sm focus:outline-none border-gray-400 rounded" placeholder="Usuario creador">
+                <select (change)="cambiarCantidadItems()" class="bg-white ml-2 text-sm focus:outline-none w-max px-2 py-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+                  <option value="10"> 10 elementos </option>
+                  <option value="20"> 20 elementos </option>
+                  <option value="50"> 50 elementos </option>
+                  <option value="100"> 100 elementos </option>
+                </select>
+                <div class="mt-2 md:mt-0">
+                  <input type="date" (change)="cambiarPagina(1)" [(ngModel)]="filtro.fechaDesde" class="border focus:outline-none md:ml-2 border-gray-400 p-2 rounded">
+                  <input type="date" (change)="cambiarPagina(1)" [(ngModel)]="filtro.fechaHasta" class="border focus:outline-none ml-2 border-gray-400 p-2 rounded">
+                </div>
+              </div>
+              <div class="md:flex md:items-center px-4 mt-1 mb-2 text-sm">
               </div>
               <div class="px-4 py-2 overflow-x-auto">
                   <div class="inline-block max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
@@ -274,8 +467,8 @@
                                   </th>
                               </tr>
                           </thead>
-                          <tbody *ngIf="cajas">
-                              <tr class="animate__animated animate__fadeIn" *ngFor="let caja of cajas | filtroCajas:filtro.parametro">
+                          <tbody>
+                              <tr class="animate__animated animate__fadeIn" *ngFor="let caja of cajas | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
                                           {{ caja.createdAt | fecha }}
@@ -311,9 +504,9 @@
                   </div>
               </div>
           </div>
-          <!-- <div *ngIf="cajas.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
-              <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
-          </div> -->
+          <div class="px-5 py-5 text-sm mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+            <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="cambiarPagina($event)"></pagination-controls>
+        </div>
       </div>
     </app-tarjeta-lista>
 </div>

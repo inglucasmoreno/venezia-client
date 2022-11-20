@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { add, format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { CajasService } from 'src/app/services/cajas.service';
 import { DataService } from 'src/app/services/data.service';
 
@@ -13,7 +15,9 @@ export class CajasHistorialComponent implements OnInit {
 
   // Modals
   public showModalCaja: boolean = false;
-  
+  public showModalReportes: boolean = false;
+  public showModalAcumuladas: boolean = false;
+
   // Shows - Flag muestra
   public showPostnet = false;
   public showIngresos: boolean = false;
@@ -25,13 +29,24 @@ export class CajasHistorialComponent implements OnInit {
   public cajas: any = [];
 
   // Paginacion
+  public totalItems: number;
+  public desde: number = 0;
   public paginaActual: number = 1;
   public cantidadItems: number = 10;
+
+  // Reportes
+  public reportes: any = {};
+  public fechaDesde = '';
+  public fechaHasta = '';
+  public fechaDesdeMostrar = '';
+  public fechaHastaMostrar = '';
 
   // Filtrado
   public filtro = {
     activo: 'true',
-    parametro: ''
+    parametro: '',
+    fechaDesde: '',
+    fechaHasta: ''
   }
 
   // Ordenar
@@ -40,9 +55,12 @@ export class CajasHistorialComponent implements OnInit {
     columna: 'createdAt'
   }
 
-  constructor(private alertService: AlertService,
-              private dataService: DataService,
-              private cajasService: CajasService) { }
+  constructor(
+    public authService: AuthService,
+    private alertService: AlertService,
+    private dataService: DataService,
+    private cajasService: CajasService
+  ) { }
 
   ngOnInit(): void {
     this.dataService.ubicacionActual = 'Dashboard - Historial de cajas';
@@ -52,13 +70,44 @@ export class CajasHistorialComponent implements OnInit {
   // Listado de cajas
   listarCajas(): void {
     this.alertService.loading();
-    this.cajasService.listarCajas(this.ordenar.direccion, this.ordenar.columna).subscribe({
-      next: ({cajas}) => {
+    const parametros = {
+      direccion: this.ordenar.direccion,
+      columna: this.ordenar.columna,
+      desde: this.desde,
+      cantidadItems: this.cantidadItems,
+      parametro: this.filtro.parametro,
+      fechaDesde: this.filtro.fechaDesde,
+      fechaHasta: this.filtro.fechaHasta,
+    }
+    this.cajasService.listarCajas(parametros).subscribe({
+      next: ({ cajas, totalItems }) => {
+        this.totalItems = totalItems;
         this.cajas = cajas;
         this.alertService.close();
       },
-      error: ({error}) => this.alertService.errorApi(error.message) 
+      error: ({ error }) => this.alertService.errorApi(error.message)
     });
+  }
+
+  // Reporte de cajas
+  generarReporte(): void {
+    
+    this.alertService.loading();
+    const parametros = { fechaDesde: this.fechaDesde, fechaHasta: this.fechaHasta };
+    if(this.fechaDesde !== '') this.fechaDesdeMostrar = format(add(new Date(this.fechaDesde),{ days: 1 }), 'dd-MM-yyyy');
+    if(this.fechaHasta !== '') this.fechaHastaMostrar = format(add(new Date(this.fechaHasta),{ days: 1 }), 'dd-MM-yyyy');
+
+    this.cajasService.reporteCajas(parametros).subscribe({
+      next: ({ reportes }) => {
+        this.reportes = reportes;
+        this.showModalReportes = false;
+        this.showModalAcumuladas = true; 
+        this.alertService.close();
+      }, error: ({error}) => {
+        this.alertService.errorApi(error.message);
+        console.log(error);
+      }
+    })
   }
 
   // Abrir modal - Detalles de caja
@@ -67,24 +116,45 @@ export class CajasHistorialComponent implements OnInit {
     this.showModalCaja = true;
   }
 
+  // Abrir modal - Reportes
+  abrirModalReportes(): void {
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.showModalReportes = true;
+  }
+
   // Filtrar Activo/Inactivo
-  filtrarActivos(activo: any): void{
+  filtrarActivos(activo: any): void {
     this.paginaActual = 1;
     this.filtro.activo = activo;
   }
 
   // Filtrar por Parametro
-  filtrarParametro(parametro: string): void{
+  filtrarParametro(parametro: string): void {
     this.paginaActual = 1;
     this.filtro.parametro = parametro;
   }
 
   // Ordenar por columna
-  ordenarPorColumna(columna: string){
+  ordenarPorColumna(columna: string) {
     this.ordenar.columna = columna;
-    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1; 
+    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
     this.alertService.loading();
     this.listarCajas();
+  }
+
+  // Paginacion - Cambiar pagina
+  cambiarPagina(nroPagina): void {
+    this.paginaActual = nroPagina;
+    this.desde = (this.paginaActual - 1) * this.cantidadItems;
+    this.alertService.loading();
+    this.listarCajas();
+  }
+
+  // Cambiar cantidad de items
+  cambiarCantidadItems(): void {
+    this.paginaActual = 1
+    this.cambiarPagina(1);
   }
 
 }

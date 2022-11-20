@@ -12,11 +12,11 @@ type NewType = Observable<any>;
 })
 export class CajasService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Caja por ID
   getCaja(id: string): Observable<any> {
-    return this.http.get(`${base_url}/cajas/${ id }`,{ 
+    return this.http.get(`${base_url}/cajas/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -25,7 +25,7 @@ export class CajasService {
 
   // Calculos iniciales
   calculosIniciales(): Observable<any> {
-    return this.http.get(`${base_url}/cajas/calculos/iniciales`,{ 
+    return this.http.get(`${base_url}/cajas/calculos/iniciales`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -42,14 +42,16 @@ export class CajasService {
   };
 
   // Listar cajas
-  listarCajas(
-    direccion: number = -1,
-    columna: string = 'createdAt'  
-  ): Observable<any> {
+  listarCajas(parametros?: any): Observable<any> {
     return this.http.get(`${base_url}/cajas`, {
       params: {
-        direccion: String(direccion),
-        columna
+        columna: parametros?.columna || 'descripcion',
+        direccion: parametros?.direccion || 1,
+        desde: parametros?.desde || 0,
+        registerpp: parametros?.cantidadItems || 100000,
+        fechaDesde: parametros?.fechaDesde || '',
+        fechaHasta: parametros?.fechaHasta || '',
+        parametro: parametros?.parametro || '',
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -58,13 +60,13 @@ export class CajasService {
   }
 
   // Actualizar caja
-  actualizarCaja(id:string, data: any): Observable<any> {
+  actualizarCaja(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/cajas/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  }
 
   // Actualizar saldo inicial de caja
   actualizarSaldoInicial(data: any): Observable<any> {
@@ -73,6 +75,19 @@ export class CajasService {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  }
+
+  // Reporte de cajas
+  reporteCajas(parametros?: any): Observable<any> {
+    return this.http.get(`${base_url}/cajas/reportes/acumulacion/estadisticas`, {
+      params: {
+        fechaDesde: parametros?.fechaDesde || '',
+        fechaHasta: parametros?.fechaHasta || '',   
+      },
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
 
 }
