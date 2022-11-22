@@ -1,0 +1,210 @@
+
+<!-- Modal: Nuevo gasto -->
+<app-modal [showModal]="showModalGasto">
+  <div (keyup.enter)="nuevoGasto()">
+      <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+          <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Nuevo gasto </h1>
+          <svg (click)="showModalGasto = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </div>
+      <div class="p-4 text-sm">
+          <div class="md:flex md:items-center">
+            <div class="md:w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de gasto </p>
+              <select [(ngModel)]="dataGasto.tipo_gasto" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
+                <option value=""> Seleccionar tipo </option>
+                <option *ngFor="let tipo of tipos_gastos" [value]="tipo._id"> {{ tipo.descripcion }} </option>
+              </select>
+            </div>
+            <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Repartidor </p>
+              <select [(ngModel)]="dataGasto.repartidor" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
+                <option value=""> Seleccionar Repartidor </option>
+                <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+              </select>
+            </div>
+          </div>
+          <div class="md:flex md:items-center mt-2">
+            <div class="md:w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Monto </p>
+              <input [(ngModel)]="dataGasto.monto" placeholder="Ej. 1500" type="number" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
+            </div>
+            <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+            </div>
+          </div>  
+          <button  (click)="nuevoGasto()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear gasto </button>
+      </div>
+  </div>
+</app-modal>
+
+<!-- Modal: Nuevo ingreso -->
+<app-modal [showModal]="showModalIngreso">
+  <div (keyup.enter)="nuevoIngreso()">
+      <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+          <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Nuevo ingreso </h1>
+          <svg (click)="showModalIngreso = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </div>
+      <div class="p-4 text-sm">
+          <div class="md:flex md:items-center">
+            <div class="md:w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de ingreso </p>
+              <select [(ngModel)]="dataIngreso.tipo_ingreso" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
+                <option value=""> Seleccionar tipo </option>
+                <option *ngFor="let tipo of tipos_ingresos" [value]="tipo._id"> {{ tipo.descripcion }} </option>
+              </select>
+            </div>
+            <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Repartidor </p>
+              <select [(ngModel)]="dataIngreso.repartidor" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
+                <option value=""> Seleccionar Repartidor </option>
+                <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+              </select>
+            </div>
+          </div>
+          <div class="md:flex md:items-center mt-2">
+            <div class="md:w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Monto </p>
+              <input [(ngModel)]="dataIngreso.monto" placeholder="Ej. 1500" type="number" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
+            </div>
+            <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+            </div>
+          </div>  
+          <button (click)="nuevoIngreso()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear ingreso </button>
+      </div>
+  </div>
+</app-modal>
+
+<div class="p-2 gsap-contenido">
+
+  
+  <!-- No se tiene permisos para acceder a la seccion -->
+  <div class="mx-auto gsap-contenido w-11/12">
+    <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE'">
+      <img class="mt-10 mx-auto" src="assets/img/not_access.svg" alt="No se tiene permisos">
+      <h1 class="mt-5 text-center md:text-lg"> Usted no tiene permisos para acceder a esta seccion </h1>
+    </div>
+  </div>
+
+  <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" class="md:flex md:justify-center max-w-5xl mx-auto">
+    
+    <!-- Cierre de caja -->
+    <div class="border h-full border-gray-300 w-full md:w-1/2">
+      <div class="bg-primary-800 border border-primary-800 text-white rounded-t flex items-center justify-between p-2">
+        <h1> Cierre de caja - Mayoristas </h1>
+        <button title="Historial de cajas" class="bg-white p-2 focus:outline-none text-primary-800 rounded hover:text-secondaryColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        </button>
+      </div>
+      <div class="p-2 text-sm">
+        <div class="p-2 bg-gray-100 flex items-center justify-between border border-gray-300 rounded">
+          <p class="font-semibold"> DATOS DE CAJA </p>
+          <input [(ngModel)]="fecha_caja" type="date" class="border border-gray-400 focus:outline-none rounded p-2 bg-white">
+        </div>
+        <select [(ngModel)]="repartidor" (change)="cargarDatosCaja()" class="border border-gray-300 p-2 rounded focus:outline-none w-full mt-2">
+          <option value=""> Todos los repartidores </option>
+          <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+        </select>
+        <div class="mt-2">
+          <div class="flex items-center justify-between border border-gray-300 p-2">
+            <p class="font-semibold"> Cantidad de pedidos </p>
+            <p class="font-semibold"> {{ caja.cantidad_pedidos }} </p>
+          </div>
+          <div class="flex items-center mt-2 justify-between p-2">
+            <p class="font-semibold"> Total en pedidos </p>
+            <p> ${{ caja.total_pedidos | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="font-semibold"> <span class="font-semibold text-red-500"> (-) </span> Total deudas </p>
+            <p class="text-red-500"> -${{ caja.total_deuda | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2 border-t border-gray-400">
+            <p class="font-semibold"> Monto a recibir </p>
+            <p> ${{ caja.total_recibido | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="font-semibold"> <span class="font-semibold text-red-500"> (-) </span> Otros gastos </p>
+            <p class="text-red-500"> -${{ total_gastos | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="font-semibold"> <span class="font-semibold text-green-600"> (+) </span> Otros ingresos </p>
+            <p class="text-green-600"> ${{ total_ingresos | moneda }} </p>
+          </div>
+          <div class="flex items-center mt-2 border-t border-gray-400 justify-between p-2">
+            <p class="font-semibold"> Total recibido </p>
+            <p class="font-semibold" [ngClass]="{'text-red-500':total_recibido < 0}"> ${{ total_recibido | moneda }} </p>
+          </div>
+        </div>
+        <button class="p-2 focus:outline-none border w-full hover:text-secondaryColor mt-2 rounded border-gray-300 bg-gray-100 font-semibold">
+          Cerrar caja
+        </button>
+      </div>
+    </div>
+
+    <div class="w-1/2 h-full">
+      <div class="border mt-2 md:mt-0 border-gray-300 md:ml-4 w-full">
+        
+        <!-- Otros gastos -->
+          
+          <div class="bg-primary-800 border border-primary-800 text-white rounded-t flex items-center justify-between p-2">
+            <h1> Otros gastos </h1>
+            <button (click)="abrirNuevoGasto()" title="Agregar gasto" class="bg-white p-2 rounded text-primary-800 hover:text-secondaryColor focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>          
+            </button>
+          </div>
+          <div *ngIf="gastos.length > 0">
+            <div class="p-2 text-sm">
+              <h1 class="bg-red-100 p-1 font-semibold rounded border border-red-300 mb-2"> Listado de gastos </h1>
+              <div (click)="eliminarGasto(gasto._id)" *ngFor="let gasto of gastos" class="flex hover:bg-red-100 cursor-pointer items-center text-xs justify-between py-2">
+                <p> <span class="font-semibold text-red-500"> (-) </span> {{ gasto.tipo_gasto.descripcion }} - <span class="font-semibold"> {{ gasto.repartidor.apellido }} {{ gasto.repartidor.nombre }} </span>  </p>
+                <p> ${{ gasto.monto | moneda }} </p>
+              </div>
+              <div class="flex items-center justify-between font-semibold border-t border-gray-400 mt-1 pt-2">
+                <p> <span class="text-red-500"> (-) </span> Total de gastos </p>
+                <p> ${{ total_gastos | moneda }} </p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="gastos.length === 0" class="p-2 text-sm">
+            No se encontraron gastos
+          </div>
+  
+      </div>
+  
+      <!-- Otros ingresos -->
+  
+      <div class="border h-full mt-3 border-gray-300 md:ml-4 w-full">
+        <div class="bg-primary-800 border border-primary-800 text-white rounded-t flex items-center justify-between p-2">
+          <h1> Otros ingresos </h1>
+          <button (click)="abrirNuevoIngreso()" title="Agregar ingreso" class="bg-white p-2 rounded text-primary-800 hover:text-secondaryColor focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>          
+          </button>
+        </div>
+        <div *ngIf="ingresos?.length > 0">
+          <div class="p-2 text-sm">
+            <h1 class="bg-green-100 p-1 font-semibold rounded border border-green-300 mb-2"> Listado de ingresos </h1>
+            <div (click)="eliminarIngreso(ingreso._id)" *ngFor="let ingreso of ingresos" class="flex hover:bg-green-100 cursor-pointer items-center text-xs justify-between py-2">
+              <p> <span class="font-semibold text-green-500"> (+) </span> {{ ingreso.tipo_ingreso.descripcion }} - <span class="font-semibold"> {{ ingreso.repartidor.apellido }} {{ ingreso.repartidor.nombre }} </span>  </p>
+              <p> ${{ ingreso.monto | moneda }} </p>
+            </div>
+            <div class="flex items-center justify-between font-semibold border-t border-gray-400 mt-1 pt-2">
+              <p> <span class="text-green-500"> (+) </span> Total de ingresos </p>
+              <p> ${{ total_ingresos | moneda }} </p>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="ingresos?.length === 0" class="p-2 text-sm">
+          No se encontraron ingresos
+        </div>
+      </div>
+
+    </div>
+
+  
+  
+  </div>
+</div>

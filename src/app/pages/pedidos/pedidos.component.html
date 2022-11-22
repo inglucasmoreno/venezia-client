@@ -154,7 +154,7 @@
             <div>
                 <p class="font-semibold text-md"> Monto recibido </p>
                 <div class="flex items-center">
-                    <input [(ngModel)]="montoRecibido" (keyup.enter)="completarPedido()" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
+                    <input (keyup)="calcularDeuda()" [(ngModel)]="montoRecibido" class="border border-gray-400 focus:outline-none p-2 rounded mt-2" placeholder="Ej. 20000" type="number">
                     <button (click)="completarPedido()" title="Completar pedido" class="border md:hidden border-gray-400 focus:outline-none hover:text-green-700 rounded p-2 ml-2 shadow mt-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -240,7 +240,7 @@
         </span> 
         <span class="bg-gray-100 font-semibold text-xs p-1 rounded border ml-1 border-gray-300"> {{ pedidoSeleccionado?.repartidor.apellido }} {{ pedidoSeleccionado?.repartidor.nombre }} </span>  
     </p>
-      <p *ngIf="pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda'" class="p-2"> 
+      <p *ngIf="pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda'" class="p-1 ml-2 mt-2 text-green-800 w-max border border-green-300 rounded bg-green-100"> 
         <span class="font-semibold"> 
             Monto recibido: 
         </span>
@@ -248,9 +248,9 @@
             ${{ pedidoSeleccionado?.monto_recibido | moneda }} 
         </span>
       </p>
-      <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="p-2 text-red-700"> 
+      <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="p-1 mt-2 ml-2 text-red-700 w-max border border-red-300 rounded bg-red-100"> 
         <span class="font-semibold"> 
-            Monto de deuda: 
+            Monto adeudado: 
         </span>
         <span>
             ${{ pedidoSeleccionado?.deuda_monto | moneda }} 
@@ -323,7 +323,7 @@
             <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
                 <div class="ml-2 text-white">
                     <h2 class="text-2xl leading-tight">
-                        {{ etapa === 'productos' ? 'Productos pendientes' : 'Listado de pedidos' }}
+                        {{ etapa === 'productos' ? 'Productos pendientes' : 'Pedidos activos' }}
                     </h2>
                     <p *ngIf="etapa === 'pedidos'"> Total de pedidos: {{ totalItems }} </p>
                 </div>
@@ -367,9 +367,17 @@
                                 </path>
                             </svg>
                         </span>
-                        <input [(ngModel)]="filtro.parametro" placeholder="Buscar" (change)="cambiarPagina(1)" class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                        <input [(ngModel)]="filtro.parametro" placeholder="Nro de pedido" (change)="cambiarPagina(1)" class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
                         />
                     </div>
+                    <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none md:w-48 w-full px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.mayorista">
+                        <option value=""> Todos los mayoristas </option>
+                        <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
+                    </select>
+                    <select *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none md:w-48 w-full px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.repartidor">
+                        <option value=""> Todos los repartidores </option>
+                        <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+                    </select>
                     <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
                         <option value="10"> 10 elementos </option>
                         <option value="20"> 20 elementos </option>
@@ -378,6 +386,10 @@
                     </select>
                 </div>
             </div>
+            <!-- <div class="ml-2 text-sm">
+                <input [(ngModel)]="filtro.fechaDesde" (change)="cambiarPagina(1)" type="date" class="bg-white text-sm focus:outline-none md:w-48 w-11/12 p-2 ml-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
+                <input [(ngModel)]="filtro.fechaHasta" (change)="cambiarPagina(1)" type="date" class="bg-white text-sm focus:outline-none md:w-48 w-11/12 p-2 ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
+            </div> -->
             <!-- <p class="py-1 w-max ml-4 mb-2 text-sm text-primary-900 border-b-8 border-gray-200">
                 <span class="font-semibold">
                     Total:
@@ -386,19 +398,25 @@
             </p> -->
             <div class="px-4 pb-2 overflow-x-auto">
                 <div class="text-sm md:flex md:items-center pb-4"> 
+                    
+                    
                     <p class="p-1 text-primary-900 border-b-8 border-gray-200">
-                        <span class="font-semibold">
-                            Total:
-                        </span>
+                        <span *ngIf="filtro.estado === 'Pendiente'" class="font-semibold"> Monto total pendientes: </span>
+                        <span *ngIf="filtro.estado === 'Enviado'" class="font-semibold"> Monto total enviados: </span>
+                        <span *ngIf="filtro.estado === 'Cancelado'" class="font-semibold"> Monto total cancelados: </span>
+                        <span *ngIf="filtro.estado === 'Deuda' || filtro.estado === 'Completado' || filtro.estado === ''" class="font-semibold"> Monto total: </span>
+                        
                          ${{ totalMonto | moneda }} 
                     </p>
-                    <p class="p-1 text-green-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-green-200">
+                    
+                    
+                    <p *ngIf="filtro.estado === '' || filtro.estado === 'Completado' || filtro.estado === 'Deuda'" class="p-1 text-green-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-green-200">
                         <span class="font-semibold">
                             Total ingresos:
                         </span>
                          ${{ totalIngresos | moneda }} 
                     </p>
-                    <p class="p-1 text-red-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-red-200">
+                    <p *ngIf="filtro.estado === '' || filtro.estado === 'Completado' || filtro.estado === 'Deuda'" class="p-1 text-red-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-red-200">
                         <span class="font-semibold">
                             Total deuda:
                         </span>
@@ -497,13 +515,13 @@
                                     </p>
                                 </td>
                                 <td class="px-5 py-3 flex items-center justify-center border-b border-gray-200 text-xs text-center">
-                                    <span *ngIf="pedido.estado === 'Deuda'" class="flex items-center justify-center ml-2 text-gray-900 whitespace-no-wrap">
+                                    <!-- <span *ngIf="pedido.estado === 'Deuda'" class="flex items-center justify-center ml-2 text-gray-900 whitespace-no-wrap">
                                         <app-boton-tabla (click)="abrirCancelarDeuda(pedido)" title="Completar pedido">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                             </svg>
                                         </app-boton-tabla>
-                                    </span>
+                                    </span> -->
                                     <span *ngIf="pedido.estado === 'Enviado'" (click)="abrirCompletarPedido(pedido)" class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
                                         <app-boton-tabla title="Completar pedido">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

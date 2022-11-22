@@ -8,30 +8,30 @@ const base_url = environment.base_url;
 @Injectable({
   providedIn: 'root'
 })
-export class MayoristasGastosService {
+export class MayoristasIngresosService {
 
   constructor(private http: HttpClient) { }
 
-  // Nuevo gasto
-  nuevoGasto(data: any): Observable<any> {
-    return this.http.post(`${base_url}/mayoristas-gastos`, data, {
+  // Nuevo ingreso
+  nuevoIngreso(data: any): Observable<any> {
+    return this.http.post(`${base_url}/mayoristas-ingresos`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
   };
 
-  // Gasto por ID
-  getGasto(id: string): Observable<any> {
-    return this.http.get(`${base_url}/mayoristas-gastos/${id}`, {
+  // Ingreso por ID
+  getIngreso(id: string): Observable<any> {
+    return this.http.get(`${base_url}/mayoristas-ingresos/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
   };
 
-  // Listar gastos
-  listarGastos(
+  // Listar ingresos
+  listarIngresos(
     direccion: number = -1,
     columna: string = 'createdAt',
     desde: number = 0,
@@ -40,10 +40,10 @@ export class MayoristasGastosService {
     parametro: string = '',
     fechaDesde: string = '',
     fechaHasta: string = '',
-    tipo_gasto: string = '',
+    tipo_ingreso: string = '',
     repartidor: string = '',
   ): Observable<any> {
-    return this.http.get(`${base_url}/mayoristas-gastos`, {
+    return this.http.get(`${base_url}/mayoristas-ingresos`, {
       params: {
         direccion: String(direccion),
         columna,
@@ -52,7 +52,7 @@ export class MayoristasGastosService {
         parametro,
         fechaDesde,
         fechaHasta,
-        tipo_gasto,
+        tipo_ingreso,
         repartidor,
         activo
       },
@@ -62,18 +62,18 @@ export class MayoristasGastosService {
     });
   }
 
-  // Actualizar gasto
-  actualizarGasto(id: string, data: any): Observable<any> {
-    return this.http.put(`${base_url}/mayoristas-gastos/${id}`, data, {
+  // Actualizar ingreso
+  actualizarIngreso(id: string, data: any): Observable<any> {
+    return this.http.put(`${base_url}/mayoristas-ingresos/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
   }
 
-  // Eliminar gasto
-  eliminarGasto(id: string): Observable<any> {
-    return this.http.delete(`${base_url}/mayoristas-gastos/${id}`, {
+  // Eliminar ingresos
+  eliminarIngreso(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/mayoristas-ingresos/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }

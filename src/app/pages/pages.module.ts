@@ -30,6 +30,10 @@ import { NuevoPedidoComponent } from './pedidos/nuevo-pedido.component';
 import { PedidosReportesComponent } from './pedidos/pedidos-reportes.component';
 import { PedidosGastosComponent } from './pedidos-gastos/pedidos-gastos.component';
 import { PedidosGastosTiposComponent } from './pedidos-gastos/pedidos-gastos-tipos.component';
+import { CajasMayoristasComponent } from './cajas-mayoristas/cajas-mayoristas.component';
+import { PedidosIngresosComponent } from './pedidos-ingresos/pedidos-ingresos.component';
+import { PedidosIngresosTiposComponent } from './pedidos-ingresos/pedidos-ingresos-tipos.component';
+import { CuentasCorrientesMayoristasComponent } from './cuentas-corrientes-mayoristas/cuentas-corrientes-mayoristas.component';
 
 
 @NgModule({
@@ -57,6 +61,10 @@ import { PedidosGastosTiposComponent } from './pedidos-gastos/pedidos-gastos-tip
     PedidosReportesComponent,
     PedidosGastosComponent,
     PedidosGastosTiposComponent,
+    CajasMayoristasComponent,
+    PedidosIngresosComponent,
+    PedidosIngresosTiposComponent,
+    CuentasCorrientesMayoristasComponent,
   ],
   imports: [
     CommonModule,

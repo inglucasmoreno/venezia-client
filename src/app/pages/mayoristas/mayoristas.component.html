@@ -104,7 +104,7 @@
                 <p class="font-semibold"> <span class="text-red-500"> * </span> Direccion </p>
                 <input [(ngModel)]="mayoristasForm.direccion" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. Portugal 1030" type="text">  
             </div>
-        </div>
+        </div> 
         <!-- <div class="flex items-center mt-4">
             <div class="md:w-1/2 w-full">
                 <p class="font-semibold"> <span class="text-red-500"> * </span> Cuenta confirmada </p>
@@ -190,7 +190,7 @@
                                           </span>
                                       </div>
                                   </th>
-                                  <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                                  <!-- <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
                                     <div (click)="ordenarPorColumna('confirm')" class="cursor-pointer flex items-center justify-center focus:outline-none">
                                         <span> Confirmado </span>
                                         <span class="ml-2 text-gray-600">    
@@ -199,7 +199,7 @@
                                             <svg *ngIf="ordenar.columna != 'confirm'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         </span>
                                     </div>
-                                </th>
+                                    </th> -->
                                   <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
                                       <div (click)="ordenarPorColumna('createdAt')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
                                           <span>
@@ -236,14 +236,14 @@
                                         {{ mayorista.descripcion }}
                                     </p>
                                   </td>
-                                  <td class="px-5 py-2 border-b text-center border-gray-200 text-xs">
+                                  <!-- <td class="px-5 py-2 border-b text-center border-gray-200 text-xs">
                                     <svg *ngIf="mayorista.confirm" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mx-auto" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                     </svg>
                                     <svg *ngIf="!mayorista.confirm" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mx-auto" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                                     </svg>
-                                  </td>
+                                  </td> -->
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 whitespace-no-wrap">
                                         {{ mayorista.createdAt | fecha }}

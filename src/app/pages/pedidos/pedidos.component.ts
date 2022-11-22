@@ -3,11 +3,11 @@ import { AlertService } from 'src/app/services/alert.service';
 import { DataService } from 'src/app/services/data.service';
 import { VentasMayoristasService } from '../../services/ventas-mayoristas.service';
 import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
-import { RepartidoresService } from 'src/app/services/repartidores.service';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
+import { MayoristasService } from 'src/app/services/mayoristas.service';
 
 const base_url = environment.base_url;
 
@@ -38,6 +38,9 @@ export class PedidosComponent implements OnInit {
   public repartidoresLista: any[] = [];
   public repartidorSeleccionado: string = '';
 
+  // Mayoristas
+  public mayoristas: any[] = [];
+
   // Pedidos
   public pedidos: any[] = null;
   public pedidosPendientes: any[] = [];
@@ -54,24 +57,28 @@ export class PedidosComponent implements OnInit {
   public nuevaCantidad: number = null;
 
   // Productos
-  public productosPendientes:any[] = [];
+  public productosPendientes: any[] = [];
 
   // Nuevo producto
   public nuevoProductoSeleccionado: any;
   public nuevoProductoCantidad: any = null;
   public listaProductos: any[] = [];
 
-	// Paginacion
+  // Paginacion
   public totalItems: number;
   public desde: number = 0;
-	public paginaActual: number = 1;
-	public cantidadItems: number = 10;
+  public paginaActual: number = 1;
+  public cantidadItems: number = 10;
 
   // Filtrado
   public filtro = {
     estado: 'Pendiente',
     parametro: '',
-    parametroProductos: ''
+    parametroProductos: '',
+    mayorista: '',
+    repartidor: '',
+    fechaDesde: '',
+    fechaHasta: ''
   }
 
   // Ordenar
@@ -81,13 +88,13 @@ export class PedidosComponent implements OnInit {
   }
 
   constructor(private ventasMayoristasService: VentasMayoristasService,
-              public authService: AuthService,
-              public usuariosService: UsuariosService,
-              private productosService: ProductosService,
-              private ventasMayoristasProductosService: VentasMayoristasProductosService,
-              private repartidoresService: RepartidoresService,
-              private dataService: DataService,
-              private alertService: AlertService) { }
+    public authService: AuthService,
+    public mayoristasService: MayoristasService,
+    public usuariosService: UsuariosService,
+    private productosService: ProductosService,
+    private ventasMayoristasProductosService: VentasMayoristasProductosService,
+    private dataService: DataService,
+    private alertService: AlertService) { }
 
   ngOnInit(): void {
     this.repartidorLogin = this.authService.usuario.role === 'DELIVERY_ROLE' ? this.authService.usuario.userId : '';
@@ -98,33 +105,50 @@ export class PedidosComponent implements OnInit {
   // Carga inicial de valores
   cargaInicial(): void {
     this.alertService.loading();
-    this.repartidoresService.listarRepartidores().subscribe({
-      next: ({ repartidores }) => {
-        this.repartidores = repartidores;
-        this.ventasMayoristasService.listarVentas(
-          this.ordenar.direccion,
-          this.ordenar.columna,
-          this.desde,
-          this.cantidadItems,
-          this.filtro.estado,
-          this.filtro.parametro,
-          this.repartidorLogin
-        ).subscribe({
-          next: ({ventas, totalItems, totalDeuda, totalIngresos, totalMonto}) => {
-            this.pedidos = ventas;
-            this.totalMonto = totalMonto;
-            this.totalDeuda = totalDeuda;
-            this.totalItems = totalItems;
-            this.totalIngresos = totalIngresos;
-            this.pedidosPendientes = ventas.filter( pedido => pedido.activo );
-            this.productosParaElaboracion();
-            this.showModalEnvio = false;
-            this.alertService.close();
-          },
-          error: ({error}) => {
-            this.alertService.errorApi(error.message);
-          }
-        });
+
+    // Listado de repartidores
+    this.usuariosService.listarUsuarios().subscribe({
+      next: ({ usuarios }) => {
+        
+        this.repartidores = usuarios.filter(usuario => usuario.role === 'DELIVERY_ROLE');
+
+        // Listado de mayoristas
+        this.mayoristasService.listarMayoristas().subscribe({
+          next: ({ mayoristas }) => {
+            
+            this.mayoristas = mayoristas;
+
+            // Listado de pedidos
+            this.ventasMayoristasService.listarVentas(
+              this.ordenar.direccion,
+              this.ordenar.columna,
+              this.desde,
+              this.cantidadItems,
+              this.filtro.estado,
+              this.filtro.parametro,
+              this.authService.usuario.role === 'DELIVERY_ROLE' ? this.repartidorLogin : this.filtro.repartidor,
+              this.filtro.mayorista,
+              this.filtro.fechaDesde,
+              this.filtro.fechaHasta,
+            ).subscribe({
+              next: ({ ventas, totalItems, totalDeuda, totalIngresos, totalMonto }) => {
+                this.pedidos = ventas;
+                this.totalMonto = totalMonto;
+                this.totalDeuda = totalDeuda;
+                this.totalItems = totalItems;
+                this.totalIngresos = totalIngresos;
+                this.pedidosPendientes = ventas.filter(pedido => pedido.activo);
+                this.productosParaElaboracion();
+                this.showModalEnvio = false;
+                this.alertService.close();
+              },
+              error: ({ error }) => {
+                this.alertService.errorApi(error.message);
+              }
+            });
+
+          }, error: ({ error }) => this.alertService.errorApi(error.message)
+        })
       },
       error: ({ error }) => this.alertService.errorApi(error.message)
     });
@@ -132,29 +156,32 @@ export class PedidosComponent implements OnInit {
 
   listarPedidos(): void {
     this.alertService.loading();
-      this.ventasMayoristasService.listarVentas(
-        this.ordenar.direccion,
-        this.ordenar.columna,
-        this.desde,
-        this.cantidadItems,
-        this.filtro.estado,
-        this.filtro.parametro,
-        this.repartidorLogin
-        ).subscribe({
-        next: ({ventas, totalItems, totalDeuda, totalIngresos, totalMonto}) => {
-          this.pedidos = ventas;
-          this.totalItems = totalItems;
-          this.totalDeuda = totalDeuda;
-          this.totalMonto = totalMonto;
-          this.totalIngresos = totalIngresos;
-          this.productoSeleccionado = null;
-          this.pedidosPendientes = ventas.filter( pedido => pedido.activo );
-          this.productosParaElaboracion();
-        },
-        error: ({error}) => {
-          this.alertService.errorApi(error.message);
-        }
-      });
+    this.ventasMayoristasService.listarVentas(
+      this.ordenar.direccion,
+      this.ordenar.columna,
+      this.desde,
+      this.cantidadItems,
+      this.filtro.estado,
+      this.filtro.parametro,
+      this.authService.usuario.role === 'DELIVERY_ROLE' ? this.repartidorLogin : this.filtro.repartidor,
+      this.filtro.mayorista,
+      this.filtro.fechaDesde,
+      this.filtro.fechaHasta,
+    ).subscribe({
+      next: ({ ventas, totalItems, totalDeuda, totalIngresos, totalMonto }) => {
+        this.pedidos = ventas;
+        this.totalItems = totalItems;
+        this.totalDeuda = totalDeuda;
+        this.totalMonto = totalMonto;
+        this.totalIngresos = totalIngresos;
+        this.productoSeleccionado = null;
+        this.pedidosPendientes = ventas.filter(pedido => pedido.activo);
+        this.productosParaElaboracion();
+      },
+      error: ({ error }) => {
+        this.alertService.errorApi(error.message);
+      }
+    });
   }
 
   // Seleccionar pedido
@@ -166,15 +193,15 @@ export class PedidosComponent implements OnInit {
       'descripcion',
       this.pedidoSeleccionado._id
     ).subscribe({
-      next: ({productos}) => {
-        window.scrollTo(0,0);
+      next: ({ productos }) => {
+        window.scrollTo(0, 0);
         this.productoSeleccionado = null;
         this.nuevaCantidad = null;
         this.productos = productos;
         this.showModal = true;
         this.alertService.close();
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     })
@@ -193,7 +220,7 @@ export class PedidosComponent implements OnInit {
     this.pedidoSeleccionado = pedido;
 
     this.alertService.question({ msg: '¿Quieres enviar el pedido?', buttonText: 'Enviar' })
-      .then(({isConfirmed}) => {
+      .then(({ isConfirmed }) => {
         if (isConfirmed) {
           this.alertService.loading();
 
@@ -205,7 +232,7 @@ export class PedidosComponent implements OnInit {
               this.pedidoSeleccionado = null;
               this.listarPedidos();
             },
-            error: ({error}) => this.alertService.errorApi(error.message)
+            error: ({ error }) => this.alertService.errorApi(error.message)
           })
         }
       });
@@ -214,8 +241,8 @@ export class PedidosComponent implements OnInit {
 
   // Productos para elaboracion
   productosParaElaboracion(): void {
-    this.ventasMayoristasProductosService.listarProductos(1,'descripcion', '', 'true').subscribe({
-      next: ({productos}) => {
+    this.ventasMayoristasProductosService.listarProductos(1, 'descripcion', '', 'true').subscribe({
+      next: ({ productos }) => {
 
         let productoTMP = productos;
 
@@ -223,13 +250,13 @@ export class PedidosComponent implements OnInit {
 
         const agregados = [];
 
-        productoTMP.map( producto => {
-          if(!agregados.includes(producto.producto._id)){
+        productoTMP.map(producto => {
+          if (!agregados.includes(producto.producto._id)) {
             agregados.push(producto.producto._id);
             this.productosPendientes.push(producto);
-          }else{
-            this.productosPendientes.map( elemento => {
-              if(elemento.producto._id === producto.producto._id){
+          } else {
+            this.productosPendientes.map(elemento => {
+              if (elemento.producto._id === producto.producto._id) {
                 elemento.cantidad += producto.cantidad;
               }
             })
@@ -243,7 +270,7 @@ export class PedidosComponent implements OnInit {
 
       },
 
-      error: ({error}) => this.alertService.errorApi(error.message)
+      error: ({ error }) => this.alertService.errorApi(error.message)
 
     })
   }
@@ -251,19 +278,19 @@ export class PedidosComponent implements OnInit {
   // Cancelar pedido
   cancelarPedido(pedido: any): void {
     this.alertService.question({ msg: 'Cancelando pedido', buttonText: 'Cancelar pedido', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {
-      if (isConfirmed) {
-        this.alertService.loading();
-        this.ventasMayoristasService.actualizarVenta(pedido._id, { estado: 'Cancelado', activo: false }).subscribe({
-          next: () => {
-            this.listarPedidos();
-          },
-          error: ({error}) => {
-            this.alertService.errorApi(error.message);
-          }
-        })
-      }
-    });
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.ventasMayoristasService.actualizarVenta(pedido._id, { estado: 'Cancelado', activo: false }).subscribe({
+            next: () => {
+              this.listarPedidos();
+            },
+            error: ({ error }) => {
+              this.alertService.errorApi(error.message);
+            }
+          })
+        }
+      });
   }
 
   // Listar productos de pedido
@@ -273,13 +300,13 @@ export class PedidosComponent implements OnInit {
       'descripcion',
       this.pedidoSeleccionado._id
     ).subscribe({
-      next: ({productos}) => {
+      next: ({ productos }) => {
         this.productos = productos;
         this.showModalCompletar = true;
         this.calculoMonto();
         this.alertService.close();
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     })
@@ -295,28 +322,28 @@ export class PedidosComponent implements OnInit {
   // Cancelar deuda
   cancelarDeuda(): void {
     this.alertService.question({ msg: 'Completar pedido', buttonText: 'Completar', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {
-      if (isConfirmed) {
-        this.alertService.loading();
-        this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
-          estado: 'Completado',
-          monto_recibido: this.totalCompletar,
-          deuda_monto: 0,
-          deuda: false
-        }).subscribe({
-          next: () => {
-            this.totalCompletar = 0;
-            this.listarPedidos();
-          },
-          error: ({ error }) => this.alertService.errorApi(error.message)
-        })
-      }
-    });
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
+            estado: 'Completado',
+            monto_recibido: this.totalCompletar,
+            deuda_monto: 0,
+            deuda: false
+          }).subscribe({
+            next: () => {
+              this.totalCompletar = 0;
+              this.listarPedidos();
+            },
+            error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
   }
 
   // Completar pedido
   abrirCompletarPedido(pedido: any): void {
-    this.montoDeuda = null;
+    this.montoDeuda = 0;
     this.estadoPago = 'Total';
     this.pedidoSeleccionado = pedido;
     this.montoRecibido = pedido.precio_total;
@@ -335,7 +362,7 @@ export class PedidosComponent implements OnInit {
       next: () => {
         this.listarProductos();
       },
-      error: ({error}) => this.alertService.errorApi(error.message)
+      error: ({ error }) => this.alertService.errorApi(error.message)
     })
 
   }
@@ -343,64 +370,64 @@ export class PedidosComponent implements OnInit {
   // Calculo de monto
   calculoMonto(): void {
     let montoTMP = 0;
-    this.productos.map( producto => {
-      if(producto.entregado) montoTMP += producto.precio;
+    this.productos.map(producto => {
+      if (producto.entregado) montoTMP += producto.precio;
     });
     this.montoRecibido = this.dataService.redondear(montoTMP, 2);
   }
 
   // Completar pedido
   completarPedido(): void {
-
+  
     // Verificaciones: Monto recibido invalido
-    if(this.montoRecibido < 0){
-      this.alertService.info('Debe colocar un monto recibido');
+    if (this.montoRecibido === null || this.montoRecibido < 0) {
+      this.alertService.info('Debe colocar un monto recibido válido');
       return;
     }
 
     // Verificacion: Monto de deuda invalido
-    if(this.estadoPago === 'Deuda' && (!this.montoDeuda || this.montoDeuda < 0) ){
-      this.alertService.info('Debe colocar el monto adeudado');
+    if (this.estadoPago === 'Deuda' && (!this.montoDeuda || this.montoDeuda < 0)) {
+      this.alertService.info('Debe colocar un monto adeudado válido');
       return;
     }
 
     // Verificacion: Saldo a pagar mayor que saldo total -> Sin deuda
-    if((this.totalMonto < this.montoRecibido) && this.estadoPago !== 'Deuda'){
+    if ((this.pedidoSeleccionado.precio_total < this.montoRecibido) && this.estadoPago !== 'Deuda') {
       this.alertService.info('El monto recibido no puede ser mayor al total');
       return;
     }
 
     // Verificacion: Saldo a pagar mayor que saldo total -> Con deuda
-    if((this.totalMonto < (this.montoRecibido + this.montoDeuda)) && this.estadoPago === 'Deuda'){
+    if ((this.totalMonto < (this.montoRecibido + this.montoDeuda)) && this.estadoPago === 'Deuda') {
       this.alertService.info('El monto recibido + deuda no puede ser mayor al total');
       return;
     }
 
     this.alertService.question({ msg: 'Completando pedido', buttonText: 'Completar', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {
-      if (isConfirmed) {
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
 
-        const data = {
-          estado: this.estadoPago === 'Total' ? 'Completado' : 'Deuda',
-          monto_recibido: this.montoRecibido,
-          deuda: this.estadoPago === 'Total' ? false : true,
-          deuda_monto: this.estadoPago === 'Total' ? 0 : this.montoDeuda,
+          const data = {
+            estado: this.estadoPago === 'Total' ? 'Completado' : 'Deuda',
+            monto_recibido: this.montoRecibido,
+            deuda: this.estadoPago === 'Total' ? false : true,
+            deuda_monto: this.estadoPago === 'Total' ? 0 : this.montoDeuda,
+          }
+
+          this.alertService.loading();
+
+          this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, data).subscribe({
+            next: () => {
+              this.estadoPago = 'Total';
+              this.montoRecibido = null;
+              this.montoDeuda = null;
+              this.listarPedidos();
+            },
+            error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+
         }
-
-        this.alertService.loading();
-
-        this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, data).subscribe({
-          next: () => {
-            this.estadoPago = 'Total';
-            this.montoRecibido = null;
-            this.montoDeuda = null;
-            this.listarPedidos();
-          },
-          error: ({ error }) => this.alertService.errorApi(error.message)
-        })
-
-      }
-    });
+      });
 
   }
 
@@ -410,7 +437,7 @@ export class PedidosComponent implements OnInit {
     this.ventasMayoristasService.generarDetallesPDF(pedido._id).subscribe({
       next: () => {
         this.alertService.close();
-        window.open(`${base_url}/pdf/detalles_pedido.pdf`,'_blank');
+        window.open(`${base_url}/pdf/detalles_pedido.pdf`, '_blank');
       },
       error: ({ error }) => this.alertService.errorApi(error.message)
     })
@@ -428,8 +455,8 @@ export class PedidosComponent implements OnInit {
     this.ventasMayoristasProductosService.generarPDF().subscribe({
       next: () => {
         this.alertService.close();
-        window.open(`${base_url}/pdf/productos_pendientes.pdf`,'_blank');
-      }, error: ({error}) => this.alertService.errorApi(error.message)
+        window.open(`${base_url}/pdf/productos_pendientes.pdf`, '_blank');
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
   }
 
@@ -446,7 +473,7 @@ export class PedidosComponent implements OnInit {
   }
 
   // Filtrar por Parametro
-  filtrarParametro(parametro: string): void{
+  filtrarParametro(parametro: string): void {
     this.paginaActual = 1;
     this.filtro.parametro = parametro;
   }
@@ -454,98 +481,98 @@ export class PedidosComponent implements OnInit {
   // Eliminar producto
   eliminarProducto(): void {
     this.alertService.question({ msg: 'Eliminando producto', buttonText: 'Eliminar', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {
-      if (isConfirmed) {
-        this.alertService.loading();
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
 
-        // Se elimina el producto
-        this.ventasMayoristasProductosService.eliminarProducto(this.productoSeleccionado._id).subscribe({
-          next: ({producto}) => {
-            const nuevoPrecioPedido = this.pedidoSeleccionado.precio_total - this.productoSeleccionado.precio;
-            this.productos = this.productos.filter( elemento => elemento._id !== producto._id );
+          // Se elimina el producto
+          this.ventasMayoristasProductosService.eliminarProducto(this.productoSeleccionado._id).subscribe({
+            next: ({ producto }) => {
+              const nuevoPrecioPedido = this.pedidoSeleccionado.precio_total - this.productoSeleccionado.precio;
+              this.productos = this.productos.filter(elemento => elemento._id !== producto._id);
 
-            // Se actualiza el pedido
-            this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id,{
-              precio_total: nuevoPrecioPedido,
-              activo: true
-            }).subscribe({
-              next: () => {
-                this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
-                this.listarPedidos();
-              }, error: ({error}) => {
-                this.alertService.errorApi(error.message);
-              }
-            })
+              // Se actualiza el pedido
+              this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
+                precio_total: nuevoPrecioPedido,
+                activo: true
+              }).subscribe({
+                next: () => {
+                  this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
+                  this.listarPedidos();
+                }, error: ({ error }) => {
+                  this.alertService.errorApi(error.message);
+                }
+              })
 
-          },error: ({error}) => this.alertService.errorApi(error.message)
-        })
-      }
-    });
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
   }
 
   // Actualizar producto
   actualizarProducto(): void {
 
-    if(!this.nuevaCantidad || this.nuevaCantidad < 0){
+    if (!this.nuevaCantidad || this.nuevaCantidad < 0) {
       this.alertService.info('Debe colocar una cantidad valida');
       return;
     }
 
     this.alertService.question({ msg: 'Actualizar producto', buttonText: 'Actualizar', cancelarText: 'Regresar' })
-    .then(({isConfirmed}) => {
-      if (isConfirmed) {
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
 
-        this.alertService.loading();
+          this.alertService.loading();
 
-        const nuevoPrecio = this.nuevaCantidad * this.productoSeleccionado.precio_unitario;
+          const nuevoPrecio = this.nuevaCantidad * this.productoSeleccionado.precio_unitario;
 
-        // Se actualizar el producto
-        this.ventasMayoristasProductosService.actualizarProducto(this.productoSeleccionado._id, {
-          precio: nuevoPrecio,
-          cantidad: this.nuevaCantidad
-        }).subscribe({
-          next: () => {
+          // Se actualizar el producto
+          this.ventasMayoristasProductosService.actualizarProducto(this.productoSeleccionado._id, {
+            precio: nuevoPrecio,
+            cantidad: this.nuevaCantidad
+          }).subscribe({
+            next: () => {
 
-            const nuevoPrecioPedido = this.pedidoSeleccionado.precio_total - this.productoSeleccionado.precio + nuevoPrecio;
+              const nuevoPrecioPedido = this.pedidoSeleccionado.precio_total - this.productoSeleccionado.precio + nuevoPrecio;
 
-            // Se actualizar el pedido
-            this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id,{
-              precio_total: nuevoPrecioPedido,
-              activo: true
-            }).subscribe({
+              // Se actualizar el pedido
+              this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
+                precio_total: nuevoPrecioPedido,
+                activo: true
+              }).subscribe({
 
-              next: () => {
+                next: () => {
 
-                this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
+                  this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
 
-                // Se actualizar el producto en la interfaz
-                this.productos.map( elemento => {
-                  if(elemento._id === this.productoSeleccionado._id){
-                    elemento.precio = nuevoPrecio,
-                    elemento.cantidad = this.nuevaCantidad
-                  }
-                })
+                  // Se actualizar el producto en la interfaz
+                  this.productos.map(elemento => {
+                    if (elemento._id === this.productoSeleccionado._id) {
+                      elemento.precio = nuevoPrecio,
+                        elemento.cantidad = this.nuevaCantidad
+                    }
+                  })
 
-                this.listarPedidos();
+                  this.listarPedidos();
 
-              }, error: ({error}) => this.alertService.errorApi(error.message)
-            })
+                }, error: ({ error }) => this.alertService.errorApi(error.message)
+              })
 
-          }, error: ({error}) => this.alertService.errorApi(error.message)
-        })
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
 
-      }
-    });
+        }
+      });
   }
 
- // Listado de productos
+  // Listado de productos
   listarProductosNuevos(): void {
     this.productosService.listarProductos().subscribe({
-      next: ({productos}) => {
-        this.productos = productos.filter( producto => producto.precio_mayorista );
+      next: ({ productos }) => {
+        this.productos = productos.filter(producto => producto.precio_mayorista);
         this.alertService.close();
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     });
@@ -555,8 +582,8 @@ export class PedidosComponent implements OnInit {
   abrirModalNuevoProducto(): void {
     this.alertService.loading();
     this.productosService.listarProductos().subscribe({
-      next: ({productos}) => {
-        this.listaProductos = productos.filter( producto => producto.precio_mayorista );
+      next: ({ productos }) => {
+        this.listaProductos = productos.filter(producto => producto.precio_mayorista);
         this.nuevoProductoSeleccionado = null;
         this.nuevoProductoCantidad = null;
         this.showModal = false;
@@ -564,7 +591,7 @@ export class PedidosComponent implements OnInit {
         this.showModalNuevoProducto = true;
         this.alertService.close();
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     });
@@ -573,7 +600,7 @@ export class PedidosComponent implements OnInit {
   // Agregar producto
   agregarProducto(): void {
 
-    if(!this.nuevoProductoCantidad || this.nuevoProductoCantidad < 0){
+    if (!this.nuevoProductoCantidad || this.nuevoProductoCantidad < 0) {
       this.alertService.info("Debe colocar una cantidad válida");
       return;
     }
@@ -581,20 +608,20 @@ export class PedidosComponent implements OnInit {
     let repetido = false;
 
     // Verificacion: Producto repetido
-    this.productos.find( elemento => {
-      if(elemento.producto._id === this.nuevoProductoSeleccionado._id){
+    this.productos.find(elemento => {
+      if (elemento.producto._id === this.nuevoProductoSeleccionado._id) {
         repetido = true;
       }
     });
 
     // Producto repetido
-    if(repetido){
+    if (repetido) {
       this.alertService.info('El producto ya se encuentra cargado');
       return;
     }
 
     // Se agrega si el producto no esta cargado en el carrito
-    if(!repetido){
+    if (!repetido) {
 
       this.alertService.loading();
 
@@ -613,23 +640,23 @@ export class PedidosComponent implements OnInit {
         creatorUser: this.pedidoSeleccionado.mayorista,
         updatorUser: this.pedidoSeleccionado.mayorista
       }
-  
+
       // Agregando producto
       this.ventasMayoristasProductosService.nuevoProducto(dataProducto).subscribe({
-        next: ({producto}) => {
+        next: ({ producto }) => {
 
           this.productos.unshift(producto);
 
           // Calculo de precio
           let precioTMP = 0;
-          this.productos.map( elemento => {
+          this.productos.map(elemento => {
             precioTMP += elemento.precio;
           })
 
           this.pedidoSeleccionado.precio_total = precioTMP;
 
           // Se actualizar el pedido
-          this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id,{
+          this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
             precio_total: this.pedidoSeleccionado.precio_total,
             activo: true
           }).subscribe({
@@ -637,12 +664,12 @@ export class PedidosComponent implements OnInit {
               this.showModalNuevoProducto = false;
               this.showModal = true;
               this.listarPedidos();
-            }, error: ({error}) => this.alertService.errorApi(error.message)
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
-        }, error: ({error}) => this.alertService.errorApi(error.message)
+        }, error: ({ error }) => this.alertService.errorApi(error.message)
       })
-      
-    } 
+
+    }
 
     this.filtro.parametro = '';
 
@@ -656,43 +683,48 @@ export class PedidosComponent implements OnInit {
 
   // Generar listado de preparacion
   generarListadoPreparacion(): void {
-    
+
     this.alertService.loading();
-  
-    if(this.repartidorSeleccionado === ''){
+
+    if (this.repartidorSeleccionado === '') {
       this.ventasMayoristasProductosService.generarPreparacionPedidosPDF().subscribe({
         next: () => {
-          window.open(`${base_url}/pdf/productos_preparacion_pedidos.pdf`,'_blank');
+          window.open(`${base_url}/pdf/productos_preparacion_pedidos.pdf`, '_blank');
           this.alertService.close();
-        }, error: ({error}) => this.alertService.errorApi(error.message)
+        }, error: ({ error }) => this.alertService.errorApi(error.message)
       })
-    }else{
+    } else {
       this.ventasMayoristasProductosService.generarPreparacionPedidosPorRepartidorPDF(this.repartidorSeleccionado).subscribe({
         next: () => {
-          window.open(`${base_url}/pdf/productos_preparacion_pedidos_por_repartidor.pdf`,'_blank');
+          window.open(`${base_url}/pdf/productos_preparacion_pedidos_por_repartidor.pdf`, '_blank');
           this.alertService.close();
-        }, error: ({error}) => this.alertService.errorApi(error.message)
+        }, error: ({ error }) => this.alertService.errorApi(error.message)
       })
     }
 
   }
 
   // Abrir preparacion pedidos
-  abrirPreparacionPedidos(): void{
+  abrirPreparacionPedidos(): void {
     this.alertService.loading();
     this.repartidorSeleccionado = '';
     this.usuariosService.listarUsuarios().subscribe({
-      next: ({usuarios}) => {
-        this.repartidoresLista = usuarios.filter( usuario => usuario.role === 'DELIVERY_ROLE' );
+      next: ({ usuarios }) => {
+        this.repartidoresLista = usuarios.filter(usuario => usuario.role === 'DELIVERY_ROLE');
         this.showModalListadoPreparacion = true;
         this.alertService.close();
-      }, error: ({error}) => this.alertService.errorApi(error.message)   
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
 
   }
 
+  // Calcular monto deuda
+  calcularDeuda(): void {
+    this.montoDeuda = this.pedidoSeleccionado.precio_total - this.montoRecibido;
+  }
+
   // Ordenar por columna
-  ordenarPorColumna(columna: string){
+  ordenarPorColumna(columna: string) {
     this.ordenar.columna = columna;
     this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
     this.alertService.loading();

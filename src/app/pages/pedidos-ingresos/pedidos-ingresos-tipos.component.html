@@ -7,7 +7,7 @@
       </div>
       <div class="p-4 text-sm">
           <p class="font-semibold"> <span class="text-red-500"> * </span> Descripción </p>
-          <input [(ngModel)]="descripcion" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. Combustible" type="text">
+          <input [(ngModel)]="descripcion" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. Sobrante" type="text">
           <div *ngIf="tipoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
             <div class="xl:w-1/2">
                 <p class="font-semibold text-sm"> Fecha de alta </p>
@@ -59,11 +59,11 @@
               <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
                   <div class="ml-2 text-white">
                       <h2 class="text-2xl leading-tight">
-                          Tipos de gastos
+                          Tipos de ingresos
                       </h2>
                       <p> Total de tipos: {{ tipos.length }} </p>
                   </div>
-                  <div *ngIf="permisos.all">
+                  <div>
                     <button title="Nuevo tipo" (click)="abrirModal('crear')" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -151,7 +151,7 @@
                               </tr>
                           </thead>
                           <tbody *ngIf="tipos">
-                              <tr class="animate__animated animate__fadeIn" *ngFor="let tipo of tipos | filtroMayoristasGastosTipos:filtro.parametro:filtro.activo">
+                              <tr class="animate__animated animate__fadeIn" *ngFor="let tipo of tipos | filtroMayoristasIngresosTipos:filtro.parametro:filtro.activo">
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
                                           {{ tipo.descripcion }}
@@ -186,4 +186,5 @@
       </div>
     </app-tarjeta-lista>
 </div>
+
 

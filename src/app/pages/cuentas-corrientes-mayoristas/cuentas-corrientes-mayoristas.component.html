@@ -1,48 +1,64 @@
-<!-- Modal: Crear / Editar tipo -->
-<app-modal [showModal]="showModalTipo">
-  <div (keyup.enter)="estadoFormulario === 'crear' ? nuevoTipo() : actualizarTipo()">
+<!-- Modal: Crear / Editar - Cuenta corriente -->
+<app-modal [showModal]="showModalCuenta">
+  <div (keyup.enter)="estadoFormulario === 'crear' ? nuevaCuentaCorriente() : actualizarCuentaCorriente()">
+      
       <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
-          <h1 class=" text-white px-2 py-1 rounded-t text-lg"> {{ estadoFormulario == 'crear' ? 'Creando tipo' : 'Editando tipo' }} </h1>
-          <svg (click)="showModalTipo = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <h1 class=" text-white px-2 py-1 rounded-t text-lg"> {{ estadoFormulario == 'crear' ? 'Creando cuenta' : 'Editando cuenta' }} </h1>
+          <svg (click)="showModalCuenta = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </div>
+      
       <div class="p-4 text-sm">
-          <p class="font-semibold"> <span class="text-red-500"> * </span> Descripción </p>
-          <input [(ngModel)]="descripcion" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. Combustible" type="text">
-          <div *ngIf="tipoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+          
+          <div class="flex items-center">
+            <div class="w-1/2">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Nombre / Razón social </p>
+              <input [(ngModel)]="descripcion" [disabled]="true" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. Equinoccio Technology" type="text">
+            </div>
+            <div class="w-1/2 ml-4">
+              <p class="font-semibold"> <span class="text-red-500"> * </span> Saldo </p>
+              <input [(ngModel)]="saldo" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 2000" type="text">
+            </div>
+          </div>
+          
+          
+          <div *ngIf="cuentaSeleccionada && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
             <div class="xl:w-1/2">
                 <p class="font-semibold text-sm"> Fecha de alta </p>
                 <div class="border text-sm mt-2 border-gray-300 rounded p-2 bg-gray-100">
-                    {{ tipoSeleccionado.createdAt | fecha }}
+                    {{ cuentaSeleccionada.createdAt | fecha }}
                 </div>
             </div>
             <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
                 <p class="font-semibold text-sm"> Usuario creador </p>
                 <div class="border text-sm capitalize mt-2 border-gray-300 rounded p-2 bg-gray-100">
-                    {{ tipoSeleccionado.creatorUser.apellido.toLowerCase() }} {{ tipoSeleccionado.creatorUser.nombre.toLowerCase() }}
+                    {{ cuentaSeleccionada.creatorUser.apellido.toLowerCase() }} {{ cuentaSeleccionada.creatorUser.nombre.toLowerCase() }}
                 </div>
             </div>
         </div> 
-        <div *ngIf="tipoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
+        
+        <div *ngIf="cuentaSeleccionada && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
             <div class="xl:w-1/2">
                 <p class="font-semibold text-sm"> Ultima actualización </p>
                 <div class="border text-sm mt-2 border-gray-300 rounded p-2 bg-gray-100">
-                    {{ tipoSeleccionado.updatedAt | fecha }}
+                    {{ cuentaSeleccionada.updatedAt | fecha }}
                 </div>
             </div>
             <div class="xl:ml-4 xl:w-1/2 mt-4 xl:mt-0">
                 <p class="font-semibold text-sm"> Usuario ultima actualización </p>
                 <div class="border text-sm capitalize mt-2 border-gray-300 rounded p-2 bg-gray-100">
-                    {{ tipoSeleccionado.updatorUser.apellido.toLowerCase() }} {{ tipoSeleccionado.updatorUser.nombre.toLowerCase() }}
+                    {{ cuentaSeleccionada.updatorUser.apellido.toLowerCase() }} {{ cuentaSeleccionada.updatorUser.nombre.toLowerCase() }}
                 </div>
             </div>
         </div>   
-          <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoTipo()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear tipo </button>
-          <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarTipo()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Actualizar tipo </button>
+
+        <button *ngIf="estadoFormulario == 'crear'" (click)="nuevaCuentaCorriente()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear cuenta </button>
+        <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarCuentaCorriente()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Actualizar cuenta </button>
+      
       </div>
   </div>
 </app-modal>
 
-<!-- Listado de tipos -->
+<!-- Listado de cuentas -->
 <div class="md:max-w-5xl mx-auto">
 
     <!-- No se tiene permisos para acceder a la seccion -->
@@ -59,22 +75,22 @@
               <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
                   <div class="ml-2 text-white">
                       <h2 class="text-2xl leading-tight">
-                          Tipos de gastos
+                          Cuentas corrientes
                       </h2>
-                      <p> Total de tipos: {{ tipos.length }} </p>
+                      <p> Total de cuentas: {{ cuentasCorrientes.length }} </p>
                   </div>
                   <div *ngIf="permisos.all">
-                    <button title="Nuevo tipo" (click)="abrirModal('crear')" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
+                    <!-- <button title="Nueva cuenta" (click)="abrirModal('crear')" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
-                    </button>
+                    </button> -->
                   </div>
               </div>
               <div class="md:flex md:items-center md:justify-between px-4 py-2">
                   <div class="my-2 flex sm:flex-row flex-col">
                       <div class="flex flex-row mb-1 sm:mb-0">
-                          <div class="relative">
+                          <!-- <div class="relative">
                               <select #txtActivo (change)="filtrarActivos(txtActivo.value)" class="h-full text-sm rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
                                   <option value='true'> Activos </option>
                                   <option value='false'> Inactivos </option>
@@ -85,7 +101,7 @@
                                       <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                                   </svg>
                               </div>
-                          </div>
+                          </div> -->
                       </div>
                       <div class="block relative">
                           <span class="h-full absolute inset-y-0 left-0 flex items-center pl-2">
@@ -95,7 +111,7 @@
                                   </path>
                               </svg>
                           </span>
-                          <input #txtParametro placeholder="Buscar" (keyup)="filtrarParametro(txtParametro.value)" class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                          <input #txtParametro placeholder="Nombre / Razón social" (keyup)="filtrarParametro(txtParametro.value)" class="appearance-none rounded-r rounded-l border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
                           />
                       </div>
                       <!-- <select (change)="paginaActual = 1" class="bg-white text-sm focus:outline-none w-max px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
@@ -112,19 +128,19 @@
                           <thead>
                               <tr class="border">
                                   <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
-                                      <div (click)="ordenarPorColumna('descripcion')" class="cursor-pointer flex items-center focus:outline-none">
-                                          <span> Descripción </span>
+                                      <div (click)="ordenarPorColumna('mayorista.descripcion')" class="cursor-pointer flex items-center focus:outline-none">
+                                          <span> Nombre / Razón social </span>
                                           <span class="ml-2 text-gray-600">    
-                                              <svg *ngIf="ordenar.columna == 'descripcion' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
-                                              <svg *ngIf="ordenar.columna == 'descripcion' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                              <svg *ngIf="ordenar.columna != 'descripcion'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                              <svg *ngIf="ordenar.columna == 'mayorista.descripcion' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                              <svg *ngIf="ordenar.columna == 'mayorista.descripcion' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                              <svg *ngIf="ordenar.columna != 'mayorista.descripcion'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                           </span>
                                       </div>
                                   </th>
                                   <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
                                       <div (click)="ordenarPorColumna('createdAt')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
                                           <span>
-                                              Fecha de creación                                                
+                                              Fecha de alta                                                
                                           </span>
                                           <span class="ml-2">
                                               <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
@@ -133,7 +149,19 @@
                                           </span>
                                       </div>
                                   </th>
-                                  <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                                  <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('saldo')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                        <span>
+                                            Saldo                                                
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'saldo' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'saldo' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'saldo'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                  </th>
+                                  <!-- <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
                                       <div (click)="ordenarPorColumna('activo')" class="cursor-pointer flex items-center focus:outline-none">
                                           <span>
                                               Estado                                               
@@ -144,30 +172,35 @@
                                               <svg *ngIf="ordenar.columna != 'activo'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                           </span>
                                       </div>
-                                  </th>
+                                  </th> -->
                                   <th *ngIf="permisos.all" class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
                                       Acción
                                   </th>
                               </tr>
                           </thead>
-                          <tbody *ngIf="tipos">
-                              <tr class="animate__animated animate__fadeIn" *ngFor="let tipo of tipos | filtroMayoristasGastosTipos:filtro.parametro:filtro.activo">
+                          <tbody *ngIf="cuentasCorrientes">
+                              <tr [ngClass]="{ 'bg-red-50' : cuenta.saldo < 0 }" class="animate__animated animate__fadeIn" *ngFor="let cuenta of cuentasCorrientes | filtroCuentasCorrientesMayoristas:filtro.parametro:filtro.activo">
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
-                                          {{ tipo.descripcion }}
+                                          {{ cuenta.mayorista.descripcion }}
                                       </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 whitespace-no-wrap">
-                                          {{ tipo.createdAt | fecha }}
+                                          {{ cuenta.createdAt | fecha }}
                                       </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                      <app-pastilla-estado [activo]=tipo.activo (click)="actualizarEstado(tipo)"></app-pastilla-estado>
+                                    <p [ngClass]="{'text-red-700' : cuenta.saldo < 0}" class="text-gray-900 whitespace-no-wrap">
+                                        ${{ cuenta.saldo | moneda }}
+                                    </p>
                                   </td>
-                                  <td *ngIf="permisos.all" class="px-5 py-2 border-b border-gray-200 text-xs text-center">
+                                  <!-- <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                      <app-pastilla-estado [activo]=cuenta.activo (click)="actualizarEstado(cuenta)"></app-pastilla-estado>
+                                  </td> -->
+                                  <td *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="px-5 py-2 border-b border-gray-200 text-xs text-center">
                                         <span class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
-                                            <app-boton-tabla (click)="abrirModal('editar', tipo)" title="Editar tipo">
+                                            <app-boton-tabla (click)="abrirModal('editar', cuenta)" title="Editar cuenta">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                 </svg>
