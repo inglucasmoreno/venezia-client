@@ -58,7 +58,7 @@ public ordenar = {
 }
 
 constructor(private mayoristasService: MayoristasService,
-            private authService: AuthService,
+            public authService: AuthService,
             private alertService: AlertService,
             private dataService: DataService) { }
 

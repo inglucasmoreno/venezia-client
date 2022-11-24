@@ -1,0 +1,106 @@
+
+<!-- MODAL - COBRO PARCIAL -->
+<app-modal-small [showModal]="showModalParcial">
+  <div class="flex items-center justify-between bg-primary-900 p-2 rounded-t">
+    <h1 class="text-white"> Cobro parcial </h1>
+    <button (click)="showModalParcial = false" class="text-white focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>            
+    </button>
+  </div> 
+  <div class="p-2 text-sm">
+    <p class="text-red-700"> <span class="font-semibold"> Total deuda: </span> ${{ pedidoSeleccionado?.deuda_monto | moneda }} </p>  
+    <div class="mt-2">
+      <p class="font-semibold"> Monto a cobrar </p>
+      <input (keyup.enter)="cobroParcial()" [(ngModel)]="montoParcial" type="number" placeholder="Ej. 5000" class="border mt-1 focus:outline-none border-gray-400 rounded p-2 w-full">
+    </div>
+    <button (click)="cobroParcial()" class="bg-gray-100 hover:text-secondaryColor focus:outline-none text-sm font-semibold p-2 rounded w-full border border-gray-400 mt-4"> 
+      Cobrar parcialmente 
+    </button>
+  </div> 
+</app-modal-small>
+
+<!-- PAGINA PRINCIPAL -->
+<div>
+
+  <!-- ETAPA - SELECCION DE MAYORISTA -->
+  <div *ngIf="!mayoristaSeleccionado" class="flex items-center justify-center">
+    <div class="mt-10 text-center">
+      <img class="w-80 text-center" src="assets/img/cobros-mayoristas.svg">
+      <h1 class="text-xl text-center mt-5"> Creando nuevo cobro </h1>
+      <select [(ngModel)]="mayorista" class="border w-full focus:outline-none text-sm p-2 mt-2 border-gray-400 rounded">
+        <option value=""> Seleccionar un mayorista </option>
+        <option [value]="mayorista._id" *ngFor="let mayorista of mayoristas"> {{ mayorista.descripcion }} </option>
+      </select>
+      <button (click)="seleccionarMayorista()" class="p-2 bg-secondaryColor focus:outline-none text-white rounded shadow text-sm mt-4"> Comenzar </button>
+    </div>
+  </div>
+
+  <!-- ETAPA - GENERACION DE PAGO -->
+  <div *ngIf="mayoristaSeleccionado" class="w-11/12 md:w-1/2 mt-10 mx-auto">
+    <div>
+      <div class="bg-primary-800 p-2 rounded flex items-center justify-between">
+        <div class="flex items-center">
+          <app-boton-regresar (click)="regresarMayoristas()"></app-boton-regresar>
+          <h2 class="text-white text-xl ml-1"> Listado de deudas </h2>
+        </div>
+        <button (click)="completarCobro()" title="Completar cobro" class="bg-white focus:outline-none hover:text-secondaryColor text-primary-800 p-2 rounded">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>        
+        </button>
+      </div>
+      <div *ngIf="pedidos.length > 0">
+        <div class="p-2 mt-1 md:mt-2 md:flex md:items-center md:justify-between text-sm">
+          <div>
+            <h2> <span class="font-semibold"> Mayoristas: </span> <span> {{ mayoristaSeleccionado?.descripcion }} </span> </h2>
+            <h2> <span class="font-semibold"> Deuda total: </span> <span> ${{ datosDeuda?.totalDeuda | moneda }} </span> </h2>
+          </div>
+          <h2 class="mt-1"> 
+            <span class="font-semibold"> Total a cobrar: </span> <span> ${{ totalACobrar | moneda }} </span> 
+          </h2>
+        </div>
+        <div class="mt-2 text-sm">
+          <div class="border border-gray-400 shadow w-full" *ngFor="let pedido of datosDeuda?.ventas">
+            <div>
+              <div [ngClass]="{'bg-green-700':pedido.tipo_cobro === 'Total', 'bg-blue-700':pedido.tipo_cobro === 'Parcial', 'bg-gray-100 text-primary-800':pedido.tipo_cobro === 'Nada'}" class="flex items-center p-2 text-white justify-between border-b border-gray-400">
+                <p> <span class="font-semibold"> Nro de pedido: </span> <span> {{ pedido.numero }} </span> </p>
+                <p> <span class="font-semibold"> Fecha: </span> <span> {{ pedido.createdAt | fecha }} </span> </p>
+              </div>
+              <div class="p-2 flex items-center justify-between">
+                <div>
+                  <p> <span class="font-semibold"> PRECIO TOTAL - </span> ${{ pedido.precio_total | moneda }} </p>
+                  <p class="text-red-700 mt-1"> <span class="font-semibold"> DEUDA DE PEDIDO - </span> ${{ pedido.deuda_monto }} </p>
+                  <p *ngIf="pedido.tipo_cobro === 'Parcial'" class="text-white w-max bg-blue-700 py-1 px-2 rounded mt-1"> <span> PAGO PARCIAL - </span> ${{ pedido.monto_parcial }} </p>
+                </div>
+                <div class="flex items-center">
+                  <button *ngIf="pedido.tipo_cobro === 'Nada'" (click)="abrirCobroParcial(pedido)" title="Cobro parcial" class="border focus:outline-none border-gray-400 shadow p-2 rounded hover:text-blue-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>             
+                  </button>
+                  <button *ngIf="pedido.tipo_cobro === 'Nada'" (click)="seleccionarPedido(pedido, 'Total')" title="Cobro completo" class="border focus:outline-none ml-1 border-gray-400 shadow p-2 rounded hover:text-green-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>                
+                  </button>
+                  <button *ngIf="pedido.tipo_cobro !== 'Nada'" (click)="seleccionarPedido(pedido, 'Nada')" title="No cobrar" class="border focus:outline-none ml-1 border-gray-400 shadow p-2 rounded hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>               
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="pedidos.length === 0">
+        <p class="mt-4 text-2xl text-center p-2 bg-gray-100 border border-gray-300"> Este mayorista se encuentra al día! </p>
+      </div>
+    </div>
+  </div>
+
+
+</div>

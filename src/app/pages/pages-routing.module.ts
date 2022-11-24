@@ -33,6 +33,8 @@ import { CajasMayoristasComponent } from './cajas-mayoristas/cajas-mayoristas.co
 import { PedidosIngresosTiposComponent } from './pedidos-ingresos/pedidos-ingresos-tipos.component';
 import { PedidosIngresosComponent } from './pedidos-ingresos/pedidos-ingresos.component';
 import { CuentasCorrientesMayoristasComponent } from './cuentas-corrientes-mayoristas/cuentas-corrientes-mayoristas.component';
+import { CobrosMayoristasComponent } from './cobros-mayoristas/cobros-mayoristas.component';
+import { NuevoCobroMayoristaComponent } from './cobros-mayoristas/nuevo-cobro-mayorista.component';
 
 const routes: Routes = [
     {
@@ -72,6 +74,8 @@ const routes: Routes = [
             { path: 'repartidores', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: RepartidoresComponent },
             { path: 'mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: MayoristasComponent },
             { path: 'cuentas-corrientes-mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: CuentasCorrientesMayoristasComponent },
+            { path: 'cobros-mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: CobrosMayoristasComponent },
+            { path: 'nuevo-cobro-mayorista', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoCobroMayoristaComponent },
             { path: 'pedidos', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosComponent },
             { path: 'nuevo-pedido', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoPedidoComponent },
             { path: 'pedidos-reportes', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosReportesComponent },

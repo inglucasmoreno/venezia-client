@@ -43,6 +43,7 @@ export class VentasMayoristasService {
     fechaDesde: string = '',
     fechaHasta: string = '',  
   ): Observable<any> {
+    console.log(mayorista);
     return this.http.get(`${base_url}/ventas-mayoristas`, {
       params: {
         direccion: String(direccion),

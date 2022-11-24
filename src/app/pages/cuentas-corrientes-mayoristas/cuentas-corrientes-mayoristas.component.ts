@@ -52,7 +52,7 @@ export class CuentasCorrientesMayoristasComponent implements OnInit {
 
   ngOnInit(): void {
     gsap.from('.gsap-contenido', { y: 100, opacity: 0, duration: .2 });
-    this.dataService.ubicacionActual = 'Dashboard - Cuentas corrientes';
+    this.dataService.ubicacionActual = 'Dashboard - Cuentas corrientes mayoristas';
     this.permisos.all = this.permisosUsuarioLogin();
     this.alertService.loading();
     this.calculosIniciales();
@@ -108,6 +108,7 @@ export class CuentasCorrientesMayoristasComponent implements OnInit {
       this.ordenar.columna
     )
       .subscribe(({ cuentas_corrientes }) => {
+        console.log(cuentas_corrientes);
         this.cuentasCorrientes = cuentas_corrientes;
         this.showModalCuenta = false;
         this.alertService.close();
