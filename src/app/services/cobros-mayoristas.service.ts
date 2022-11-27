@@ -32,13 +32,31 @@ export class CobrosMayoristasService {
 
   // Listar cobros
   listarCobros(
-    direccion: number = 1,
-    columna: string = 'descripcion'  
+    direccion : number = 1, 
+    columna: string = 'apellido_nombre',
+    desde: number = 0,
+    registerpp: number = 10,
+    estado: string = '',
+    parametro: string = '',
+    repartidor: string = '',
+    mayorista: string = '',
+    fechaDesde: string = '',
+    fechaHasta: string = '',
+    tipo: string = ''
   ): Observable<any> {
     return this.http.get(`${base_url}/cobros-mayoristas`, {
       params: {
         direccion: String(direccion),
-        columna
+        columna,
+        desde,
+        registerpp,
+        estado,
+        parametro,
+        repartidor,
+        mayorista,
+        fechaDesde,
+        fechaHasta,
+        tipo  
       },
       headers: {
         'Authorization': localStorage.getItem('token')

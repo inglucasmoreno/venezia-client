@@ -53,8 +53,9 @@
 </app-modal>
 
 <div class="gsap-contenido">
+
     <!-- FILTROS -->
-    <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" class="mx-auto md:w-1/3 w-11/12">
+    <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" class="mx-auto max-w-xl w-11/12">
      
       <div (click)="showFiltros = !showFiltros" class="bg-primary-800 w-full cursor-pointer flex items-center justify-between p-2 rounded-t mt-10 text-center text-white">
         <h1> 

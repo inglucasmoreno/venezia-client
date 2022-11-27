@@ -1,3 +1,66 @@
+<!-- Modal: Detalles de pedido -->
+<app-modal [showModal]="showModalDetallesPedido">
+  <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+      <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Detalles de pedido - Nro {{ pedidoSeleccionado?.numero }} </h1>
+      <svg (click)="cerrarDetallesPedido()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </div>
+  <div class="p-2 text-sm">
+      <div class="flex items-center justify-between">
+          <p> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.createdAt ?  (pedidoSeleccionado?.createdAt | fecha) : null }} </p>
+          <p> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
+      </div>
+      <p class="mt-2"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
+      <p class="mt-2"> <span class="font-semibold"> Estado: </span> <span class="font-semibold" [ngClass]="{'text-green-700':pedidoSeleccionado?.estado === 'Completado', 'text-red-700':pedidoSeleccionado?.estado === 'Deuda'}"> {{ pedidoSeleccionado?.estado }} </span> </p>
+      <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="mt-2"> <span class="font-semibold"> Monto deuda: </span> <span class="text-red-700"> ${{ pedidoSeleccionado?.deuda_monto | moneda }} </span> </p>
+  </div>
+  <div class="px-2 text-sm pb-4">
+      <h1 class="text-lg font-semibold"> Listado de productos </h1>
+      <div class="max-h-52 overflow-y-auto">
+          <div class="p-2 border border-gray-400 mt-2" *ngFor="let producto of productos">
+              <p class="font-semibold text-lg"> {{producto.descripcion}} </p>
+              <p class="text-gray-500 text-xs"> ${{producto.precio_unitario | moneda}} x {{ producto.unidad_medida.descripcion }} </p>
+              <p class="text-gray-800"> Cantidad: {{producto.cantidad}} </p>
+              <p class="text-gray-800"> Precio: ${{producto.precio | moneda}} </p>
+          </div> 
+      </div>
+  </div>
+</app-modal>
+
+<!-- MODA - COMPLETAR COBRO -->
+<app-modal-small [showModal]="showModalCompletarCobro">
+  <div class="flex items-center justify-between bg-primary-900 p-2 rounded-t">
+    <h1 class="text-white"> Completando cobro </h1>
+    <button (click)="showModalCompletarCobro = false" class="text-white focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>            
+    </button>
+  </div> 
+  <div class="p-2 text-sm">
+    <div class="py-2">
+      <p *ngIf="totalACobrar > 0"> <span class="font-semibold"> Total a cobrar: </span> <span> ${{ totalACobrar | moneda }} </span> </p>
+      <p class="text-green-800 mt-1" *ngIf="totalACobrar > 0 && (inputMontoACobrar - totalACobrar) > 0"> <span class="font-semibold"> Anticipo: </span> <span> ${{ (inputMontoACobrar - totalACobrar) | moneda }} </span> </p>
+      <p *ngIf="totalACobrar === 0"> <span class="font-semibold"> Cobro en concepto de </span> <span class="rounded p-1 border border-green-300 font-semibold bg-green-50 text-green-700"> Anticipo </span> </p>
+
+    </div>
+    <div class="mt-1">
+      <div>
+        <p class="font-semibold"> Repartidor </p>
+        <select [(ngModel)]="repartidor" class="p-2 w-full border border-gray-400 focus:outline-none mt-1 rounded">
+          <option value=""> Pago en sucursal </option>
+          <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+        </select>
+      </div>
+      <div class="mt-2">
+        <p class="font-semibold">  Monto cobrado </p>
+        <input (keyup.enter)="completarCobro()" [(ngModel)]="inputMontoACobrar" type="number" placeholder="Ej. 3000" class="p-2 focus:outline-none border border-gray-400 mt-1 rounded w-full">
+      </div>
+    </div>
+    <button (click)="completarCobro()" class="border w-full focus:outline-none p-2 rounded mt-4 border-gray-400 bg-gray-100 font-semibold hover:text-secondaryColor">
+      Completar cobro
+    </button>
+  </div>
+</app-modal-small>
 
 <!-- MODAL - COBRO PARCIAL -->
 <app-modal-small [showModal]="showModalParcial">
@@ -22,7 +85,7 @@
 </app-modal-small>
 
 <!-- PAGINA PRINCIPAL -->
-<div>
+<div class="gsap-contenido">
 
   <!-- ETAPA - SELECCION DE MAYORISTA -->
   <div *ngIf="!mayoristaSeleccionado" class="flex items-center justify-center">
@@ -33,19 +96,26 @@
         <option value=""> Seleccionar un mayorista </option>
         <option [value]="mayorista._id" *ngFor="let mayorista of mayoristas"> {{ mayorista.descripcion }} </option>
       </select>
-      <button (click)="seleccionarMayorista()" class="p-2 bg-secondaryColor focus:outline-none text-white rounded shadow text-sm mt-4"> Comenzar </button>
+      <div class="flex justify-center text-center mt-2">
+        <button routerLink="/dashboard/cobros-mayoristas" title="Listado de cobros" class="w-max px-2 focus:outline-none font-semibold text-sm text-center py-1 mt-4 bg-gray-100 border border-gray-400 rounded hover:text-secondaryColor"> 
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+          </svg> 
+        </button>
+        <button (click)="seleccionarMayorista()" class="p-2 bg-secondaryColor ml-2 focus:outline-none text-white rounded shadow text-sm mt-4"> Comenzar </button>
+      </div>
     </div>
   </div>
 
   <!-- ETAPA - GENERACION DE PAGO -->
-  <div *ngIf="mayoristaSeleccionado" class="w-11/12 md:w-1/2 mt-10 mx-auto">
+  <div *ngIf="mayoristaSeleccionado" class="w-11/12 max-w-3xl mt-10 mx-auto">
     <div>
       <div class="bg-primary-800 p-2 rounded flex items-center justify-between">
         <div class="flex items-center">
           <app-boton-regresar (click)="regresarMayoristas()"></app-boton-regresar>
           <h2 class="text-white text-xl ml-1"> Listado de deudas </h2>
         </div>
-        <button (click)="completarCobro()" title="Completar cobro" class="bg-white focus:outline-none hover:text-secondaryColor text-primary-800 p-2 rounded">
+        <button (click)="abrirCompletarCobro()" title="Completar cobro" class="bg-white focus:outline-none hover:text-secondaryColor text-primary-800 p-2 rounded">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>        
@@ -62,7 +132,7 @@
           </h2>
         </div>
         <div class="mt-2 text-sm">
-          <div class="border border-gray-400 shadow w-full" *ngFor="let pedido of datosDeuda?.ventas">
+          <div class="border mb-4 border-gray-400 shadow w-full" *ngFor="let pedido of datosDeuda?.ventas">
             <div>
               <div [ngClass]="{'bg-green-700':pedido.tipo_cobro === 'Total', 'bg-blue-700':pedido.tipo_cobro === 'Parcial', 'bg-gray-100 text-primary-800':pedido.tipo_cobro === 'Nada'}" class="flex items-center p-2 text-white justify-between border-b border-gray-400">
                 <p> <span class="font-semibold"> Nro de pedido: </span> <span> {{ pedido.numero }} </span> </p>
@@ -70,11 +140,16 @@
               </div>
               <div class="p-2 flex items-center justify-between">
                 <div>
-                  <p> <span class="font-semibold"> PRECIO TOTAL - </span> ${{ pedido.precio_total | moneda }} </p>
-                  <p class="text-red-700 mt-1"> <span class="font-semibold"> DEUDA DE PEDIDO - </span> ${{ pedido.deuda_monto }} </p>
+                  <p> <span class="font-semibold"> Precio total: </span> ${{ pedido.precio_total | moneda }} </p>
+                  <p class="text-red-700 mt-1"> <span class="font-semibold"> Deuda: </span> ${{ pedido.deuda_monto }} </p>
                   <p *ngIf="pedido.tipo_cobro === 'Parcial'" class="text-white w-max bg-blue-700 py-1 px-2 rounded mt-1"> <span> PAGO PARCIAL - </span> ${{ pedido.monto_parcial }} </p>
                 </div>
                 <div class="flex items-center">
+                  <button (click)="abrirDetallesPedido(pedido)" title="Detalles de pedido" class="border mr-1 focus:outline-none border-gray-400 shadow p-2 rounded hover:text-secondaryColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>          
+                  </button>
                   <button *ngIf="pedido.tipo_cobro === 'Nada'" (click)="abrirCobroParcial(pedido)" title="Cobro parcial" class="border focus:outline-none border-gray-400 shadow p-2 rounded hover:text-blue-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -97,7 +172,7 @@
         </div>
       </div>
       <div *ngIf="pedidos.length === 0">
-        <p class="mt-4 text-2xl text-center p-2 bg-gray-100 border border-gray-300"> Este mayorista se encuentra al día! </p>
+        <p class="mt-4 md:text-xl text-center p-2 bg-gray-100 border border-gray-300"> <span class="font-semibold"> {{ mayoristaSeleccionado?.descripcion }} </span>  se encuentra al día! </p>
       </div>
     </div>
   </div>

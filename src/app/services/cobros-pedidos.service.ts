@@ -33,12 +33,14 @@ export class CobrosPedidosService {
   // Listar relaciones
   listarRelaciones(
     direccion: number = 1,
-    columna: string = 'descripcion'  
+    columna: string = 'descripcion',
+    cobro: string = ''  
   ): Observable<any> {
     return this.http.get(`${base_url}/cobros-pedidos`, {
       params: {
         direccion: String(direccion),
-        columna
+        columna,
+        cobro
       },
       headers: {
         'Authorization': localStorage.getItem('token')
