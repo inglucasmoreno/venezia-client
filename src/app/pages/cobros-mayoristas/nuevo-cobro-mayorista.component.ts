@@ -253,6 +253,7 @@ export class NuevoCobroMayoristaComponent implements OnInit {
             next: () => {
               this.carro_cobro = [];
               this.pedidoSeleccionado = null;
+              this.mayorista = '';
               this.mayoristaSeleccionado = null;
               this.totalACobrar = 0;
               this.showModalCompletarCobro = false;

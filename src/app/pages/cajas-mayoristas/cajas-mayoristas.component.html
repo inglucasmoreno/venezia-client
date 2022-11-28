@@ -19,6 +19,7 @@
               <p class="font-semibold"> <span class="text-red-500"> * </span> Repartidor </p>
               <select [(ngModel)]="dataGasto.repartidor" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
                 <option value=""> Seleccionar Repartidor </option>
+                <option value="000000000000000000000000"> SUCURSAL </option>
                 <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
               </select>
             </div>
@@ -56,6 +57,7 @@
               <p class="font-semibold"> <span class="text-red-500"> * </span> Repartidor </p>
               <select [(ngModel)]="dataIngreso.repartidor" class="w-full border mt-2 border-gray-400 rounded p-2 focus:outline-none">
                 <option value=""> Seleccionar Repartidor </option>
+                <option value="000000000000000000000000"> SUCURSAL </option>
                 <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
               </select>
             </div>
@@ -97,22 +99,30 @@
         </button>
       </div>
       <div class="p-2 text-sm">
-        <div class="p-2 bg-gray-100 flex items-center justify-between border border-gray-300 rounded">
+        <div class="p-2 bg-gray-100 flex items-center justify-between border border-gray-400 rounded">
           <p class="font-semibold"> DATOS DE CAJA </p>
           <input [(ngModel)]="fecha_caja" type="date" class="border border-gray-400 focus:outline-none rounded p-2 bg-white">
         </div>
-        <select [(ngModel)]="repartidor" (change)="cargarDatosCaja()" class="border border-gray-300 p-2 rounded focus:outline-none w-full mt-2">
+        <select [(ngModel)]="repartidor" (change)="cargarDatosCaja()" class="border border-gray-400 p-2 rounded focus:outline-none w-full mt-2">
           <option value=""> Todos los repartidores </option>
           <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
         </select>
         <div class="mt-2">
-          <div class="flex items-center justify-between border border-gray-300 p-2">
+          <div class="flex items-center justify-between border border-gray-400 p-2">
             <p class="font-semibold"> Cantidad de pedidos </p>
             <p class="font-semibold"> {{ caja.cantidad_pedidos }} </p>
           </div>
           <div class="flex items-center mt-2 justify-between p-2">
-            <p class="font-semibold"> Total en pedidos </p>
+            <p class="font-semibold"> Total en ventas </p>
             <p> ${{ caja.total_pedidos | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="font-semibold"> <span class="font-semibold text-green-600"> (+) </span> Total anticipos </p>
+            <p class="text-green-600"> ${{ caja.total_anticipos | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2">
+            <p class="font-semibold"> <span class="font-semibold text-red-500"> (-) </span> Total cuenta corriente </p>
+            <p class="text-red-500"> -${{ caja.total_cuentas_corrientes | moneda }} </p>
           </div>
           <div class="flex items-center justify-between p-2">
             <p class="font-semibold"> <span class="font-semibold text-red-500"> (-) </span> Total deudas </p>
@@ -134,14 +144,32 @@
             <p class="font-semibold"> Total recibido </p>
             <p class="font-semibold" [ngClass]="{'text-red-500':total_recibido < 0}"> ${{ total_recibido | moneda }} </p>
           </div>
+          <div *ngIf="repartidor.trim() === ''">
+            <div class="flex items-center mt-2 bg-gray-100 rounded border border-gray-400 justify-between p-2">
+              <p class="font-semibold"> Total recibido (Real) </p>
+              <input [(ngModel)]="montoReal" (keyup)="calculos()" type="number" placeholder="Ej. 3000" class="border focus:outline-none border-gray-400 bg-white rounded p-2">
+            </div>
+            <div class="flex items-center mt-2 bg-gray-100 rounded border border-gray-400 justify-between p-2">
+              <p class="font-semibold"> Monto Cintia </p>
+              <input [(ngModel)]="montoCintia" (keyup)="calculos()" type="number" placeholder="Ej. 4000" class="border focus:outline-none border-gray-400 bg-white rounded p-2">
+            </div>
+            <div class="flex items-center mt-2 bg-gray-100 rounded border border-gray-400 justify-between p-2">
+              <p class="font-semibold"> Diferencia en caja </p>
+              <p [ngClass]="{'text-red-500' : diferencia < 0}" class="font-semibold"> ${{ diferencia | moneda }} </p>
+            </div>
+            <div class="flex items-center mt-2 bg-gray-100 rounded border border-gray-400 justify-between p-2">
+              <p class="font-semibold"> Total en caja final </p>
+              <p class="font-semibold"> ${{ total_final | moneda }} </p>
+            </div>
+          </div>
         </div>
-        <button class="p-2 focus:outline-none border w-full hover:text-secondaryColor mt-2 rounded border-gray-300 bg-gray-100 font-semibold">
+        <button (click)="cerrarCaja()" *ngIf="repartidor.trim() === ''" class="p-2 focus:outline-none border w-full mt-4 rounded border-gray-300 text-white bg-secondaryColor font-semibold">
           Cerrar caja
         </button>
       </div>
     </div>
 
-    <div class="w-1/2 h-full">
+    <div class="md:w-1/2 w-full h-full">
       <div class="border mt-2 md:mt-0 border-gray-300 md:ml-4 w-full">
         
         <!-- Otros gastos -->
@@ -158,7 +186,7 @@
             <div class="p-2 text-sm">
               <h1 class="bg-red-100 p-1 font-semibold rounded border border-red-300 mb-2"> Listado de gastos </h1>
               <div (click)="eliminarGasto(gasto._id)" *ngFor="let gasto of gastos" class="flex hover:bg-red-100 cursor-pointer items-center text-xs justify-between py-2">
-                <p> <span class="font-semibold text-red-500"> (-) </span> {{ gasto.tipo_gasto.descripcion }} - <span class="font-semibold"> {{ gasto.repartidor.apellido }} {{ gasto.repartidor.nombre }} </span>  </p>
+                <p> <span class="font-semibold text-red-500"> (-) </span> {{ gasto.tipo_gasto.descripcion }} - <span class="font-semibold"> {{ gasto.repartidor.apellido }} {{ gasto.repartidor._id !== '000000000000000000000000' ? gasto.repartidor.nombre : null }} </span>  </p>
                 <p> ${{ gasto.monto | moneda }} </p>
               </div>
               <div class="flex items-center justify-between font-semibold border-t border-gray-400 mt-1 pt-2">
@@ -188,8 +216,12 @@
           <div class="p-2 text-sm">
             <h1 class="bg-green-100 p-1 font-semibold rounded border border-green-300 mb-2"> Listado de ingresos </h1>
             <div (click)="eliminarIngreso(ingreso._id)" *ngFor="let ingreso of ingresos" class="flex hover:bg-green-100 cursor-pointer items-center text-xs justify-between py-2">
-              <p> <span class="font-semibold text-green-500"> (+) </span> {{ ingreso.tipo_ingreso.descripcion }} - <span class="font-semibold"> {{ ingreso.repartidor.apellido }} {{ ingreso.repartidor.nombre }} </span>  </p>
+              <p> <span class="font-semibold text-green-500"> (+) </span> {{ ingreso.tipo_ingreso.descripcion }} - <span class="font-semibold"> {{ ingreso.repartidor.apellido }} {{ ingreso.repartidor._id !== '000000000000000000000000' ? ingreso.repartidor.nombre : null }} </span>  </p>
               <p> ${{ ingreso.monto | moneda }} </p>
+            </div>
+            <div *ngFor="let cobro of cobros" class="flex items-center text-xs justify-between py-2">
+              <p> <span class="font-semibold text-green-500"> (+) </span> COBRO NRO {{ cobro.nro }} - <span class="font-semibold"> {{ cobro.repartidor.apellido }} {{ cobro.repartidor._id !== '000000000000000000000000' ? cobro.repartidor.nombre : null }} </span> </p>
+              <p> ${{ cobro.monto | moneda }} </p>
             </div>
             <div class="flex items-center justify-between font-semibold border-t border-gray-400 mt-1 pt-2">
               <p> <span class="text-green-500"> (+) </span> Total de ingresos </p>

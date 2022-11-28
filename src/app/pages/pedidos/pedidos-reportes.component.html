@@ -22,7 +22,7 @@
         </span> 
         <span class="bg-gray-100 font-semibold text-xs p-1 rounded border ml-1 border-gray-300"> {{ pedidoSeleccionado?.repartidor.apellido }} {{ pedidoSeleccionado?.repartidor.nombre }} </span>  
     </p>
-      <p *ngIf="pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda'" class="p-2"> 
+    <p *ngIf="pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda'" class="p-1 ml-1 mt-2 border-l-8 border-green-200 text-green-800 w-max"> 
         <span class="font-semibold"> 
             Monto recibido: 
         </span>
@@ -30,19 +30,35 @@
             ${{ pedidoSeleccionado?.monto_recibido | moneda }} 
         </span>
       </p>
-      <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="p-2 text-red-700"> 
+      <p *ngIf="(pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda') && pedidoSeleccionado?.monto_anticipo > 0"class="p-1 ml-1 mt-2 border-l-8 border-primary-200 w-max"> 
         <span class="font-semibold"> 
-            Monto de deuda: 
+            A favor del cliente: 
+        </span>
+        <span>
+            ${{ pedidoSeleccionado?.monto_anticipo | moneda }} 
+        </span>
+      </p>
+      <p *ngIf="(pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda') && pedidoSeleccionado?.monto_cuenta_corriente > 0"class="p-1 ml-1 mt-2 border-l-8 border-blue-200 text-blue-900 w-max"> 
+        <span class="font-semibold"> 
+            Con cuenta corriente: 
+        </span>
+        <span>
+            ${{ pedidoSeleccionado?.monto_cuenta_corriente | moneda }} 
+        </span>
+      </p>
+      <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="p-1 mt-2 ml-1 border-l-8 border-red-200 text-red-700 w-max"> 
+        <span class="font-semibold"> 
+            Monto deuda: 
         </span>
         <span>
             ${{ pedidoSeleccionado?.deuda_monto | moneda }} 
         </span>
       </p>
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between mt-2">
           <p class="px-2 mt-1 font-semibold text-lg"> Listado de productos </p>
       </div>
       <div class="max-h-80 mt-2 overflow-y-auto">
-          <div *ngFor="let producto of productos" [ngClass]="{'bg-green-100 border-green-300': ((pedidoSeleccionado?.estado === 'Deuda' || pedidoSeleccionado?.estado === 'Completado') && producto.entregado), 'bg-red-100 border-red-300': ((pedidoSeleccionado?.estado === 'Deuda' || pedidoSeleccionado?.estado === 'Completado') && !producto.entregado)}" class="border shadow p-2 my-2 border-gray-300 mx-2">
+          <div *ngFor="let producto of productos" class="border shadow p-2 my-2 border-gray-400 mx-2">
               <p class="font-semibold"> {{ producto.descripcion }} </p>
               <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
               <p class="text-sm"> Cantidad: {{ producto.cantidad }} </p>

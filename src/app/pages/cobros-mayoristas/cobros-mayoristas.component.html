@@ -85,6 +85,10 @@
                         <p class="font-semibold"> Deuda total </p>
                         <p class="text-red-500"t> ${{ relacion.monto_deuda | moneda }} </p>
                     </div>
+                    <div *ngIf="relacion.monto_cuenta_corriente > 0" class="flex py-1 bg-blue-100 items-center mb-2 justify-between">
+                        <p class="font-semibold"> Cobrado desde cuenta corriente </p>
+                        <p class="font-semibold text-blue-700"> ${{ relacion.monto_cuenta_corriente | moneda }} </p>
+                    </div>
                     <div class="flex py-1 items-center justify-between">
                         <p class="font-semibold"> Total cobrado </p>
                         <p class="font-semibold text-green-700"> ${{ relacion.monto_cobrado | moneda }} </p>

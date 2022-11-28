@@ -182,7 +182,7 @@
                               </tr>
                           </thead>
                           <tbody *ngIf="cuentasCorrientes">
-                              <tr [ngClass]="{ 'bg-red-50' : cuenta.saldo < 0 }" class="animate__animated animate__fadeIn" *ngFor="let cuenta of cuentasCorrientes | filtroCuentasCorrientesMayoristas:filtro.parametro:filtro.activo">
+                              <tr [ngClass]="{ 'bg-red-50' : cuenta.saldo < 0, 'bg-green-50' : cuenta.saldo > 0 }" class="animate__animated animate__fadeIn" *ngFor="let cuenta of cuentasCorrientes | filtroCuentasCorrientesMayoristas:filtro.parametro:filtro.activo">
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
                                           {{ cuenta.mayorista.descripcion }}
@@ -194,7 +194,7 @@
                                       </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                    <p [ngClass]="{'text-red-700' : cuenta.saldo < 0}" class="text-gray-900 whitespace-no-wrap">
+                                    <p [ngClass]="{'text-red-700' : cuenta.saldo < 0, 'text-green-700' : cuenta.saldo > 0}" class="text-gray-900 whitespace-no-wrap">
                                         ${{ cuenta.saldo | moneda }}
                                     </p>
                                   </td>

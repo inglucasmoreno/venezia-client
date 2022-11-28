@@ -141,7 +141,7 @@
               <div class="p-2 flex items-center justify-between">
                 <div>
                   <p> <span class="font-semibold"> Precio total: </span> ${{ pedido.precio_total | moneda }} </p>
-                  <p class="text-red-700 mt-1"> <span class="font-semibold"> Deuda: </span> ${{ pedido.deuda_monto }} </p>
+                  <p class="text-red-700 mt-1"> <span class="font-semibold"> Deuda: </span> ${{ pedido.deuda_monto | moneda }} </p>
                   <p *ngIf="pedido.tipo_cobro === 'Parcial'" class="text-white w-max bg-blue-700 py-1 px-2 rounded mt-1"> <span> PAGO PARCIAL - </span> ${{ pedido.monto_parcial }} </p>
                 </div>
                 <div class="flex items-center">

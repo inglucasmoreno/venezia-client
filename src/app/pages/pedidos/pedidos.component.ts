@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
 import { MayoristasService } from 'src/app/services/mayoristas.service';
+import { CuentasCorrientesMayoristasService } from 'src/app/services/cuentas-corrientes-mayoristas.service';
 
 const base_url = environment.base_url;
 
@@ -19,8 +20,12 @@ const base_url = environment.base_url;
 })
 export class PedidosComponent implements OnInit {
 
+  // Flags
+  public flagCierreCompletar = false;
+
   // Etapa
   public etapa = 'pedidos';
+  public seccion = 'detalles';
 
   // Modal
   public showModal: boolean = false;
@@ -64,6 +69,10 @@ export class PedidosComponent implements OnInit {
   public nuevoProductoCantidad: any = null;
   public listaProductos: any[] = [];
 
+  // Cuenta corriente de mayorista
+  public cuenta_corriente: any;
+  public montoCuentaCorriente: number = 0;
+
   // Paginacion
   public totalItems: number;
   public desde: number = 0;
@@ -78,7 +87,8 @@ export class PedidosComponent implements OnInit {
     mayorista: '',
     repartidor: '',
     fechaDesde: '',
-    fechaHasta: ''
+    fechaHasta: '',
+    activo: ''
   }
 
   // Ordenar
@@ -93,12 +103,14 @@ export class PedidosComponent implements OnInit {
     public usuariosService: UsuariosService,
     private productosService: ProductosService,
     private ventasMayoristasProductosService: VentasMayoristasProductosService,
+    private cuentasCorrientesMayoristas: CuentasCorrientesMayoristasService,
     private dataService: DataService,
     private alertService: AlertService) { }
 
   ngOnInit(): void {
     this.repartidorLogin = this.authService.usuario.role === 'DELIVERY_ROLE' ? this.authService.usuario.userId : '';
     this.dataService.ubicacionActual = 'Dashboard - Pedidos';
+    this.filtro.activo = this.authService.usuario.role === 'DELIVERY_ROLE' ? '' : 'true';
     this.cargaInicial();
   }
 
@@ -130,6 +142,7 @@ export class PedidosComponent implements OnInit {
               this.filtro.mayorista,
               this.filtro.fechaDesde,
               this.filtro.fechaHasta,
+              this.filtro.activo
             ).subscribe({
               next: ({ ventas, totalItems, totalDeuda, totalIngresos, totalMonto }) => {
                 this.pedidos = ventas;
@@ -167,6 +180,7 @@ export class PedidosComponent implements OnInit {
       this.filtro.mayorista,
       this.filtro.fechaDesde,
       this.filtro.fechaHasta,
+      this.filtro.activo
     ).subscribe({
       next: ({ ventas, totalItems, totalDeuda, totalIngresos, totalMonto }) => {
         this.pedidos = ventas;
@@ -176,6 +190,10 @@ export class PedidosComponent implements OnInit {
         this.totalIngresos = totalIngresos;
         this.productoSeleccionado = null;
         this.pedidosPendientes = ventas.filter(pedido => pedido.activo);
+        if(this.flagCierreCompletar){
+          this.flagCierreCompletar = false;
+          this.showModalCompletar = false;
+        }
         this.productosParaElaboracion();
       },
       error: ({ error }) => {
@@ -187,6 +205,7 @@ export class PedidosComponent implements OnInit {
   // Seleccionar pedido
   seleccionarPedido(pedido: any): void {
     this.alertService.loading();
+    this.seccion = 'detalles';
     this.pedidoSeleccionado = pedido;
     this.ventasMayoristasProductosService.listarProductos(
       1,
@@ -264,7 +283,7 @@ export class PedidosComponent implements OnInit {
         });
 
         this.showModalEnvio = false;
-        this.showModalCompletar = false;
+        // this.showModalCompletar = false;
         this.showModalCompletarDeuda = false;
         this.alertService.close();
 
@@ -343,12 +362,24 @@ export class PedidosComponent implements OnInit {
 
   // Completar pedido
   abrirCompletarPedido(pedido: any): void {
+
+    this.seccion = 'completar';
     this.montoDeuda = 0;
     this.estadoPago = 'Total';
     this.pedidoSeleccionado = pedido;
-    this.montoRecibido = pedido.precio_total;
     this.alertService.loading();
-    this.listarProductos();
+    
+    // Cuenta corriente de mayorista
+    this.cuentasCorrientesMayoristas.getCuentaCorrientePorMayorista(pedido.mayorista._id).subscribe({
+      next: ({ cuenta_corriente }) => {
+        this.cuenta_corriente = cuenta_corriente;
+        this.montoCuentaCorriente = cuenta_corriente.saldo;
+        this.montoRecibido = pedido.precio_total - cuenta_corriente.saldo;
+        this.listarProductos();
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })
+    
+    
   }
 
   // Producto no entregado
@@ -369,10 +400,21 @@ export class PedidosComponent implements OnInit {
 
   // Calculo de monto
   calculoMonto(): void {
+   
     let montoTMP = 0;
+   
     this.productos.map(producto => {
       if (producto.entregado) montoTMP += producto.precio;
     });
+
+    if(this.cuenta_corriente.saldo > 0){
+      montoTMP -= this.cuenta_corriente.saldo;
+    }
+
+    if(this.cuenta_corriente.saldo >= this.pedidoSeleccionado.precio_total){
+      montoTMP = 0;
+    }
+    
     this.montoRecibido = this.dataService.redondear(montoTMP, 2);
   }
 
@@ -381,46 +423,54 @@ export class PedidosComponent implements OnInit {
   
     // Verificaciones: Monto recibido invalido
     if (this.montoRecibido === null || this.montoRecibido < 0) {
-      this.alertService.info('Debe colocar un monto recibido válido');
+      this.alertService.info('Debe colocar un monto cobrado válido');
       return;
     }
 
-    // Verificacion: Monto de deuda invalido
-    if (this.estadoPago === 'Deuda' && (!this.montoDeuda || this.montoDeuda < 0)) {
-      this.alertService.info('Debe colocar un monto adeudado válido');
+    // Verificacion: Monto de cuenta corriente invalido
+    if (this.cuenta_corriente.saldo > 0 && (this.montoCuentaCorriente < 0 || this.montoCuentaCorriente === null) ) {
+      this.alertService.info('Monto de cuenta corriente inválido');
       return;
     }
 
-    // Verificacion: Saldo a pagar mayor que saldo total -> Sin deuda
-    if ((this.pedidoSeleccionado.precio_total < this.montoRecibido) && this.estadoPago !== 'Deuda') {
-      this.alertService.info('El monto recibido no puede ser mayor al total');
+    // Verificacion: Se supera saldo de cuenta corriente
+    if (this.cuenta_corriente.saldo > 0 && (this.montoCuentaCorriente > this.cuenta_corriente.saldo)) {
+      this.alertService.info('Se superó el saldo de cuenta corriente');
       return;
     }
 
-    // Verificacion: Saldo a pagar mayor que saldo total -> Con deuda
-    if ((this.totalMonto < (this.montoRecibido + this.montoDeuda)) && this.estadoPago === 'Deuda') {
-      this.alertService.info('El monto recibido + deuda no puede ser mayor al total');
-      return;
-    }
+    let montoCC = 0;
 
+    // Adaptando monto cuenta corriente
+
+    if(this.cuenta_corriente.saldo > 0) montoCC = this.cuenta_corriente.saldo;
+    else montoCC = 0;
+    
+    if(this.cuenta_corriente.saldo > this.pedidoSeleccionado.precio_total) montoCC = this.pedidoSeleccionado.precio_total;
+    
     this.alertService.question({ msg: 'Completando pedido', buttonText: 'Completar', cancelarText: 'Regresar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
 
           const data = {
-            estado: this.estadoPago === 'Total' ? 'Completado' : 'Deuda',
+            estado: this.montoDeuda > 0 ? 'Deuda' : 'Completado',
+            monto_cuenta_corriente: montoCC,
+            monto_anticipo: this.montoDeuda >= 0 ? 0 : (this.montoDeuda * -1),
             monto_recibido: this.montoRecibido,
-            deuda: this.estadoPago === 'Total' ? false : true,
-            deuda_monto: this.estadoPago === 'Total' ? 0 : this.montoDeuda,
+            deuda: this.montoDeuda > 0 ? true : false,
+            deuda_monto: this.montoDeuda < 0 ? 0 : this.montoDeuda,
+            usuario: this.authService.usuario.userId,
           }
 
           this.alertService.loading();
 
-          this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, data).subscribe({
+          this.ventasMayoristasService.completarVenta(this.pedidoSeleccionado._id, data).subscribe({
             next: () => {
               this.estadoPago = 'Total';
               this.montoRecibido = null;
+              this.montoCuentaCorriente = 0;
               this.montoDeuda = null;
+              this.flagCierreCompletar = true;
               this.listarPedidos();
             },
             error: ({ error }) => this.alertService.errorApi(error.message)
@@ -498,6 +548,8 @@ export class PedidosComponent implements OnInit {
               }).subscribe({
                 next: () => {
                   this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
+                  this.calculoMonto();
+                  this.calcularDeuda();
                   this.listarPedidos();
                 }, error: ({ error }) => {
                   this.alertService.errorApi(error.message);
@@ -553,6 +605,8 @@ export class PedidosComponent implements OnInit {
                     }
                   })
 
+                  this.calculoMonto();
+                  this.calcularDeuda();
                   this.listarPedidos();
 
                 }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -578,7 +632,7 @@ export class PedidosComponent implements OnInit {
     });
   }
 
-  // Abrir modal nuevo producto
+  // Abrir modal nuevoC producto
   abrirModalNuevoProducto(): void {
     this.alertService.loading();
     this.productosService.listarProductos().subscribe({
@@ -587,6 +641,7 @@ export class PedidosComponent implements OnInit {
         this.nuevoProductoSeleccionado = null;
         this.nuevoProductoCantidad = null;
         this.showModal = false;
+        this.showModalCompletar = false;
         this.filtro.parametroProductos = '';
         this.showModalNuevoProducto = true;
         this.alertService.close();
@@ -655,14 +710,22 @@ export class PedidosComponent implements OnInit {
 
           this.pedidoSeleccionado.precio_total = precioTMP;
 
+          this.calculoMonto();
+          this.calcularDeuda();
+
           // Se actualizar el pedido
           this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
             precio_total: this.pedidoSeleccionado.precio_total,
             activo: true
           }).subscribe({
             next: () => {
-              this.showModalNuevoProducto = false;
-              this.showModal = true;
+              if(this.seccion === 'detalles'){
+                this.showModalNuevoProducto = false;
+                this.showModal = true;
+              }else if(this.seccion === 'completar'){
+                this.showModalNuevoProducto = false;
+                this.showModalCompletar = true; 
+              }
               this.listarPedidos();
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
@@ -677,8 +740,14 @@ export class PedidosComponent implements OnInit {
 
   // Cerrar seleccion de nuevo producto
   cerrarSeleccionNuevoProducto(): void {
-    this.showModalNuevoProducto = false;
-    this.showModal = true;
+    console.log(this.seccion);
+    if(this.seccion === 'detalles'){
+      this.showModalNuevoProducto = false;
+      this.showModal = true;
+    }else if(this.seccion === 'completar'){
+      this.showModalNuevoProducto = false;
+      this.showModalCompletar = true;
+    }
   }
 
   // Generar listado de preparacion
@@ -720,7 +789,15 @@ export class PedidosComponent implements OnInit {
 
   // Calcular monto deuda
   calcularDeuda(): void {
-    this.montoDeuda = this.pedidoSeleccionado.precio_total - this.montoRecibido;
+
+    if(this.cuenta_corriente.saldo <= 0){
+      this.montoDeuda = this.pedidoSeleccionado.precio_total - this.montoRecibido;
+    }
+
+    if(this.cuenta_corriente.saldo > 0 && (this.cuenta_corriente.saldo < this.pedidoSeleccionado.precio_total)){
+      this.montoDeuda = this.pedidoSeleccionado.precio_total - (this.montoRecibido + this.montoCuentaCorriente);
+    }
+
   }
 
   // Ordenar por columna

@@ -10,7 +10,7 @@ const base_url = environment.base_url;
 })
 export class VentasMayoristasService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Nueva venta
   nuevaVenta(data: any): Observable<any> {
@@ -23,7 +23,7 @@ export class VentasMayoristasService {
 
   // Venta por ID
   getVenta(id: string): Observable<any> {
-    return this.http.get(`${base_url}/ventas-mayoristas/${ id }`,{ 
+    return this.http.get(`${base_url}/ventas-mayoristas/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -32,7 +32,7 @@ export class VentasMayoristasService {
 
   // Listar ventas
   listarVentas(
-    direccion : number = 1, 
+    direccion: number = 1,
     columna: string = 'apellido_nombre',
     desde: number = 0,
     registerpp: number = 10,
@@ -41,7 +41,8 @@ export class VentasMayoristasService {
     repartidor: string = '',
     mayorista: string = '',
     fechaDesde: string = '',
-    fechaHasta: string = '',  
+    fechaHasta: string = '',
+    activo: string = ''
   ): Observable<any> {
     console.log(mayorista);
     return this.http.get(`${base_url}/ventas-mayoristas`, {
@@ -55,7 +56,8 @@ export class VentasMayoristasService {
         repartidor,
         mayorista,
         fechaDesde,
-        fechaHasta   
+        fechaHasta,
+        activo
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -64,21 +66,30 @@ export class VentasMayoristasService {
   }
 
   // Actualizar venta
-  actualizarVenta(id:string, data: any): Observable<any> {
+  actualizarVenta(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/ventas-mayoristas/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  }
+
+  // Completar venta
+  completarVenta(id: string, data: any): Observable<any> {
+    return this.http.put(`${base_url}/ventas-mayoristas/completar/venta/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
 
   // Generar detalles de pedido - PDF
-  generarDetallesPDF(id:string): Observable<any> {
+  generarDetallesPDF(id: string): Observable<any> {
     return this.http.get(`${base_url}/ventas-mayoristas/detalles-pedido/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
-  } 
-  
+  }
+
 }

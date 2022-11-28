@@ -57,9 +57,17 @@ export class CajasMayoristasComponent implements OnInit {
   public ingresos: any[] = [];
   public total_ingresos: number = 0;
 
+  // Cobros
+  public cobros: any[] = [];
+
   // Caja
   public caja: any = {};
   public total_recibido = 0;
+  public montoReal = null;
+  public diferencia = 0;
+  public montoCintia = null;
+  public total_final = 0;
+  public total_cobros = 0;
 
   constructor(
     public authService: AuthService,
@@ -75,7 +83,7 @@ export class CajasMayoristasComponent implements OnInit {
 
   // Inicio de componente
   ngOnInit(): void {
-    gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
+    gsap.from('.gsap-contenido', { y: 100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = 'Dashboard - Cajas mayoristas';
     this.alertService.loading();
     this.calculosIniciales();
@@ -87,13 +95,18 @@ export class CajasMayoristasComponent implements OnInit {
       next: ({ usuarios }) => {
         this.repartidores = usuarios.filter(usuario => usuario.role === 'DELIVERY_ROLE');
         this.cajasMayoristasService.calculosIniciales(this.repartidor).subscribe({
-          next: ({ datos, gastos, ingresos, total_ingresos, total_gastos, total_recibido }) => {
+          next: ({ datos, gastos, ingresos, total_ingresos, total_gastos, total_recibido, cobros, total_cobros }) => {
             this.caja = datos;
             this.gastos = gastos;
             this.ingresos = ingresos;
             this.total_ingresos = total_ingresos;
             this.total_gastos = total_gastos;
             this.total_recibido = total_recibido;
+            this.cobros = cobros;
+            this.total_cobros = total_cobros;
+            console.log(total_cobros);
+            console.log(cobros);
+            this.calculos();
             this.alertService.close();
           }, error: ({ error }) => this.alertService.errorApi(error.message)
         })
@@ -105,13 +118,19 @@ export class CajasMayoristasComponent implements OnInit {
   nuevoGasto(): void {
 
     // Verificacion: Tipo de gasto
-    if(this.dataGasto.tipo_gasto.trim() === ''){
+    if (this.dataGasto.tipo_gasto.trim() === '') {
       this.alertService.info('Debe seleccionar un tipo de gasto');
       return;
     }
 
+    // Verificacion: Monto invalido
+    if (this.dataGasto.monto === null || this.dataGasto.monto < 0) {
+      this.alertService.info('Debe colocar un monto válido');
+      return;
+    }
+
     // Verificacion: Repartidor
-    if(this.dataGasto.repartidor.trim() === ''){
+    if (this.dataGasto.repartidor.trim() === '') {
       this.alertService.info('Debe seleccionar un repartidor');
       return;
     }
@@ -136,13 +155,19 @@ export class CajasMayoristasComponent implements OnInit {
   nuevoIngreso(): void {
 
     // Verificacion: Tipo de ingreso
-    if(this.dataIngreso.tipo_ingreso.trim() === ''){
+    if (this.dataIngreso.tipo_ingreso.trim() === '') {
       this.alertService.info('Debe seleccionar un tipo de ingreso');
       return;
     }
 
+    // Verificacion: Monto invalido
+    if (this.dataIngreso.monto === null || this.dataIngreso.monto < 0) {
+      this.alertService.info('Debe colocar un monto válido');
+      return;
+    }
+
     // Verificacion: Repartidor
-    if(this.dataIngreso.repartidor.trim() === ''){
+    if (this.dataIngreso.repartidor.trim() === '') {
       this.alertService.info('Debe seleccionar un repartidor');
       return;
     }
@@ -198,13 +223,15 @@ export class CajasMayoristasComponent implements OnInit {
   cargarDatosCaja(): void {
     this.alertService.loading();
     this.cajasMayoristasService.calculosIniciales(this.repartidor).subscribe({
-      next: ({ datos, gastos, ingresos, total_ingresos, total_gastos, total_recibido }) => {
+      next: ({ datos, gastos, ingresos, total_ingresos, total_gastos, total_recibido, cobros, total_cobros }) => {
         this.caja = datos;
         this.gastos = gastos;
         this.ingresos = ingresos;
         this.total_ingresos = total_ingresos;
         this.total_gastos = total_gastos;
         this.total_recibido = total_recibido;
+        this.cobros = cobros;
+        this.total_cobros = total_cobros;
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
@@ -236,6 +263,106 @@ export class CajasMayoristasComponent implements OnInit {
           }, ({ error }) => this.alertService.errorApi(error.message));
         }
       });
+  }
+
+  // Calcular diferencia
+  calculos(): void {
+    this.diferencia = this.montoReal - this.total_recibido;
+    this.total_final = this.montoReal - this.montoCintia;
+  }
+
+  // Cerrar caja
+  cerrarCaja(): void {
+
+    // Verificacion: Fecha de caja
+    if (!this.fecha_caja) {
+      this.alertService.info('Debe colocar un fecha válida para la caja');
+      return;
+    }
+
+    // Verificacion: Total real recibido
+    if (this.montoReal === null || this.montoReal < 0) {
+      this.alertService.info('Debe colocar un total real válido');
+      return;
+    }
+
+    // Verificacion: Monto cintia
+    if (this.montoCintia === null || this.montoCintia < 0) {
+      this.alertService.info('Debe colocar un monto cintia válido');
+      return;
+    }
+
+    // Se arma la data de cierre de caja
+
+    // Adaptando gastos
+
+    let gastosTMP = [];
+
+    this.gastos.map(gasto => {
+
+      gastosTMP.push({
+        tipo: gasto.tipo_gasto.descripcion,
+        monto: gasto.monto,
+        repartidor: `${gasto.repartidor.apellido} ${gasto.repartidor._id !== '000000000000000000000000' ? gasto.repartidor.nombre : ''}`.trim()
+      })
+    })
+
+    // Adaptando ingresos
+
+    let ingresosTMP = [];
+
+    this.ingresos.map(ingreso => {
+      ingresosTMP.push({
+        tipo: ingreso.tipo_ingreso.descripcion,
+        monto: ingreso.monto,
+        repartidor: `${ingreso.repartidor.apellido} ${ingreso.repartidor._id !== '000000000000000000000000' ? ingreso.repartidor.nombre : ''}`.trim()
+      })
+    })
+
+    this.cobros.map(cobro => {
+      ingresosTMP.push({
+        tipo: `COBRO NRO ${cobro.nro}`,
+        monto: cobro.monto,
+        repartidor: `${cobro.repartidor.apellido} ${cobro.repartidor._id !== '000000000000000000000000' ? cobro.repartidor.nombre : ''}`.trim()
+      })
+    })
+
+    const data = {
+      fecha_caja: this.fecha_caja,
+      cantidad_ventas: this.caja.cantidad_pedidos,
+      total_ventas: this.caja.total_pedidos,
+      total_anticipos: this.caja.total_anticipos,
+      total_cuentas_corrientes: this.caja.total_cuentas_corrientes,
+      total_deuda: this.caja.total_deuda,
+      monto_a_recibir: this.caja.total_recibido,
+      total_otros_ingresos: this.total_ingresos,
+      total_otros_gastos: this.total_gastos,
+      ingresos: ingresosTMP,
+      gastos: gastosTMP,
+      total_recibido: this.total_recibido,
+      total_recibido_real: this.montoReal,
+      monto_cintia: this.montoCintia,
+      diferencia: this.diferencia,
+      total_final: this.total_final,
+      creatorUser: this.authService.usuario.userId,
+      updatorUser: this.authService.usuario.userId
+    }
+
+    // Cerrando caja
+    this.alertService.question({ msg: 'Cerrando caja', buttonText: 'Cerrar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.cajasMayoristasService.nuevaCaja(data).subscribe({
+            next: () => {
+              this.montoReal = null;
+              this.montoCintia = null;
+              this.calculosIniciales();
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
+
   }
 
 }

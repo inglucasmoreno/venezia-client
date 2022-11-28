@@ -67,7 +67,7 @@
   <div class="md:w-1/2 border borde-gray-300 rounded-t h-full">
     <div class="bg-primary-800 flex items-center justify-between p-3 rounded-t">
       <h1 class="rounded-t text-lg text-white"> Datos de caja </h1>
-      <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" routerLink="/dashboard/caja/historial" title="Historial de cajas" class="bg-white p-2 focus:outline-none border border-primary-300 rounded hover:text-secondaryColor">
+      <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" routerLink="/dashboard/caja/historial" title="Historial de cajas" class="bg-white p-2 focus:outline-none border border-primary-400 rounded hover:text-secondaryColor">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
         </svg>
@@ -77,17 +77,17 @@
       <div class="text-center">
         <p class="font-semibold"> Saldo inicial de caja </p>
         <div class="flex items-center justify-center">
-          <div class="border border-gray-300 shadow w-max p-2 rounded mt-2">
+          <div class="border border-gray-400 shadow w-max p-2 rounded mt-2">
               ${{ saldoInicial | moneda }}
           </div>
-          <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirModalSaldoInicial()" title="Actualizar saldo inicial de caja" class="w-max border focus:outline-none hover:text-secondaryColor border-gray-300 shadow p-2 rounded ml-2 mt-2">
+          <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirModalSaldoInicial()" title="Actualizar saldo inicial de caja" class="w-max border focus:outline-none hover:text-secondaryColor border-gray-400 shadow p-2 rounded ml-2 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
             </svg>          
           </button>
         </div>
         <div class="mt-2">
-          <div class="flex items-center bg-gray-100 rounded border font-semibold border-gray-300 justify-between p-2">
+          <div class="flex items-center bg-gray-100 rounded border font-semibold border-gray-400 justify-between p-2">
             <p class="flex items-center">  
               <span class="ml-1"> Cantidad de ventas </span>       
             </p>
@@ -114,7 +114,7 @@
             </p>
             <p> ${{ valoresCaja?.total_adicional_credito | moneda }} </p>
           </div>
-          <div (click)="showFacturado = !showFacturado" class="my-2 cursor-pointer font-semibold bg-gray-100 p-2 rounded border border-gray-300 ">
+          <div (click)="showFacturado = !showFacturado" class="my-2 cursor-pointer font-semibold bg-gray-100 p-2 rounded border border-gray-400 ">
             <div class="flex items-center justify-between">
               <p> Total en ventas </p>
               <p> ${{ valoresCaja?.total_ventas | moneda }} </p>
@@ -199,27 +199,27 @@
               </div>            
             </div>
           </div>
-          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-400 justify-between">
             <p> Total efectivo en caja (Sistema) </p>
             <p> ${{ efectivoEnCaja | moneda }} </p>
           </div>
-          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-400 justify-between">
             <p> Total efectivo en caja (Real) </p>
-            <input (keyup)="calculosFinales()" [(ngModel)]="efectivoEnCajaReal" type="number" min="0" placeholder="Total efectivo real" class="bg-white border focus:outline-none rounded border-gray-300 p-2">
+            <input (keyup)="calculosFinales()" [(ngModel)]="efectivoEnCajaReal" type="number" min="0" placeholder="Total efectivo real" class="bg-white border focus:outline-none rounded border-gray-400 p-2">
           </div>
-          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-400 justify-between">
             <p> Monto a tesoreria </p>
-            <input (keyup)="calculosFinales()" [(ngModel)]="tesoreria" type="number" min="0" placeholder="Monto a tesoreria" class="bg-white border focus:outline-none rounded border-gray-300 p-2">
+            <input (keyup)="calculosFinales()" [(ngModel)]="tesoreria" type="number" min="0" placeholder="Monto a tesoreria" class="bg-white border focus:outline-none rounded border-gray-400 p-2">
           </div>
-          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-400 justify-between">
             <p> Diferencia en caja </p>
             <p [ngClass]="{'text-red-500': diferencia < 0}"> ${{ diferencia | moneda }} </p>
           </div>
-          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+          <div class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-400 justify-between">
             <p> Saldo inicial proxima caja </p>
             <p> ${{ saldoProximaCaja | moneda }} </p>
           </div>
-          <button (click)="cierreDeCaja()" class="border mt-2 border-gray-300 shadow bg-secondaryColor text-white focus:outline-none font-semibold w-full p-2 rounded">
+          <button (click)="cierreDeCaja()" class="border mt-2 border-gray-400 shadow bg-secondaryColor text-white focus:outline-none font-semibold w-full p-2 rounded">
             Cierre de caja
           </button>
         </div>

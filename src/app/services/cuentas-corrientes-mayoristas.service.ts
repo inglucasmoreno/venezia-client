@@ -10,7 +10,7 @@ const base_url = environment.base_url;
 })
 export class CuentasCorrientesMayoristasService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Nueva cuenta corriente
   nuevaCuentaCorriente(data: any): Observable<any> {
@@ -23,7 +23,17 @@ export class CuentasCorrientesMayoristasService {
 
   // Cuenta corriente por ID
   getCuentaCorriente(id: string): Observable<any> {
-    return this.http.get(`${base_url}/cuentas-corrientes-mayoristas/${ id }`,{ 
+    return this.http.get(`${base_url}/cuentas-corrientes-mayoristas/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Cuenta corriente por Mayorista
+  getCuentaCorrientePorMayorista(mayorista: string): Observable<any> {
+    console.log(mayorista);
+    return this.http.get(`${base_url}/cuentas-corrientes-mayoristas/parametro/mayorista/${mayorista}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -45,7 +55,7 @@ export class CuentasCorrientesMayoristasService {
   // Listar cuentas corrientes
   listarCuentasCorrientes(
     direccion: number = 1,
-    columna: string = 'descripcion'  
+    columna: string = 'descripcion'
   ): Observable<any> {
     return this.http.get(`${base_url}/cuentas-corrientes-mayoristas`, {
       params: {
@@ -59,12 +69,12 @@ export class CuentasCorrientesMayoristasService {
   }
 
   // Actualizar cuenta corriente
-  actualizarCuentaCorriente(id:string, data: any): Observable<any> {
+  actualizarCuentaCorriente(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/cuentas-corrientes-mayoristas/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  }
 
 }
