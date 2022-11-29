@@ -548,8 +548,12 @@ export class PedidosComponent implements OnInit {
               }).subscribe({
                 next: () => {
                   this.pedidoSeleccionado.precio_total = nuevoPrecioPedido;
-                  this.calculoMonto();
-                  this.calcularDeuda();
+
+                  if(this.pedidoSeleccionado?.estado !== 'Pendiente'){
+                    this.calculoMonto();
+                    this.calcularDeuda();
+                  }
+
                   this.listarPedidos();
                 }, error: ({ error }) => {
                   this.alertService.errorApi(error.message);
@@ -605,8 +609,11 @@ export class PedidosComponent implements OnInit {
                     }
                   })
 
-                  this.calculoMonto();
-                  this.calcularDeuda();
+                  if(this.pedidoSeleccionado?.estado !== 'Pendiente'){
+                    this.calculoMonto();
+                    this.calcularDeuda();
+                  }
+
                   this.listarPedidos();
 
                 }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -710,8 +717,10 @@ export class PedidosComponent implements OnInit {
 
           this.pedidoSeleccionado.precio_total = precioTMP;
 
-          this.calculoMonto();
-          this.calcularDeuda();
+          if(this.pedidoSeleccionado?.estado !== 'Pendiente'){
+            this.calculoMonto();
+            this.calcularDeuda();
+          }
 
           // Se actualizar el pedido
           this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
