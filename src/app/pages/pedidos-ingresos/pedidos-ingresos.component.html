@@ -69,13 +69,13 @@
 
     <!-- No se tiene permisos para acceder a la seccion -->
     <div class="mx-auto gsap-contenido w-11/12">
-      <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE'">
+      <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE' || (authService.usuario.role === 'USER_ROLE' && !authService.usuario.permisos.includes('MAYORISTAS_ALL'))">
         <img class="mt-10 mx-auto" src="assets/img/not_access.svg" alt="No se tiene permisos">
         <h1 class="mt-5 text-center md:text-lg"> Usted no tiene permisos para acceder a esta seccion </h1>
       </div>
     </div>
 
-    <app-tarjeta-lista *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
+    <app-tarjeta-lista *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL'))">
       <div class="container mx-auto">
           <div>
               <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
@@ -92,6 +92,7 @@
                   <div class="my-2 flex sm:flex-row flex-col">
                       <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.repartidor">
                         <option value=""> Todos los repartidores </option>
+                        <option value="000000000000000000000000"> SUCURSAL </option>
                         <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
                       </select> 
                       <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.tipo_ingreso">
@@ -179,7 +180,7 @@
                               <tr class="animate__animated animate__fadeIn" *ngFor="let ingreso of ingresos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
                                   <td class="px-5 py-3 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
-                                          {{ ingreso.repartidor.apellido }} {{ ingreso.repartidor.nombre }}
+                                          {{ ingreso.repartidor.apellido }} {{ ingreso.repartidor._id !== '000000000000000000000000' ? ingreso.repartidor.nombre : null }}
                                       </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
@@ -189,7 +190,7 @@
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 w-max whitespace-no-wrap">
-                                        {{ ingreso.monto }}
+                                        ${{ ingreso.monto | moneda }}
                                     </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">

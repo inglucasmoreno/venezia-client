@@ -49,7 +49,7 @@ export class PedidosGastosComponent implements OnInit {
 
   // Filtrado
   public filtro = {
-    activo: 'true',
+    activo: '',
     parametro: '',
     repartidor: '',
     tipo_gasto: '',
@@ -99,7 +99,7 @@ export class PedidosGastosComponent implements OnInit {
         this.montoTotal = montoTotal;
         this.tiposService.listarTipos().subscribe({
           next: ({ tipos }) => {
-            this.tipos = tipos.filter( tipo => tipo.activo );
+            this.tipos = tipos;
             this.usuariosService.listarUsuarios().subscribe({
               next: ({usuarios}) => {
                 this.repartidores = usuarios.filter( usuario => usuario.activo && usuario.role === 'DELIVERY_ROLE' );

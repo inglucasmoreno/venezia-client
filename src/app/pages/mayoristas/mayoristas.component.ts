@@ -252,7 +252,7 @@ constructor(private mayoristasService: MayoristasService,
     
     const { _id, activo } = mayorista;
 
-    if(!this.permisos.all) return this.alertService.info('Usted no tiene permiso para realizar esta acción');
+    // if(!this.permisos.all) return this.alertService.info('Usted no tiene permiso para realizar esta acción');
 
     this.alertService.question({ msg: '¿Quieres actualizar el estado?', buttonText: 'Actualizar' })
         .then(({isConfirmed}) => {  

@@ -47,13 +47,13 @@
 
     <!-- No se tiene permisos para acceder a la seccion -->
     <div class="mx-auto gsap-contenido w-11/12">
-      <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE'">
+      <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE' || (authService.usuario.role === 'USER_ROLE' && !authService.usuario.permisos.includes('MAYORISTAS_ALL'))">
         <img class="mt-10 mx-auto" src="assets/img/not_access.svg" alt="No se tiene permisos">
         <h1 class="mt-5 text-center md:text-lg"> Usted no tiene permisos para acceder a esta seccion </h1>
       </div>
     </div>
 
-    <app-tarjeta-lista *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
+    <app-tarjeta-lista *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL'))">
       <div class="container mx-auto">
           <div>
               <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">

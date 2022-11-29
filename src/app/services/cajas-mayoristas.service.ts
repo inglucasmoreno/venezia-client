@@ -43,14 +43,16 @@ export class CajasMayoristasService {
   };
 
   // Listar cajas
-  listarCajas(
-    direccion: number = 1,
-    columna: string = 'descripcion'
-  ): Observable<any> {
+  listarCajas(parametros?: any): Observable<any> {
     return this.http.get(`${base_url}/cajas-mayoristas`, {
       params: {
-        direccion: String(direccion),
-        columna
+        columna: parametros?.columna || 'descripcion',
+        direccion: parametros?.direccion || 1,
+        desde: parametros?.desde || 0,
+        registerpp: parametros?.cantidadItems || 100000,
+        fechaDesde: parametros?.fechaDesde || '',
+        fechaHasta: parametros?.fechaHasta || '',
+        parametro: parametros?.parametro || '',
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -59,8 +61,21 @@ export class CajasMayoristasService {
   }
 
   // Actualizar caja
-  actualizarCajas(id: string, data: any): Observable<any> {
+  actualizarCaja(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/cajas-mayoristas/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+  // Reporte de cajas
+  reporteCajas(parametros?: any): Observable<any> {
+    return this.http.get(`${base_url}/cajas-mayoristas/reportes/acumulacion/estadisticas`, {
+      params: {
+        fechaDesde: parametros?.fechaDesde || '',
+        fechaHasta: parametros?.fechaHasta || '',   
+      },
       headers: {
         'Authorization': localStorage.getItem('token')
       }

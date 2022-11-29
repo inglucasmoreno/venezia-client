@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { format } from 'date-fns';
+import { add, format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { CajasMayoristasService } from 'src/app/services/cajas-mayoristas.service';
@@ -328,7 +328,7 @@ export class CajasMayoristasComponent implements OnInit {
     })
 
     const data = {
-      fecha_caja: this.fecha_caja,
+      fecha_caja: add(new Date(this.fecha_caja), { hours: 3 }),
       cantidad_ventas: this.caja.cantidad_pedidos,
       total_ventas: this.caja.total_pedidos,
       total_anticipos: this.caja.total_anticipos,

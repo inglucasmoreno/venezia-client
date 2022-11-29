@@ -176,7 +176,7 @@
                                           </span>
                                       </div>
                                   </th> -->
-                                  <th *ngIf="permisos.all" class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                                  <th *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
                                       Acción
                                   </th>
                               </tr>
