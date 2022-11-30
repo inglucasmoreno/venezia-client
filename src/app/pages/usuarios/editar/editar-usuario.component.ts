@@ -115,7 +115,7 @@ export class EditarUsuarioComponent implements OnInit {
       (permiso === 'PEDIDOSYA_ALL' || permiso === 'PEDIDOSYA_READ') ? this.permisos.pedidosYa = permiso : null;
 
       // Mayoristas
-      (permiso === 'MAYORISTAS_ALL' || permiso === 'MAYORISTAS_READ') ? this.permisos.mayoristas = permiso : null;
+      (permiso === 'MAYORISTAS_ALL' || permiso === 'MAYORISTAS_READ' || permiso === 'MAYORISTAS_LIMIT') ? this.permisos.mayoristas = permiso : null;
     
       // Cierre de cajas
       (permiso === 'CAJAS_ALL' || permiso === 'CAJAS_READ') ? this.permisos.cajas = permiso : null;

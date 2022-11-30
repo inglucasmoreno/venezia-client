@@ -80,19 +80,19 @@
   
   <!-- No se tiene permisos para acceder a la seccion -->
   <div class="mx-auto gsap-contenido w-11/12">
-    <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE' || (authService.usuario.role === 'USER_ROLE' && !authService.usuario.permisos.includes('MAYORISTAS_ALL'))">
+    <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE' || (authService.usuario.role === 'USER_ROLE' && !authService.usuario.permisos.includes('MAYORISTAS_ALL') && !authService.usuario.permisos.includes('MAYORISTAS_READ'))">
       <img class="mt-10 mx-auto" src="assets/img/not_access.svg" alt="No se tiene permisos">
       <h1 class="mt-5 text-center md:text-lg"> Usted no tiene permisos para acceder a esta seccion </h1>
     </div>
   </div>
 
-  <div *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL'))" class="md:flex md:justify-center max-w-5xl mx-auto">
+  <div *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL') || authService.usuario.permisos.includes('MAYORISTAS_READ'))" class="md:flex md:justify-center max-w-5xl mx-auto">
     
     <!-- Cierre de caja -->
     <div class="border h-full border-gray-300 w-full md:w-1/2">
       <div class="bg-primary-800 border border-primary-800 text-white rounded-t flex items-center justify-between p-2">
         <h1> Cierre de caja - Mayoristas </h1>
-        <button routerLink="/dashboard/cajas-mayoristas-historial" title="Historial de cajas" class="bg-white p-2 focus:outline-none text-primary-800 rounded hover:text-secondaryColor">
+        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" routerLink="/dashboard/cajas-mayoristas-historial" title="Historial de cajas" class="bg-white p-2 focus:outline-none text-primary-800 rounded hover:text-secondaryColor">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
           </svg>

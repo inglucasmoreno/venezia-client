@@ -16,7 +16,7 @@
             </div>
             <div class="w-1/2 ml-4">
               <p class="font-semibold"> <span class="text-red-500"> * </span> Saldo </p>
-              <input [(ngModel)]="saldo" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 2000" type="text">
+              <input [disabled]="authService.usuario.role !== 'ADMIN_ROLE'" [(ngModel)]="saldo" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 2000" type="text">
             </div>
           </div>
           
@@ -176,7 +176,7 @@
                                           </span>
                                       </div>
                                   </th> -->
-                                  <th *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
+                                  <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
                                       Acción
                                   </th>
                               </tr>
@@ -201,7 +201,7 @@
                                   <!-- <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                       <app-pastilla-estado [activo]=cuenta.activo (click)="actualizarEstado(cuenta)"></app-pastilla-estado>
                                   </td> -->
-                                  <td *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="px-5 py-2 justify-center flex items-center border-b border-gray-200 text-xs text-center">
+                                  <td class="px-5 py-2 justify-center flex items-center border-b border-gray-200 text-xs text-center">
                                         <span class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
                                             <app-boton-tabla (click)="abrirModal('editar', cuenta)" title="Editar cuenta">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
