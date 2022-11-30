@@ -809,6 +809,17 @@ export class PedidosComponent implements OnInit {
 
   }
 
+  // Generar listado de deudas PDF
+  generarListadoDeudas(): void {
+    this.alertService.loading();
+    this.ventasMayoristasService.detallesDeudasPDF().subscribe({
+      next: () => {
+        window.open(`${base_url}/pdf/deudas_mayoristas.pdf`, '_blank');
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
   // Ordenar por columna
   ordenarPorColumna(columna: string) {
     this.ordenar.columna = columna;

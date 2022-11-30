@@ -92,4 +92,13 @@ export class VentasMayoristasService {
     });
   }
 
+  // Generar detalles de deudas mayoristas - PDF
+  detallesDeudasPDF(): Observable<any> {
+    return this.http.get(`${base_url}/ventas-mayoristas/detalles-deudas/pdf`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
 }
