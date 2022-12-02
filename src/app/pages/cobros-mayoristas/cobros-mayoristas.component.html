@@ -6,7 +6,7 @@
     </div>
     <div class="p-2 text-sm">
         <div class="flex items-center justify-between">
-            <p> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.createdAt ?  (pedidoSeleccionado?.createdAt | fecha) : null }} </p>
+            <p *ngIf="pedidoSeleccionado?.fecha_pedido || pedidoSeleccionado?.createdAt"> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.fecha_pedido ? (pedidoSeleccionado?.fecha_pedido | fecha) : (pedidoSeleccionado?.createdAt | fecha) }} </p>
             <p> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
         </div>
         <p class="mt-2"> <span class="font-semibold"> Mayorista: </span> {{ cobroSeleccionado?.mayorista.descripcion }} </p>

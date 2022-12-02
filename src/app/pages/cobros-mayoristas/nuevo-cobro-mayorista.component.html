@@ -6,7 +6,7 @@
   </div>
   <div class="p-2 text-sm">
       <div class="flex items-center justify-between">
-          <p> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.createdAt ?  (pedidoSeleccionado?.createdAt | fecha) : null }} </p>
+          <p> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.fecha_pedido ? (pedidoSeleccionado?.fecha_pedido | fecha) : (pedidoSeleccionado?.createdAt | fecha)}} </p>
           <p> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
       </div>
       <p class="mt-2"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
@@ -136,7 +136,7 @@
             <div>
               <div [ngClass]="{'bg-green-700':pedido.tipo_cobro === 'Total', 'bg-blue-700':pedido.tipo_cobro === 'Parcial', 'bg-gray-100 text-primary-800':pedido.tipo_cobro === 'Nada'}" class="flex items-center p-2 text-white justify-between border-b border-gray-400">
                 <p> <span class="font-semibold"> Nro de pedido: </span> <span> {{ pedido.numero }} </span> </p>
-                <p> <span class="font-semibold"> Fecha: </span> <span> {{ pedido.createdAt | fecha }} </span> </p>
+                <p> <span class="font-semibold"> Fecha: </span> <span> {{ pedido.fecha_pedido ? (pedido.fecha_pedido | fecha) : (pedido.createdAt | fecha) }} </span> </p>
               </div>
               <div class="p-2 flex items-center justify-between">
                 <div>

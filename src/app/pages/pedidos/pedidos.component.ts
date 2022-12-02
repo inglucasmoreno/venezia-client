@@ -9,6 +9,7 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
 import { MayoristasService } from 'src/app/services/mayoristas.service';
 import { CuentasCorrientesMayoristasService } from 'src/app/services/cuentas-corrientes-mayoristas.service';
+import { format } from 'date-fns';
 
 const base_url = environment.base_url;
 
@@ -72,6 +73,9 @@ export class PedidosComponent implements OnInit {
   // Cuenta corriente de mayorista
   public cuenta_corriente: any;
   public montoCuentaCorriente: number = 0;
+
+  // Input
+  public fechaActualizar: string = format(new Date(),'yyyy-MM-dd');
 
   // Paginacion
   public totalItems: number;
@@ -363,6 +367,8 @@ export class PedidosComponent implements OnInit {
   // Completar pedido
   abrirCompletarPedido(pedido: any): void {
 
+    this.fechaActualizar = pedido.fecha_pedido ? format(new Date(pedido.fecha_pedido), 'yyyy-MM-dd') :  format(new Date(pedido.createdAt), 'yyyy-MM-dd');
+
     this.seccion = 'completar';
     this.montoDeuda = 0;
     this.estadoPago = 'Total';
@@ -420,7 +426,13 @@ export class PedidosComponent implements OnInit {
 
   // Completar pedido
   completarPedido(): void {
-  
+
+    // Verificaciones: Fecha de pedido valida
+    if (!this.fechaActualizar) {
+      this.alertService.info('Debe colocar una fecha de pedido válida');
+      return;
+    }
+
     // Verificaciones: Monto recibido invalido
     if (this.montoRecibido === null || this.montoRecibido < 0) {
       this.alertService.info('Debe colocar un monto cobrado válido');
@@ -453,6 +465,7 @@ export class PedidosComponent implements OnInit {
         if (isConfirmed) {
 
           const data = {
+            fecha_pedido: this.fechaActualizar,
             estado: this.montoDeuda > 0 ? 'Deuda' : 'Completado',
             monto_cuenta_corriente: montoCC,
             monto_anticipo: this.montoDeuda >= 0 ? 0 : (this.montoDeuda * -1),
