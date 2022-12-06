@@ -583,7 +583,10 @@
                         <tbody *ngIf="pedidos">
                             <tr class="animate__animated animate__fadeIn" *ngFor="let pedido of pedidos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
                                 <td class="px-5 py-4 border-b border-gray-200 text-xs">
-                                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                                    <p *ngIf="pedido.estado === 'Pendiente'" class="text-gray-900 w-max whitespace-no-wrap">
+                                        {{ pedido.createdAt | fecha }}
+                                    </p>
+                                    <p *ngIf="pedido.estado !== 'Pendiente'" class="text-gray-900 w-max whitespace-no-wrap">
                                         {{ pedido.fecha_pedido ? (pedido.fecha_pedido | fecha) : (pedido.createdAt | fecha) }}
                                     </p>
                                 </td>
