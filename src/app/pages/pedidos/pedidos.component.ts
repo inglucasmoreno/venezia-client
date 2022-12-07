@@ -98,7 +98,7 @@ export class PedidosComponent implements OnInit {
   // Ordenar
   public ordenar = {
     direccion: -1,  // Asc (1) | Desc (-1)
-    columna: 'createdAt'
+    columna: 'fecha_pedido'
   }
 
   constructor(private ventasMayoristasService: VentasMayoristasService,
@@ -762,7 +762,6 @@ export class PedidosComponent implements OnInit {
 
   // Cerrar seleccion de nuevo producto
   cerrarSeleccionNuevoProducto(): void {
-    console.log(this.seccion);
     if(this.seccion === 'detalles'){
       this.showModalNuevoProducto = false;
       this.showModal = true;
@@ -831,6 +830,16 @@ export class PedidosComponent implements OnInit {
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
+  }
+
+  // Actualizar fecha
+  actualizarFecha(): void {
+    this.alertService.loading();
+    this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, { fecha_pedido: this.fechaActualizar }).subscribe({
+      next: () => {
+        this.listarPedidos();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    });
   }
 
   // Ordenar por columna
