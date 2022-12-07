@@ -1,3 +1,29 @@
+<!-- Modal: Reporte repartidores -->
+<app-modal [showModal]="showModalReportesRepartidores">
+  <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+    <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Reporte de repartidores </h1>
+    <svg (click)="showModalReportesRepartidores = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </div>
+  <div class="p-2 text-sm">
+    <div>
+      <p class="font-semibold"> Repartidor </p>
+      <select class="p-2 rounded border focus:outline-none w-full mt-1 border-gray-500">
+        <option value=""> Todos los repartidores </option>
+      </select>
+    </div>  
+
+    <p class="font-semibold mt-3"> Fechas </p>
+    <div class="flex items-center mt-2">
+      <input type="date" class="p-2 w-1/2 rounded focus:outline-none border border-gray-500">
+      <input type="date" class="p-2 w-1/2 ml-2 focus:outline-none rounded border border-gray-500">
+    </div>
+
+    <button (click)="generarReporte()" class="bg-gray-100 font-semibold p-2 w-full hover:text-secondaryColor focus:outline-none mt-4 border border-gray-400 shadow rounded">
+      Generar reporte
+    </button>
+
+  </div>
+</app-modal>
 
 <!-- Modal: Nuevo gasto -->
 <app-modal [showModal]="showModalGasto">
@@ -92,11 +118,19 @@
     <div class="border h-full border-gray-300 w-full md:w-1/2">
       <div class="bg-primary-800 border border-primary-800 text-white rounded-t flex items-center justify-between p-2">
         <h1> Cierre de caja - Mayoristas </h1>
-        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" routerLink="/dashboard/cajas-mayoristas-historial" title="Historial de cajas" class="bg-white p-2 focus:outline-none text-primary-800 rounded hover:text-secondaryColor">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-          </svg>
-        </button>
+        <div>
+          <button (click)="abrirReportesRepartidores()" *ngIf="authService.usuario.role === 'ADMIN_ROLE'" title="Reportes de repartidores" class="bg-white p-2 focus:outline-none text-primary-800 rounded hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+            </svg>
+          </button>
+          <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" routerLink="/dashboard/cajas-mayoristas-historial" title="Historial de cajas" class="bg-white p-2 ml-2 focus:outline-none text-primary-800 rounded hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="p-2 text-sm">
         <div class="p-2 bg-gray-100 flex items-center justify-between border border-gray-400 rounded">

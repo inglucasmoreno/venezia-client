@@ -101,4 +101,14 @@ export class VentasMayoristasService {
     });
   }
 
+  // Reportes - Repartidores
+  reportesRepartidores(): Observable<any> {
+    console.log('llega');
+    return this.http.get(`${base_url}/ventas-mayoristas/reportes/repartidores/web`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
 }

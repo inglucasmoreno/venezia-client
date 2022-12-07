@@ -10,6 +10,7 @@ import { MayoristasTiposGastosService } from 'src/app/services/mayoristas-tipos-
 import { MayoristasTiposIngresosService } from 'src/app/services/mayoristas-tipos-ingresos.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
 import gsap from 'gsap';
+import { VentasMayoristasService } from 'src/app/services/ventas-mayoristas.service';
 
 @Component({
   selector: 'app-cajas-mayoristas',
@@ -24,6 +25,7 @@ export class CajasMayoristasComponent implements OnInit {
   // Modals
   public showModalGasto: boolean = false;
   public showModalIngreso: boolean = false;
+  public showModalReportesRepartidores: boolean = false;
 
   // Repartidores
   public repartidores: any[] = [];
@@ -69,6 +71,13 @@ export class CajasMayoristasComponent implements OnInit {
   public total_final = 0;
   public total_cobros = 0;
 
+  // REPORTES - MAYORISTAS
+  public dataReportes = {
+    repartidor: '',
+    fechaDesde: '',
+    fechaHasta: ''
+  }
+
   constructor(
     public authService: AuthService,
     private dataService: DataService,
@@ -77,6 +86,7 @@ export class CajasMayoristasComponent implements OnInit {
     private tiposIngresosService: MayoristasTiposIngresosService,
     private mayoristasGastosService: MayoristasGastosService,
     private mayoristasIngresosService: MayoristasIngresosService,
+    private ventasMayoristasService: VentasMayoristasService,
     private cajasMayoristasService: CajasMayoristasService,
     private usuariosService: UsuariosService
   ) { }
@@ -363,6 +373,20 @@ export class CajasMayoristasComponent implements OnInit {
         }
       });
 
+  }
+
+  // REPORTES DE REPARTIDORES
+  
+  abrirReportesRepartidores(): void {
+    this.showModalReportesRepartidores = true;
+  }
+
+  generarReporte(): void {
+    this.ventasMayoristasService.reportesRepartidores().subscribe({
+      next: ({ reporte }) => {
+        console.log(reporte);
+      },error: ({error}) => this.alertService.errorApi(error.message)
+    })
   }
 
 }
