@@ -4,25 +4,45 @@
     <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Reporte de repartidores </h1>
     <svg (click)="showModalReportesRepartidores = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
   </div>
+  
   <div class="p-2 text-sm">
-    <div>
-      <p class="font-semibold"> Repartidor </p>
-      <select class="p-2 rounded border focus:outline-none w-full mt-1 border-gray-500">
-        <option value=""> Todos los repartidores </option>
-      </select>
-    </div>  
+    
+    <div *ngIf="reportes.length === 0">  
+      
+      <div>
+        <p class="font-semibold"> Repartidor </p>
+        <select class="p-2 rounded border focus:outline-none w-full mt-1 border-gray-500">
+          <option value=""> Todos los repartidores </option>
+        </select>
+      </div>  
 
-    <p class="font-semibold mt-3"> Fechas </p>
-    <div class="flex items-center mt-2">
-      <input type="date" class="p-2 w-1/2 rounded focus:outline-none border border-gray-500">
-      <input type="date" class="p-2 w-1/2 ml-2 focus:outline-none rounded border border-gray-500">
+      <p class="font-semibold mt-3"> Fechas </p>
+      <div class="flex items-center mt-2">
+        <input type="date" class="p-2 w-1/2 rounded focus:outline-none border border-gray-500">
+        <input type="date" class="p-2 w-1/2 ml-2 focus:outline-none rounded border border-gray-500">
+      </div>
+  
+      <button (click)="generarReporte()" class="bg-gray-100 font-semibold p-2 w-full hover:text-secondaryColor focus:outline-none mt-4 border border-gray-400 shadow rounded">
+        Generar reporte
+      </button>
+    
     </div>
 
-    <button (click)="generarReporte()" class="bg-gray-100 font-semibold p-2 w-full hover:text-secondaryColor focus:outline-none mt-4 border border-gray-400 shadow rounded">
-      Generar reporte
-    </button>
+    <div *ngIf="reportes.length !== 0">  
+      <div *ngFor="let reporte of reportes">
+        <div class="p-2">
+          <p> <span class="font-semibold"> Repartidor: </span> {{ reporte._id.apellido }} {{ reporte._id.nombre }} </p>
+          <p class="text-xs px-2 py-1"> <span class="font-semibold"> Cantidad de pedidos: </span> {{ reporte.cantidad_ventas }} </p>
+          <p class="text-xs px-2 py-1"> <span class="font-semibold"> Total en ventas: </span> ${{ reporte.total_ventas | moneda }} </p>
+          <p class="text-xs px-2 py-1"> <span class="font-semibold"> Total cobrado: </span> ${{ reporte.total_recibido | moneda }} </p>
+          <p class="text-xs px-2 py-1"> <span class="font-semibold"> Total deuda: </span> ${{ reporte.total_deudas | moneda }} </p>
+          <p>  </p>
+        </div>
+      </div>
+    </div>
 
   </div>
+
 </app-modal>
 
 <!-- Modal: Nuevo gasto -->
@@ -254,7 +274,7 @@
               <p> ${{ ingreso.monto | moneda }} </p>
             </div>
             <div *ngFor="let cobro of cobros" class="flex items-center text-xs justify-between py-2">
-              <p> <span class="font-semibold text-green-500"> (+) </span> COBRO NRO {{ cobro.nro }} - <span class="font-semibold"> {{ cobro.repartidor.apellido }} {{ cobro.repartidor._id !== '000000000000000000000000' ? cobro.repartidor.nombre : null }} </span> </p>
+              <p> <span class="font-semibold text-green-500"> (+) </span> COBRO ({{ cobro.nro }}) - {{ cobro.mayorista.descripcion }} - <span class="font-semibold"> {{ cobro.repartidor.apellido }} {{ cobro.repartidor._id !== '000000000000000000000000' ? cobro.repartidor.nombre : null }} </span> </p>
               <p> ${{ cobro.monto | moneda }} </p>
             </div>
             <div class="flex items-center justify-between font-semibold border-t border-gray-400 mt-1 pt-2">

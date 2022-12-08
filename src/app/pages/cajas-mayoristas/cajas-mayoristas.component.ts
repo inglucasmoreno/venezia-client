@@ -72,11 +72,14 @@ export class CajasMayoristasComponent implements OnInit {
   public total_cobros = 0;
 
   // REPORTES - MAYORISTAS
+  
   public dataReportes = {
     repartidor: '',
     fechaDesde: '',
     fechaHasta: ''
   }
+
+  public reportes: any[] = [];
 
   constructor(
     public authService: AuthService,
@@ -113,6 +116,7 @@ export class CajasMayoristasComponent implements OnInit {
             this.total_gastos = total_gastos;
             this.total_recibido = total_recibido;
             this.cobros = cobros;
+            console.log(cobros);
             this.total_cobros = total_cobros;
             console.log(total_cobros);
             console.log(cobros);
@@ -331,7 +335,7 @@ export class CajasMayoristasComponent implements OnInit {
 
     this.cobros.map(cobro => {
       ingresosTMP.push({
-        tipo: `COBRO NRO ${cobro.nro}`,
+        tipo: `COBRO (${cobro.nro}) - ${cobro.mayorista.descripcion}`,
         monto: cobro.monto,
         repartidor: `${cobro.repartidor.apellido} ${cobro.repartidor._id !== '000000000000000000000000' ? cobro.repartidor.nombre : ''}`.trim()
       })
@@ -367,6 +371,7 @@ export class CajasMayoristasComponent implements OnInit {
             next: () => {
               this.montoReal = null;
               this.montoCintia = null;
+              this.fecha_caja = format(new Date(), 'yyyy-MM-dd');
               this.calculosIniciales();
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
@@ -382,9 +387,12 @@ export class CajasMayoristasComponent implements OnInit {
   }
 
   generarReporte(): void {
+    this.alertService.loading();
     this.ventasMayoristasService.reportesRepartidores().subscribe({
-      next: ({ reporte }) => {
-        console.log(reporte);
+      next: ({ reportes }) => {
+        this.reportes = reportes;
+        console.log(this.reportes);
+        this.alertService.close();
       },error: ({error}) => this.alertService.errorApi(error.message)
     })
   }

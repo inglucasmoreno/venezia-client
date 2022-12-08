@@ -8,6 +8,7 @@ import { UsuariosService } from 'src/app/services/usuarios.service';
 import { VentasMayoristasService } from 'src/app/services/ventas-mayoristas.service';
 import gsap from 'gsap';
 import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-nuevo-cobro-mayorista',
@@ -43,6 +44,7 @@ export class NuevoCobroMayoristaComponent implements OnInit {
   public repartidor: string = '';
 
   // INPUTS
+  public fechaCobro = format(new Date(), 'yyyy-MM-dd');
   public inputMontoACobrar = null;
 
   public filtro = {
@@ -205,6 +207,8 @@ export class NuevoCobroMayoristaComponent implements OnInit {
   // Abrir completar cobro
   abrirCompletarCobro(): void {
 
+    this.fechaCobro = format(new Date(), 'yyyy-MM-dd');
+
     // Se listan los repartidores
     this.alertService.loading();
     this.usuariosService.listarUsuarios().subscribe({
@@ -239,6 +243,7 @@ export class NuevoCobroMayoristaComponent implements OnInit {
         if (isConfirmed) {
           this.alertService.loading();
           const data: any = {
+            fecha_cobro: this.fechaCobro,
             tipo: this.totalACobrar === 0 ? 'Anticipo' : 'Cobro',
             mayorista: this.mayoristaSeleccionado._id,
             repartidor: this.repartidor,

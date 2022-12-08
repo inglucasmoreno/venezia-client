@@ -61,7 +61,7 @@ export class PedidosIngresosComponent implements OnInit {
   // Ordenar
   public ordenar = {
     direccion: -1,  // Asc (1) | Desc (-1)
-    columna: 'createdAt'
+    columna: 'fecha_ingreso'
   }
 
   constructor(
