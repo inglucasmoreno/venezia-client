@@ -44,7 +44,6 @@ export class VentasMayoristasService {
     fechaHasta: string = '',
     activo: string = ''
   ): Observable<any> {
-    console.log(mayorista);
     return this.http.get(`${base_url}/ventas-mayoristas`, {
       params: {
         direccion: String(direccion),
@@ -102,9 +101,17 @@ export class VentasMayoristasService {
   }
 
   // Reportes - Repartidores
-  reportesRepartidores(): Observable<any> {
-    console.log('llega');
+  reportesRepartidores(
+    repartidor: string = '', 
+    fechaDesde: string = '', 
+    fechaHasta: string = ''
+  ): Observable<any> {
     return this.http.get(`${base_url}/ventas-mayoristas/reportes/repartidores/web`, {
+      params: {
+        repartidor,
+        fechaDesde,
+        fechaHasta
+      },
       headers: {
         'Authorization': localStorage.getItem('token')
       }

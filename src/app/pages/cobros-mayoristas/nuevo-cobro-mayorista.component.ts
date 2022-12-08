@@ -208,6 +208,7 @@ export class NuevoCobroMayoristaComponent implements OnInit {
   abrirCompletarCobro(): void {
 
     this.fechaCobro = format(new Date(), 'yyyy-MM-dd');
+    this.repartidor = '';
 
     // Se listan los repartidores
     this.alertService.loading();

@@ -78,6 +78,8 @@ export class CajasMayoristasComponent implements OnInit {
     fechaDesde: '',
     fechaHasta: ''
   }
+  public fechaDesdeMostrar = '';
+  public fechaHastaMostrar = '';
 
   public reportes: any[] = [];
 
@@ -383,18 +385,35 @@ export class CajasMayoristasComponent implements OnInit {
   // REPORTES DE REPARTIDORES
   
   abrirReportesRepartidores(): void {
+    this.reportes = [];
+    this.dataReportes = {
+      repartidor: '',
+      fechaDesde: '',
+      fechaHasta: ''
+    }
     this.showModalReportesRepartidores = true;
   }
 
   generarReporte(): void {
     this.alertService.loading();
-    this.ventasMayoristasService.reportesRepartidores().subscribe({
+    if (this.dataReportes.fechaDesde !== '') this.fechaDesdeMostrar = format(add(new Date(this.dataReportes.fechaDesde), { days: 1 }), 'dd-MM-yyyy');
+    if (this.dataReportes.fechaHasta !== '') this.fechaHastaMostrar = format(add(new Date(this.dataReportes.fechaHasta), { days: 1 }), 'dd-MM-yyyy');
+    const { repartidor, fechaDesde, fechaHasta } = this.dataReportes;
+    this.ventasMayoristasService.reportesRepartidores(
+      repartidor,
+      fechaDesde,
+      fechaHasta
+    ).subscribe({
       next: ({ reportes }) => {
         this.reportes = reportes;
         console.log(this.reportes);
         this.alertService.close();
       },error: ({error}) => this.alertService.errorApi(error.message)
     })
+  }
+
+  regresarBusqueda(): void {
+    this.reportes = [];
   }
 
 }
