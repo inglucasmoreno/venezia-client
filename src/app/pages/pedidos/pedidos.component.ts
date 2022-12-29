@@ -23,6 +23,7 @@ export class PedidosComponent implements OnInit {
 
   // Flags
   public flagCierreCompletar = false;
+  public flagEnvioMasivo = false;
 
   // Etapa
   public etapa = 'pedidos';
@@ -36,6 +37,7 @@ export class PedidosComponent implements OnInit {
   public showModalCompletarDeuda: boolean = false;
   public showModalProductosPendientes: boolean = false;
   public showModalNuevoProducto = false;
+  public showModalEnvioMasivo = false;
 
   // Repartidores
   public repartidores: any[] = [];
@@ -76,6 +78,9 @@ export class PedidosComponent implements OnInit {
 
   // Input
   public fechaActualizar: string = format(new Date(),'yyyy-MM-dd');
+
+  // Envio masivo
+  public envioMasivoRepartidor = 'todos';
 
   // Paginacion
   public totalItems: number;
@@ -194,10 +199,21 @@ export class PedidosComponent implements OnInit {
         this.totalIngresos = totalIngresos;
         this.productoSeleccionado = null;
         this.pedidosPendientes = ventas.filter(pedido => pedido.activo);
+        
+        
+        // Cierre completar pedido
         if(this.flagCierreCompletar){
           this.flagCierreCompletar = false;
           this.showModalCompletar = false;
         }
+        
+        // Cierre envio masivo
+        if(this.flagEnvioMasivo){
+          this.flagEnvioMasivo = false;
+          this.showModalEnvioMasivo = false;
+        }
+
+        
         this.productosParaElaboracion();
       },
       error: ({ error }) => {
@@ -304,7 +320,7 @@ export class PedidosComponent implements OnInit {
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
           this.alertService.loading();
-          this.ventasMayoristasService.actualizarVenta(pedido._id, { estado: 'Cancelado', activo: false }).subscribe({
+          this.ventasMayoristasService.actualizarVenta(pedido._id, { estado: 'Cancelado' }).subscribe({
             next: () => {
               this.listarPedidos();
             },
@@ -840,6 +856,28 @@ export class PedidosComponent implements OnInit {
         this.listarPedidos();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     });
+  }
+
+  // Abrir envios masivos
+  abrirEnviosMasivos(): void {
+    this.showModalEnvioMasivo = true;
+    this.envioMasivoRepartidor = 'todos';
+  }
+
+  // EnvioMasivo
+  envioMasivo(): void {
+    this.alertService.question({ msg: '¿Quieres realizar un envio masivo?', buttonText: 'Enviar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.ventasMayoristasService.envioMasivo(this.envioMasivoRepartidor).subscribe({
+            next: () => {
+              this.flagEnvioMasivo = true;
+              this.listarPedidos();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+        }
+      });    
   }
 
   // Ordenar por columna

@@ -30,6 +30,15 @@ export class VentasMayoristasService {
     });
   };
 
+  // Envio masivo
+  envioMasivo(repartidor: string): Observable<any> {
+    return this.http.get(`${base_url}/ventas-mayoristas/envio/masivo/${repartidor}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
   // Listar ventas
   listarVentas(
     direccion: number = 1,
@@ -102,8 +111,8 @@ export class VentasMayoristasService {
 
   // Reportes - Repartidores
   reportesRepartidores(
-    repartidor: string = '', 
-    fechaDesde: string = '', 
+    repartidor: string = '',
+    fechaDesde: string = '',
     fechaHasta: string = ''
   ): Observable<any> {
     return this.http.get(`${base_url}/ventas-mayoristas/reportes/repartidores/web`, {

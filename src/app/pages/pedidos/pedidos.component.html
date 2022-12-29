@@ -1,4 +1,26 @@
 
+<!-- Envio masivo -->
+<app-modal [showModal]="showModalEnvioMasivo">
+    <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
+        <h1> Envio masivo de pedidos </h1>
+        <button (click)="showModalEnvioMasivo = false" class="focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>               
+        </button>
+    </div>
+    <div class="p-2 text-sm">
+        <p class="font-semibold mb-2"> Seleccionar repartidor </p>    
+        <select [(ngModel)]="envioMasivoRepartidor" class="w-full border focus:outline-none border-gray-400 p-2 rounded">
+            <option value="todos"> Todos los repartidores </option>
+            <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+        </select>    
+        <button (click)="envioMasivo()" class="bg-secondaryColor w-full focus:outline-none mt-3 text-white shadow p-2 rounded">
+            Enviar pedidos
+        </button>
+    </div>
+</app-modal>
+
 <!-- Listado de preparacion -->
 <app-modal [showModal]="showModalListadoPreparacion">
     <div>
@@ -470,7 +492,7 @@
                         <option value=""> Todos los mayoristas </option>
                         <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
                     </select>
-                    <select *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none md:w-48 w-full px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.repartidor">
+                    <select *ngIf="authService.usuario.role === 'ADMIN_ROLE' || authService.usuario.role === 'USER_ROLE'" (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none md:w-48 w-full px-2 py-2 md:py-0 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.repartidor">
                         <option value=""> Todos los repartidores </option>
                         <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
                     </select>
@@ -493,32 +515,35 @@
                  ${{ totalMonto | moneda }} 
             </p> -->
             <div class="px-4 pb-2 overflow-x-auto">
-                <div class="text-sm md:flex md:items-center pb-4"> 
-                    
-                    
-                    <p class="p-1 text-primary-900 border-b-8 border-gray-200">
-                        <span *ngIf="filtro.estado === 'Pendiente'" class="font-semibold"> Monto total pendientes: </span>
-                        <span *ngIf="filtro.estado === 'Enviado'" class="font-semibold"> Monto total enviados: </span>
-                        <span *ngIf="filtro.estado === 'Cancelado'" class="font-semibold"> Monto total cancelados: </span>
-                        <span *ngIf="filtro.estado === 'Deuda' || filtro.estado === 'Completado' || filtro.estado === ''" class="font-semibold"> Monto total: </span>
+                <div class="md:flex md:items-center md:justify-between">
+                    <div class="text-sm md:flex md:items-center pb-4"> 
+                        <p class="p-1 text-primary-900 border-b-8 border-gray-200">
+                            <span *ngIf="filtro.estado === 'Pendiente'" class="font-semibold"> Monto total pendientes: </span>
+                            <span *ngIf="filtro.estado === 'Enviado'" class="font-semibold"> Monto total enviados: </span>
+                            <span *ngIf="filtro.estado === 'Cancelado'" class="font-semibold"> Monto total cancelados: </span>
+                            <span *ngIf="filtro.estado === 'Deuda' || filtro.estado === 'Completado' || filtro.estado === ''" class="font-semibold"> Monto total: </span>
+                            
+                             ${{ totalMonto | moneda }} 
+                        </p>
                         
-                         ${{ totalMonto | moneda }} 
-                    </p>
-                    
-                    
-                    <p *ngIf="filtro.estado === '' || filtro.estado === 'Completado' || filtro.estado === 'Deuda'" class="p-1 text-green-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-green-200">
-                        <span class="font-semibold">
-                            Total ingresos:
-                        </span>
-                         ${{ totalIngresos | moneda }} 
-                    </p>
-                    <p *ngIf="filtro.estado === '' || filtro.estado === 'Completado' || filtro.estado === 'Deuda'" class="p-1 text-red-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-red-200">
-                        <span class="font-semibold">
-                            Total deuda:
-                        </span>
-                         ${{ totalDeuda | moneda }} 
-                    </p>
-                </div>   
+                        
+                        <p *ngIf="filtro.estado === '' || filtro.estado === 'Completado' || filtro.estado === 'Deuda'" class="p-1 text-green-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-green-200">
+                            <span class="font-semibold">
+                                Total ingresos:
+                            </span>
+                             ${{ totalIngresos | moneda }} 
+                        </p>
+                        <p *ngIf="filtro.estado === '' || filtro.estado === 'Completado' || filtro.estado === 'Deuda'" class="p-1 text-red-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-red-200">
+                            <span class="font-semibold">
+                                Total deuda:
+                            </span>
+                             ${{ totalDeuda | moneda }} 
+                        </p>
+                    </div>   
+                    <button (click)="abrirEnviosMasivos()" title="Enviar todos los pedidos" *ngIf="filtro.estado === 'Pendiente' && authService.usuario.role !== 'DELIVERY_ROLE'" class="p-2 border shadow md:mb-0 mb-2 border-gray-400 hover:text-secondaryColor focus:outline-none font-semibold text-sm rounded bg-gray-50">
+                        Envio masivo
+                    </button>
+                </div>
                 <div class="inline-block mt-2 max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
                     <table class="min-w-full leading-normal">
                         <thead>
