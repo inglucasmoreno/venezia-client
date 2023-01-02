@@ -4,6 +4,9 @@ import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { CajasService } from 'src/app/services/cajas.service';
 import { DataService } from 'src/app/services/data.service';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-cajas-historial',
@@ -114,6 +117,27 @@ export class CajasHistorialComponent implements OnInit {
   abrirModalDetalles(caja: any): void {
     this.cajaSeleccionada = caja;
     this.showModalCaja = true;
+  }
+
+  // Generar reporte PDF
+  generarPDF(): void {
+    this.alertService.question({ msg: 'Generando reporte PDF', buttonText: 'Generar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          const data = {
+            fechasDesde: this.fechaDesdeMostrar,
+            fechaHasta: this.fechaHastaMostrar,
+            reportes: this.reportes
+          }
+          this.cajasService.reporteCajasPDF(data).subscribe({
+            next: () => {
+              this.alertService.close();
+              window.open(`${base_url}/pdf/reporte_cajas.pdf`, '_blank');
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          });
+        }
+      });
   }
 
   // Abrir modal - Reportes

@@ -82,8 +82,17 @@ export class CajasService {
     return this.http.get(`${base_url}/cajas/reportes/acumulacion/estadisticas`, {
       params: {
         fechaDesde: parametros?.fechaDesde || '',
-        fechaHasta: parametros?.fechaHasta || '',   
+        fechaHasta: parametros?.fechaHasta || '',
       },
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+  // Reporte de cajas - PDF
+  reporteCajasPDF(data: any): Observable<any> {
+    return this.http.post(`${base_url}/cajas/reportes/acumulacion/estadisticas/pdf`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
