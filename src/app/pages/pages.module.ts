@@ -37,6 +37,7 @@ import { CuentasCorrientesMayoristasComponent } from './cuentas-corrientes-mayor
 import { CobrosMayoristasComponent } from './cobros-mayoristas/cobros-mayoristas.component';
 import { NuevoCobroMayoristaComponent } from './cobros-mayoristas/nuevo-cobro-mayorista.component';
 import { CajasMayoristasHistorialComponent } from './cajas-mayoristas/cajas-mayoristas-historial.component';
+import { PedidosCompletarComponent } from './pedidos/pedidos-completar.component';
 
 
 @NgModule({
@@ -71,6 +72,7 @@ import { CajasMayoristasHistorialComponent } from './cajas-mayoristas/cajas-mayo
     CobrosMayoristasComponent,
     NuevoCobroMayoristaComponent,
     CajasMayoristasHistorialComponent,
+    PedidosCompletarComponent,
   ],
   imports: [
     CommonModule,

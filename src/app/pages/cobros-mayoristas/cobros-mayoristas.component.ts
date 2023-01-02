@@ -66,7 +66,7 @@ export class CobrosMayoristasComponent implements OnInit {
   // Ordenar
   public ordenar = {
     direccion: -1,  // Asc (1) | Desc (-1)
-    columna: 'fecha_cobro'
+    columna: 'nro'
   }
 
   constructor(

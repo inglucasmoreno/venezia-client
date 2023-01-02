@@ -131,6 +131,8 @@ export class CajasMayoristasHistorialComponent implements OnInit {
   // Abrir detalles de pedido
   abrirModalDetalles(caja: any): void {
     this.cajaSeleccionada = caja;
+    this.flagIngresos = false;
+    this.flagGastos = false;
     this.showModalDetalles = true;
   }
 
@@ -138,6 +140,8 @@ export class CajasMayoristasHistorialComponent implements OnInit {
   abrirModalReportes(): void {
     this.fechaDesde = '';
     this.fechaHasta = '';
+    this.flagIngresos = false;
+    this.flagGastos = false;
     this.showModalReportes = true;
   }
 

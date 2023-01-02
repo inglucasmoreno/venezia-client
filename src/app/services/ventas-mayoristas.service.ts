@@ -31,8 +31,17 @@ export class VentasMayoristasService {
   };
 
   // Envio masivo
-  envioMasivo(repartidor: string): Observable<any> {
-    return this.http.get(`${base_url}/ventas-mayoristas/envio/masivo/${repartidor}`, {
+  envioMasivo(repartidor: string, data: any): Observable<any> {
+    return this.http.post(`${base_url}/ventas-mayoristas/envio/masivo/${repartidor}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Completar masivo
+  completarMasivo(data: any): Observable<any> {
+    return this.http.post(`${base_url}/ventas-mayoristas/completar/masivo/`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -108,6 +117,15 @@ export class VentasMayoristasService {
       }
     });
   }
+
+  // Talonarios masivos PDF
+  talonariosMasivosPDF(): Observable<any> {
+    return this.http.get(`${base_url}/ventas-mayoristas/talonarios-masivos/pdf`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
 
   // Reportes - Repartidores
   reportesRepartidores(

@@ -20,10 +20,20 @@ const base_url = environment.base_url;
   ]
 })
 export class PedidosComponent implements OnInit {
+  
+  // Fechas
+  public fechaMasivo = format(new Date(), 'yyyy-MM-dd');
+
+  // Totales masivos
+  public totalPedidosMasivo = 0;
+  public totalDeudaMasivo = 0;
+  public totalAnticipoMasivo = 0;
+  public totalRecibidoMasivo = 0;
 
   // Flags
   public flagCierreCompletar = false;
   public flagEnvioMasivo = false;
+  public flagCompletarMasivo = false;
 
   // Etapa
   public etapa = 'pedidos';
@@ -31,13 +41,14 @@ export class PedidosComponent implements OnInit {
 
   // Modal
   public showModal: boolean = false;
+  public showModalEnviar: boolean = false;
   public showModalListadoPreparacion: boolean = false;
-  public showModalEnvio: boolean = false;
   public showModalCompletar: boolean = false;
   public showModalCompletarDeuda: boolean = false;
   public showModalProductosPendientes: boolean = false;
   public showModalNuevoProducto = false;
   public showModalEnvioMasivo = false;
+  public showModalCompletarMasivo = false;
 
   // Repartidores
   public repartidores: any[] = [];
@@ -63,6 +74,7 @@ export class PedidosComponent implements OnInit {
   public totalMonto = 0;
   public productoSeleccionado: any = null;
   public nuevaCantidad: number = null;
+  public pedidosEnviados: any[];
 
   // Productos
   public productosPendientes: any[] = [];
@@ -81,6 +93,7 @@ export class PedidosComponent implements OnInit {
 
   // Envio masivo
   public envioMasivoRepartidor = 'todos';
+  public completarMasivoRepartidor = '';
 
   // Paginacion
   public totalItems: number;
@@ -160,8 +173,6 @@ export class PedidosComponent implements OnInit {
                 this.totalItems = totalItems;
                 this.totalIngresos = totalIngresos;
                 this.pedidosPendientes = ventas.filter(pedido => pedido.activo);
-                this.productosParaElaboracion();
-                this.showModalEnvio = false;
                 this.alertService.close();
               },
               error: ({ error }) => {
@@ -177,7 +188,7 @@ export class PedidosComponent implements OnInit {
   }
 
   listarPedidos(): void {
-    this.alertService.loading();
+    // this.alertService.loading();
     this.ventasMayoristasService.listarVentas(
       this.ordenar.direccion,
       this.ordenar.columna,
@@ -200,7 +211,6 @@ export class PedidosComponent implements OnInit {
         this.productoSeleccionado = null;
         this.pedidosPendientes = ventas.filter(pedido => pedido.activo);
         
-        
         // Cierre completar pedido
         if(this.flagCierreCompletar){
           this.flagCierreCompletar = false;
@@ -213,8 +223,14 @@ export class PedidosComponent implements OnInit {
           this.showModalEnvioMasivo = false;
         }
 
-        
-        this.productosParaElaboracion();
+        // Cierre completar masivo
+        if(this.flagCompletarMasivo){
+          this.flagCompletarMasivo = false;
+          this.showModalCompletarMasivo = false;
+        }
+
+        this.alertService.close();
+
       },
       error: ({ error }) => {
         this.alertService.errorApi(error.message);
@@ -248,27 +264,31 @@ export class PedidosComponent implements OnInit {
 
   // Abrir modal -> Enviar pedido
   abrirEnviarPedido(pedido: any): void {
-    this.repartidor = '';
+    this.fechaMasivo = format(new Date(),'yyyy-MM-dd');
     this.pedidoSeleccionado = pedido;
-    this.showModalEnvio = true;
+    this.showModalEnviar = true;
   }
 
   // Enviar pedido
-  enviarPedido(pedido: any): void {
+  enviarPedido(): void {
 
-    this.pedidoSeleccionado = pedido;
+    // Verificacion: Fecha de pedido
+    if(this.fechaMasivo === ''){
+      this.alertService.info('Debe colocar una fecha correcta');
+      return;
+    }
 
     this.alertService.question({ msg: '¿Quieres enviar el pedido?', buttonText: 'Enviar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
           this.alertService.loading();
 
-          const data = { estado: 'Enviado' };
+          const data = { estado: 'Enviado', fecha_pedido: this.fechaMasivo};
 
           this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, data).subscribe({
             next: () => {
-              this.repartidor = '';
               this.pedidoSeleccionado = null;
+              this.showModalEnviar = false;
               this.listarPedidos();
             },
             error: ({ error }) => this.alertService.errorApi(error.message)
@@ -280,6 +300,7 @@ export class PedidosComponent implements OnInit {
 
   // Productos para elaboracion
   productosParaElaboracion(): void {
+    this.alertService.loading();
     this.ventasMayoristasProductosService.listarProductos(1, 'descripcion', '', 'true').subscribe({
       next: ({ productos }) => {
 
@@ -302,8 +323,7 @@ export class PedidosComponent implements OnInit {
           }
         });
 
-        this.showModalEnvio = false;
-        // this.showModalCompletar = false;
+        this.showModalProductosPendientes = true;
         this.showModalCompletarDeuda = false;
         this.alertService.close();
 
@@ -668,7 +688,7 @@ export class PedidosComponent implements OnInit {
     });
   }
 
-  // Abrir modal nuevoC producto
+  // Abrir modal nuevo producto
   abrirModalNuevoProducto(): void {
     this.alertService.loading();
     this.productosService.listarProductos().subscribe({
@@ -839,13 +859,18 @@ export class PedidosComponent implements OnInit {
 
   // Generar listado de deudas PDF
   generarListadoDeudas(): void {
-    this.alertService.loading();
-    this.ventasMayoristasService.detallesDeudasPDF().subscribe({
-      next: () => {
-        window.open(`${base_url}/pdf/deudas_mayoristas.pdf`, '_blank');
-        this.alertService.close();
-      }, error: ({ error }) => this.alertService.errorApi(error.message)
-    })
+    this.alertService.question({ msg: '¿Quieres generar listado de deudas?', buttonText: 'Generar' })
+    .then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        this.alertService.loading();
+        this.ventasMayoristasService.detallesDeudasPDF().subscribe({
+          next: () => {
+            window.open(`${base_url}/pdf/deudas_mayoristas.pdf`, '_blank');
+            this.alertService.close();
+          }, error: ({ error }) => this.alertService.errorApi(error.message)
+        })     
+      }
+    }); 
   }
 
   // Actualizar fecha
@@ -860,17 +885,33 @@ export class PedidosComponent implements OnInit {
 
   // Abrir envios masivos
   abrirEnviosMasivos(): void {
+    this.fechaMasivo = format(new Date(),'yyyy-MM-dd');
     this.showModalEnvioMasivo = true;
     this.envioMasivoRepartidor = 'todos';
   }
 
-  // EnvioMasivo
+  // Abrir completar masivos
+  abrirCompletarMasivo(): void {
+    this.pedidosEnviados = [];
+    this.fechaMasivo = format(new Date(),'yyyy-MM-dd');
+    this.completarMasivoRepartidor = '';
+    this.showModalCompletarMasivo = true;
+  }
+
+  // Envio masivo
   envioMasivo(): void {
+
+    // Verificacion: Fecha de pedido
+    if(this.fechaMasivo === ''){
+      this.alertService.info('Debe colocar una fecha correcta');
+      return;
+    }
+
     this.alertService.question({ msg: '¿Quieres realizar un envio masivo?', buttonText: 'Enviar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
           this.alertService.loading();
-          this.ventasMayoristasService.envioMasivo(this.envioMasivoRepartidor).subscribe({
+          this.ventasMayoristasService.envioMasivo(this.envioMasivoRepartidor, { fecha_pedidos: this.fechaMasivo }).subscribe({
             next: () => {
               this.flagEnvioMasivo = true;
               this.listarPedidos();
@@ -878,6 +919,189 @@ export class PedidosComponent implements OnInit {
           })
         }
       });    
+  }
+
+  // Completar masivo
+  completarMasivo(): void {
+    
+    // Verificacion: Fecha de pedido
+    if(this.fechaMasivo === ''){
+      this.alertService.info('Debe colocar una fecha correcta');
+      return;
+    }
+
+    let pedidosACompletar = this.pedidosEnviados.filter( pedido => pedido.seleccionado );
+    
+    // Verificacion: Pedidos seleccionados
+    if(pedidosACompletar.length === 0){
+      this.alertService.info('No hay pedidos seleccionados');
+      return;
+    }
+
+    const dataCompletar = {
+      usuario: this.authService.usuario.userId,
+      fecha_pedidos: this.fechaMasivo,
+      pedidos: pedidosACompletar
+    }
+    this.alertService.question({ msg: '¿Quieres completar de forma masiva?', buttonText: 'Completar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.ventasMayoristasService.completarMasivo(dataCompletar).subscribe({
+            next: () => {
+              this.flagCompletarMasivo = true;
+              this.listarPedidos();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+        }
+      });    
+  }
+
+  // Calculos masivos
+  calculosMasivos(): void {
+
+    let totalPedidosTMP = 0;
+    let totalDeudaTMP = 0;
+    let totalAnticipoTMP = 0;
+    let totalRecibidoTMP = 0;
+
+    this.pedidosEnviados.map( pedido => {
+      if(pedido.seleccionado){
+        totalPedidosTMP += pedido.precio_total;
+        totalDeudaTMP += pedido.deuda_monto;
+        totalAnticipoTMP += pedido.monto_anticipo;
+        totalRecibidoTMP += pedido.monto_cobrado;
+      }  
+    })
+
+    this.totalPedidosMasivo = totalPedidosTMP;
+    this.totalDeudaMasivo = totalDeudaTMP;
+    this.totalAnticipoMasivo = totalAnticipoTMP;
+    this.totalRecibidoMasivo = totalRecibidoTMP;
+ 
+  }
+
+
+  // Buscar pedidos enviados
+  buscarPedidosEnviados(): void {
+
+    if(this.completarMasivoRepartidor === ''){
+      this.pedidosEnviados = [];
+      return;
+    }
+
+   this.alertService.loading();
+   
+   this.ventasMayoristasService.listarVentas(
+    1,
+    'mayorista.descripcion',
+    0,
+    10000,
+    'Enviado',
+    '',
+    this.completarMasivoRepartidor,
+    '',
+    '',
+    '',
+    'true',
+  ).subscribe({
+    next: ({ ventas, totalItems, totalDeuda, totalIngresos, totalMonto }) => {
+
+      this.pedidosEnviados = [];
+
+      ventas.map( venta => {
+        this.pedidosEnviados.push({
+          _id: venta._id,
+          fecha_pedido: venta.fecha_pedido,
+          precio_total: venta.precio_total,
+          numero: venta.numero,
+          deuda: false,
+          estado: 'Completado',
+          mayorista: venta.mayorista.descripcion,
+          mayoristaID: venta.mayorista._id,
+          repartidorID: venta.repartidor._id,
+          seleccionado: true,
+          diferencia: 0,
+          monto_anticipo: 0,
+          deuda_monto: 0,
+          monto_cobrado: venta.precio_total
+        })
+      });
+
+      this.calculosMasivos();
+
+      console.log(this.pedidosEnviados);
+      this.alertService.close();
+    },
+    error: ({ error }) => {
+      this.alertService.errorApi(error.message);
+    }
+  }); 
+  }
+
+  // Seleccionar/Deseleccionar pedido
+  seleccionarDeseleccionarPedido(pedido:any): void {
+    
+    pedido.seleccionado = !pedido.seleccionado;
+    
+    if(!pedido.seleccionado){
+      pedido.deuda_monto = 0;
+      pedido.diferencia = 0;
+      pedido.deuda = false;
+      pedido.estado = 'Completado',
+      pedido.monto_cobrado = null;
+    }else{
+      pedido.deuda_monto = 0;
+      pedido.diferencia = 0;
+      pedido.deuda = false;
+      pedido.estado = 'Completado';
+      pedido.monto_cobrado = pedido.precio_total;
+    }
+
+    this.calculosMasivos();
+
+  }
+
+  // Calcular deuda completar masivo
+  calcularDeudaEnvioMasivo(pedido: any): void {
+    console.log(pedido);
+    
+    if(pedido.monto_cobrado >= 0){
+      pedido.diferencia = pedido.monto_cobrado - pedido.precio_total ;
+    }
+
+    if(pedido.diferencia > 0){
+      pedido.deuda_monto = 0;
+      pedido.deuda = false;
+      pedido.estado = 'Completado';
+      pedido.monto_anticipo = pedido.diferencia;
+    }else if(pedido.diferencia < 0){
+      pedido.monto_anticipo = 0;
+      pedido.deuda = true;
+      pedido.estado = 'Deuda';
+      pedido.deuda_monto = -pedido.diferencia;
+    }
+
+    this.calculosMasivos();
+
+    console.log(pedido);
+
+  }
+
+  // Impresion masiva
+  impresionMasiva(): void {
+    this.alertService.question({ msg: '¿Quieres realizar una impresion masiva?', buttonText: 'Imprimir' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.ventasMayoristasService.talonariosMasivosPDF().subscribe({
+            next: () => {
+              this.alertService.close();
+              window.open(`${base_url}/pdf/talonarios_masivos.pdf`, '_blank');
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+        }
+      });      
   }
 
   // Ordenar por columna
