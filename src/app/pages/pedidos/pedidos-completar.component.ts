@@ -135,11 +135,11 @@ export class PedidosCompletarComponent implements OnInit {
             mayorista: venta.mayorista.descripcion,
             mayoristaID: venta.mayorista._id,
             repartidorID: venta.repartidor._id,
-            seleccionado: false,
+            seleccionado: true,
             diferencia: 0,
             monto_anticipo: 0,
             deuda_monto: 0,
-            monto_cobrado: null
+            monto_cobrado: venta.precio_total
           })
         });
 
