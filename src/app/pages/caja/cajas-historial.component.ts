@@ -126,7 +126,7 @@ export class CajasHistorialComponent implements OnInit {
         if (isConfirmed) {
           this.alertService.loading();
           const data = {
-            fechasDesde: this.fechaDesdeMostrar,
+            fechaDesde: this.fechaDesdeMostrar,
             fechaHasta: this.fechaHastaMostrar,
             reportes: this.reportes
           }
