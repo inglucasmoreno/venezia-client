@@ -150,7 +150,7 @@
             <p> Tesoreria </p>
             <p> ${{ reportes?.tesoreria | moneda }} </p>
           </div>
-          <div [ngClass]="{'text-red-500':cajaSeleccionada?.diferencia < 0}" class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
+          <div [ngClass]="{'text-red-500':reportes?.diferencia < 0}" class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-300 justify-between">
             <p> Diferencia </p>
             <p> ${{ reportes?.diferencia | moneda }} </p>
           </div>
