@@ -7,6 +7,8 @@ import { VentasMayoristasService } from 'src/app/services/ventas-mayoristas.serv
 import gsap from 'gsap';
 import { MayoristasService } from 'src/app/services/mayoristas.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
+import { format } from 'date-fns';
+import { PaquetesService } from '../../services/paquetes.service';
 
 @Component({
   selector: 'app-nuevo-pedido',
@@ -17,6 +19,12 @@ export class NuevoPedidoComponent implements OnInit {
 
 // Modal
 public showModal = false;
+
+// Fecha actual
+public fecha_pedido: string = format(new Date(),'yyyy-MM-dd');
+
+// Etapas
+public etapa: string = 'creacion';
 
 // Variables
 public precioCarrito: number = 0;
@@ -51,6 +59,7 @@ public ordenar = {
 
 constructor(private dataService: DataService,
             public authService: AuthService,
+            private paquetesService: PaquetesService,
             private alertService: AlertService,
             private usuarioService: UsuariosService,
             private mayoristasService: MayoristasService,
@@ -254,6 +263,37 @@ reiniciarPedido(): void {
   this.cantidad = null;
   this.precioCarrito = 0; 
   this.almacenarLocalStorage();      
+}
+
+// Crear paquete
+crearPaquete(): void {
+
+  // Verificacion: Fecha de paquete
+  if(!this.fecha_pedido){
+    this.alertService.info('Debe colocar una fecha de pedido válida');
+    return;
+  }
+
+  // Verificacion - Seleccionar repartidor - Usuario administrador
+  if(this.authService.usuario.role === 'ADMIN_ROLE' && this.repartidor === ''){
+    this.alertService.info('Debe seleccionar un repartidor');
+    return;
+  }
+
+  const data = {
+    fecha_pedido: this.fecha_pedido,
+    creatorUser: this.authService.usuario.userId,
+    updatorUser: this.authService.usuario.userId,
+  };
+
+  this.alertService.loading();
+  
+  this.paquetesService.nuevoPaquete(data).subscribe({
+    next: () => {
+      this.etapa = 'armado';
+    }, error: ({error}) => this.alertService.errorApi(error.message)
+  });
+
 }
 
 // Producto seleccionado

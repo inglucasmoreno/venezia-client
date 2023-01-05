@@ -1,118 +1,157 @@
 <!-- Listado de productos -->
 <app-modal [showModal]="showModal">
-  <div>
-      <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
-          <h1 class="text-xl"> Agregando producto </h1>
-          <button class="focus:outline-none">
-              <svg (click)="showModal = false" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>               
-          </button>
-      </div>
-      <div class="max-h-screen overflow-y-auto">
-          <div *ngIf="!productoSeleccionado" class="p-4">
-              <input [(ngModel)]="filtro.parametro" type="text" class="p-2 border focus:outline-none text-sm border-primary-400" placeholder="Buscador">
-              <div (click)="seleccionarProducto(producto)" *ngFor="let producto of productos | filtroProductos:this.filtro.parametro:'true'" class="my-3 border cursor-pointer hover:bg-red-50 hover:border-red-200 text-sm border-gray-300 p-2 rounded">
-                  <h3 class="font-semibold"> {{ producto.descripcion }} </h3>
-                  <p class="text-xs"> ${{ producto.precio_mayorista | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
-              </div>
-          </div>
-          <div *ngIf="productoSeleccionado" class="p-4">
-              <p class="font-semibold"> {{ productoSeleccionado.descripcion }} </p>
-              <p class="text-xs"> ${{ productoSeleccionado.precio_mayorista | moneda }} x {{ productoSeleccionado.unidad_medida.descripcion }} </p>    
-              <div class="flex items-center">
-                  <input (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" min="0" type="number" placeholder="Cantidad" class="border text-sm mt-2 focus:outline-none border-gray-300 p-2 rounded">
-                  <button (click)="agregarProducto()" class="p-2 focus:outline-none border mt-2 ml-2 hover:border-green-300 hover:bg-green-100 rounded border-gray-300 text-green-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>    
-                  </button>
-                  <button (click)="cerrarSeleccion()" class="p-2 focus:outline-none border mt-2 ml-2 hover:border-red-300 hover:bg-red-100 rounded border-gray-300 text-red-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                          </svg>   
-                  </button>
-              </div>
-          </div>
-      </div>
-  </div>
-</app-modal>
-
-<!-- Carrito de compras -->
-<div class="p-2 gsap-contenido">
-  <div *ngIf="carrito.length > 0" class="max-w-4xl mx-auto mt-4">
-      <div class="bg-primary-800 flex items-center justify-between p-2">
-          <h1 class="text-white text-xl"> Creando pedido </h1>
-          <div>
-              <button *ngIf="carrito.length > 0" (click)="crearPedido()" title="Enviar pedido" class="bg-white text-primary-800 p-2 focus:outline-none rounded hover:text-green-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-              </button>
-              <button (click)="abrirModal()" title="Agregar producto" class="bg-white ml-2 text-primary-800 p-2 focus:outline-none rounded hover:text-secondaryColor">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-              </button>
-          </div>
-      </div>
-      <div class="p-2 border shadow border-gray-300">
-          <div class="md:flex md:items-center pb-2 border-b border-gray-400">
-                <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
-                    <p class="font-semibold text-sm"> Repartidor seleccionado </p>
-                    <select (change)="almacenarLocalStorage()" [(ngModel)]="repartidor" class="border my-2 w-full md:w-auto text-sm focus:outline-none border-gray-400 shadow rounded p-2">
-                        <option value=""> Seleccionar repartidor </option>
-                        <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
-                    </select>                      
-                </div>    
-                <div class="md:ml-2">
-                    <p class="font-semibold text-sm"> Mayorista seleccionado </p>
-                    <select (change)="almacenarLocalStorage()" [(ngModel)]="mayorista" class="border my-2 w-full md:w-auto text-sm focus:outline-none border-gray-400 shadow rounded p-2">
-                        <option value=""> Seleccionar mayorista </option>
-                        <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
-                    </select>        
+    <div>
+        <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
+            <h1 class="text-xl"> Agregando producto </h1>
+            <button class="focus:outline-none">
+                <svg (click)="showModal = false" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="max-h-screen overflow-y-auto">
+            <div *ngIf="!productoSeleccionado" class="p-4">
+                <input [(ngModel)]="filtro.parametro" type="text"
+                    class="p-2 border focus:outline-none text-sm border-primary-400" placeholder="Buscador">
+                <div (click)="seleccionarProducto(producto)"
+                    *ngFor="let producto of productos | filtroProductos:this.filtro.parametro:'true'"
+                    class="my-3 border cursor-pointer hover:bg-red-50 hover:border-red-200 text-sm border-gray-300 p-2 rounded">
+                    <h3 class="font-semibold"> {{ producto.descripcion }} </h3>
+                    <p class="text-xs"> ${{ producto.precio_mayorista | moneda }} x {{
+                        producto.unidad_medida.descripcion }} </p>
                 </div>
             </div>
-            <p *ngIf="carrito.length > 0" class="text-lg font-semibold pt-2"> Listado de producto </p>
-            <p *ngIf="carrito.length > 0" class="text-sm"> Precio total: <span class="font-semibold"> ${{ precioCarrito | moneda }} </span></p>
-            <div class="max-h-screen overflow-y-auto mt-2">
-                <div class="border flex items-center justify-between border-gray-400 shadow p-2 my-2" *ngFor="let producto of carrito">
-                    <div>
-                        <p class="text-sm font-semibold"> {{ producto.descripcion }} </p>
-                        <p class="text-xs text-gray-500"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida_descripcion }} </p> 
-                        <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
-                        <p class="text-xs font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
-                    </div>
-                    <button (click)="eliminarProducto(producto)" class="border border-gray-400 focus:outline-none p-2 rounded hover:bg-red-100 hover:border-red-300 text-red-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <div *ngIf="productoSeleccionado" class="p-4">
+                <p class="font-semibold"> {{ productoSeleccionado.descripcion }} </p>
+                <p class="text-xs"> ${{ productoSeleccionado.precio_mayorista | moneda }} x {{
+                    productoSeleccionado.unidad_medida.descripcion }} </p>
+                <div class="flex items-center">
+                    <input (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" min="0" type="number"
+                        placeholder="Cantidad"
+                        class="border text-sm mt-2 focus:outline-none border-gray-300 p-2 rounded">
+                    <button (click)="agregarProducto()"
+                        class="p-2 focus:outline-none border mt-2 ml-2 hover:border-green-300 hover:bg-green-100 rounded border-gray-300 text-green-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                    <button (click)="cerrarSeleccion()"
+                        class="p-2 focus:outline-none border mt-2 ml-2 hover:border-red-300 hover:bg-red-100 rounded border-gray-300 text-red-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
             </div>
-      </div>
-  </div>
-  <div *ngIf="carrito.length <= 0" class="text-center text-sm mt-10">
-      <div>
-          <img class="md:w-1/2 mx-auto" src="assets/img/pedido.svg" alt="Pedidos.svg">
-          <!-- <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE'"> -->
-          <div>
-              <p class="mt-5 text-xl mb-2"> Creando nuevo pedido </p>
-              <div>
-                <select *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" [(ngModel)]="repartidor" class="border mb-2 block mx-auto w-11/12 md:w-1/4 focus:outline-none border-gray-400 shadow rounded p-2">
-                    <option value=""> Seleccionar repartidor </option>
-                    <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
-                </select>
-                <select [(ngModel)]="mayorista" class="border block mx-auto w-11/12 md:w-1/4 focus:outline-none border-gray-400 shadow rounded p-2">
+        </div>
+    </div>
+</app-modal>
+
+<!-- Carrito de compras -->
+<div class="p-2 gsap-contenido">
+    <div *ngIf="carrito.length > 0" class="max-w-4xl mx-auto mt-4">
+        <div class="bg-primary-800 flex items-center justify-between p-2">
+            <h1 class="text-white text-xl"> Creando pedido </h1>
+            <div>
+                <button *ngIf="carrito.length > 0" (click)="crearPedido()" title="Enviar pedido"
+                    class="bg-white text-primary-800 p-2 focus:outline-none rounded hover:text-green-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </button>
+                <button (click)="abrirModal()" title="Agregar producto"
+                    class="bg-white ml-2 text-primary-800 p-2 focus:outline-none rounded hover:text-secondaryColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="p-2 border shadow border-gray-300">
+            <div class="md:flex md:items-center pb-2 border-b border-gray-400">
+                <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
+                    <p class="font-semibold text-sm"> Repartidor seleccionado </p>
+                    <select (change)="almacenarLocalStorage()" [(ngModel)]="repartidor"
+                        class="border my-2 w-full md:w-auto text-sm focus:outline-none border-gray-400 shadow rounded p-2">
+                        <option value=""> Seleccionar repartidor </option>
+                        <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido
+                            }} {{ repartidor.nombre }} </option>
+                    </select>
+                </div>
+                <div class="md:ml-2">
+                    <p class="font-semibold text-sm"> Mayorista seleccionado </p>
+                    <select (change)="almacenarLocalStorage()" [(ngModel)]="mayorista"
+                        class="border my-2 w-full md:w-auto text-sm focus:outline-none border-gray-400 shadow rounded p-2">
+                        <option value=""> Seleccionar mayorista </option>
+                        <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion
+                            }} </option>
+                    </select>
+                </div>
+            </div>
+            <p *ngIf="carrito.length > 0" class="text-lg font-semibold pt-2"> Listado de producto </p>
+            <p *ngIf="carrito.length > 0" class="text-sm"> Precio total: <span class="font-semibold"> ${{ precioCarrito
+                    | moneda }} </span></p>
+            <div class="max-h-screen overflow-y-auto mt-2">
+                <div class="border flex items-center justify-between border-gray-400 shadow p-2 my-2"
+                    *ngFor="let producto of carrito">
+                    <div>
+                        <p class="text-sm font-semibold"> {{ producto.descripcion }} </p>
+                        <p class="text-xs text-gray-500"> ${{ producto.precio_unitario | moneda }} x {{
+                            producto.unidad_medida_descripcion }} </p>
+                        <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
+                        <p class="text-xs font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
+                    </div>
+                    <button (click)="eliminarProducto(producto)"
+                        class="border border-gray-400 focus:outline-none p-2 rounded hover:bg-red-100 hover:border-red-300 text-red-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div *ngIf="etapa === 'creacion'" class="text-center text-sm mt-10">
+        <div>
+            <img class="md:w-1/2 mx-auto" src="assets/img/pedido.svg" alt="Pedidos.svg">
+            <!-- <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE'"> -->
+            <div>
+                <p class="mt-5 text-xl mb-2"> Creando nuevo paquete </p>
+                <div>
+                    <input [(ngModel)]="fecha_pedido" type="date"
+                        class="border focus:outline-none p-2 w-1/4 mt-2 border-gray-400 rounded">
+                    <select *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" [(ngModel)]="repartidor"
+                        class="border mb-2 mt-3 block mx-auto w-11/12 md:w-1/4 focus:outline-none border-gray-400 shadow rounded p-2">
+                        <option value=""> Seleccionar repartidor </option>
+                        <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido
+                            }} {{ repartidor.nombre }} </option>
+                    </select>
+                    <!-- <select [(ngModel)]="mayorista" class="border block mx-auto w-11/12 md:w-1/4 focus:outline-none border-gray-400 shadow rounded p-2">
                   <option value=""> Seleccionar mayorista </option>
                   <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
-                </select>
-                <button (click)="abrirModal()" class="bg-secondaryColor text-white py-2 px-4 rounded shadow mt-4 focus:outline-none"> Crear pedido </button>
-              </div>
-          </div>
-          <!-- <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
+                </select> -->
+                    <button (click)="crearPaquete()"
+                        class="bg-secondaryColor text-white py-2 px-4 rounded shadow mt-4 focus:outline-none"> Crear
+                        paquete </button>
+                </div>
+            </div>
+            <!-- <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
             <h1 class="text-xl mt-10"> Solo los repartidores pueden crear pedidos </h1>
           </div> -->
-      </div>
-  </div>
+        </div>
+    </div>
+
+    <div *ngIf="etapa === 'armado'" class="text-center text-sm mt-10">
+        <p> Crear nuevo pedido </p>
+    </div>
+
+
 </div>
