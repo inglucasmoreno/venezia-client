@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- icon666.com - MILLIONS vector ICONS FREE -->
+
+<svg
+   id="Capa_1"
+   enable-background="new 0 0 512.422 512.422"
+   viewBox="0 0 512.422 512.422"
+   version="1.1"
+   sodipodi:docname="caja.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs29" />
+  <sodipodi:namedview
+     id="namedview27"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.81670967"
+     inkscape:cx="324.47271"
+     inkscape:cy="198.3569"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g24" />
+  <g
+     id="g24">
+    <path
+       d="M 419.98657,225.31506 H 89.986575 v -39.155 l 164.999995,-20.845 165,20.845 z"
+       fill="#b57a6a"
+       id="path2" />
+    <path
+       d="m 419.98657,225.31506 h -165 v -60 l 165,0.845 z"
+       fill="#8d5b4a"
+       id="path4" />
+    <path
+       d="m 89.986575,263.73906 v 143.994 l 164.999995,29.999 165,-29.999 v -143.994 l -165,-38.424 z"
+       fill="#8d5b4a"
+       id="path6" />
+    <path
+       d="m 419.98657,276.74406 -165,-51.429 v 212.417 l 165,-29.999 z"
+       fill="#7d4d3e"
+       id="path8" />
+    <path
+       d="m 209.98657,300.31506 -164.999995,-30 45,-75 164.999995,30 z"
+       fill="#f0cfa3"
+       id="path14" />
+    <path
+       d="m 209.98657,90.315055 -164.999995,30.000005 45,75 164.999995,-30 z"
+       fill="#f0cfa3"
+       id="path16" />
+    <g
+       fill="#edb986"
+       id="g22"
+       transform="translate(-1.2244253,-74.689945)">
+      <path
+         d="m 301.211,165.005 165,30 -45,75 -165,-30 z"
+         id="path18" />
+      <path
+         d="m 301.211,375.005 165,-30 -45,-75 -165,30 z"
+         id="path20" />
+    </g>
+  </g>
+</svg>

@@ -21,6 +21,15 @@ export class PaquetesService {
     });
   };
 
+  // Completar paquete
+  completarPaquete(data: any): Observable<any> {
+    return this.http.post(`${base_url}/paquetes/completar`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
   // Paquete por ID
   getPaquete(id: string): Observable<any> {
     return this.http.get(`${base_url}/paquetes/${ id }`,{ 

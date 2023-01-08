@@ -1,10 +1,190 @@
-<!-- Listado de productos -->
-<app-modal [showModal]="showModal">
+
+<!-- Modal: Nuevo producto -->
+<app-modal [showModal]="showModalNuevoProducto">
     <div>
         <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
             <h1 class="text-xl"> Agregando producto </h1>
             <button class="focus:outline-none">
-                <svg (click)="showModal = false" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                <svg (click)="cerrarSeleccionNuevoProducto()" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>               
+            </button>
+        </div>
+        <div class="max-h-screen overflow-y-auto">
+            <div *ngIf="!nuevoProductoSeleccionado" class="p-4">
+                <input [(ngModel)]="filtro.parametro" type="text" class="p-2 border focus:outline-none text-sm border-primary-400" placeholder="Buscador">
+                <div (click)="seleccionarNuevoProducto(producto)" *ngFor="let producto of listaProductos | filtroProductos:this.filtro.parametro:'true'" class="my-3 border cursor-pointer hover:bg-red-50 hover:border-red-400 text-sm border-gray-400 p-2 rounded">
+                    <h3 class="font-semibold"> {{ producto.descripcion }} </h3>
+                    <p class="text-xs"> ${{ producto.precio_mayorista | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
+                </div>
+            </div>
+            <div *ngIf="nuevoProductoSeleccionado" class="p-4">
+                <p class="font-semibold"> {{ nuevoProductoSeleccionado.descripcion }} </p>
+                <p class="text-xs"> ${{ nuevoProductoSeleccionado.precio_mayorista | moneda }} x {{ nuevoProductoSeleccionado.unidad_medida.descripcion }} </p>    
+                <div class="flex items-center">
+                    <input (keyup.enter)="agregarNuevoProducto()" [(ngModel)]="nuevoProductoCantidad" min="0" type="number" placeholder="Cantidad" class="border text-sm mt-2 focus:outline-none border-gray-300 p-2 rounded">
+                    <button (click)="agregarNuevoProducto()" class="p-2 focus:outline-none shadow bg-green-700 mt-2 ml-2 rounded text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>    
+                    </button>
+                    <button (click)="nuevoProductoSeleccionado = false" class="p-2 focus:outline-none shadow bg-red-700 mt-2 ml-2 rounded text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>   
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-modal>
+
+<!-- Detalles de pedido -->
+<app-modal [showModal]="showModalDetallesPedido">
+    <div>   
+        <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
+            <h1 class="text-lg"> Detalles de pedido </h1>
+            <button class="focus:outline-none">
+                <svg (click)="showModalDetallesPedido = false" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div> 
+        <div class="p-2 text-sm">
+            <div>  
+                <div class="flex items-center justify-between">
+                    <p> <span class="font-semibold"> Número de pedido: </span> {{ pedidoSeleccionado?.numero }} </p>
+                    <p class="mt-2"> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
+                </div>
+                <p class="mt-1"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
+            </div>
+            <div class="mt-2">
+                <div class=" border border-gray-400 bg-gray-100 flex items-center justify-between p-2">
+                    <p class="font-semibold text-base"> Listado de productos </p>
+                    <button (click)="abrirModalNuevoProducto()" title="Agregar producto" class="hover:text-secondaryColor bg-white p-2 focus:outline-none border rounded border-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>                       
+                    </button>
+                </div>
+                <div *ngIf="!productoSeleccionado" class="max-h-80 mt-2 overflow-y-auto">
+                    <div (click)="authService.usuario.role !== 'DELIVERY_ROLE' ? seleccionarProducto(producto) : null" *ngFor="let producto of pedidos_productos" class="border shadow cursor-pointer hover:border-secondaryColor p-2 my-2 border-gray-400 mx-2">
+                        <p class="font-semibold"> {{ producto.descripcion }} </p>
+                        <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
+                        <p class="text-sm"> Cantidad: {{ producto.cantidad }} </p>
+                        <p class="text-sm"> Precio: ${{ producto.precio | moneda }} </p>
+                    </div>
+                </div>
+                <div *ngIf="productoSeleccionado" class="mt-2">
+                    <div>
+                        <div class="flex items-center px-2">
+                            <button title="Regresar al listado" (click)="productoSeleccionado = null" class="border focus:outline-none p-2 rounded border-gray-400 hover:text-secondaryColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                                </svg>
+                            </button>
+                            <h1 class="font-semibold text-lg ml-2"> Editando producto </h1>
+                        </div>
+                        <div class="px-2 py-3">
+                            <p class="font-semibold"> 
+                                {{ productoSeleccionado?.descripcion }} 
+                            </p>   
+                            <p class="text-gray-500 text-xs"> 
+                                ${{ productoSeleccionado?.precio_unitario | moneda }} x {{ productoSeleccionado.unidad_medida.descripcion }} 
+                            </p>
+                            <div class="flex items-center">
+                                <input (keyup.enter)="actualizarProductoDetalle()" [(ngModel)]="nuevaCantidad" type="number" placeholder="Cantidad" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded">       
+                                <button (click)="actualizarProductoDetalle()" title="Actualizar producto" class="bg-green-700 font-semibold text-white p-2 rounded mt-1 focus:outline-none ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>    
+                                </button>
+                                <button (click)="eliminarProductoDetalle()" title="Eliminar producto" class="bg-red-700 text-white font-semibold p-2 rounded mt-1 focus:outline-none ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>  
+                                </button>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-modal>
+
+<!-- Nuevo pedido -->
+<app-modal [showModal]="showModalNuevoPedido">
+    <div>
+        <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
+            <h1 class="text-lg"> Nuevo pedido </h1>
+            <button class="focus:outline-none">
+                <svg (click)="showModalNuevoPedido = false" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>  
+        <div class="text-sm">
+            <div class="p-2 flex items-center">
+                <select [(ngModel)]="mayorista" class="p-2 w-50 md:w-80 border focus:outline-none border-gray-400 shadow rounded">
+                    <option value=""> Seleccionar mayorista </option>
+                    <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
+                </select>
+                <button (click)="abrirModalProductos()" title="Agregar producto" class="p-2 focus:outline-none rounded border border-gray-400 shadow ml-2 hover:text-secondaryColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                </button>
+                <button (click)="completarPedido()" *ngIf="carrito.length > 0" title="Completar pedido" class="p-2 focus:outline-none rounded border border-gray-400 shadow ml-2 hover:text-secondaryColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                </button>
+            </div>
+            <div *ngIf="carrito.length > 0" class="p-2">
+                <div class="flex items-center justify-between p-2 border border-gray-400 bg-gray-50">
+                    <p class="font-semibold"> Listado de productos </p>
+                    <p>
+                        <span class="font-semibold"> Precio total: </span>
+                        <span> ${{ precioCarrito | moneda }} </span>
+                    </p>
+                </div>
+            </div>
+            <div *ngIf="carrito.length > 0" class="max-h-screen overflow-y-auto px-2">
+                <div class="border flex items-center justify-between border-gray-400 shadow p-2 my-2"
+                    *ngFor="let producto of carrito">
+                    <div>
+                        <p class="text-sm font-semibold"> {{ producto.descripcion }} </p>
+                        <p class="text-xs text-gray-500"> ${{ producto.precio_unitario | moneda }} x {{
+                            producto.unidad_medida_descripcion }} </p>
+                        <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
+                        <p class="text-xs font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
+                    </div>
+                    <button title="Eliminar producto" (click)="eliminarProducto(producto)"
+                        class="shadow focus:outline-none p-2 rounded bg-red-700 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="px-2 pb-3" *ngIf="carrito.length === 0">
+                <p class="text-lg text-gray-700"> El pedido no tiene productos cargados </p>
+                <button (click)="abrirModalProductos()" class="bg-secondaryColor text-white focus:outline-none p-2 shadow rounded mt-2"> Agregar productos </button>
+            </div>
+        </div>
+    </div>
+</app-modal>
+
+<!-- Listado de productos -->
+<app-modal [showModal]="showModalProductos">
+    <div>
+        <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
+            <h1 class="text-xl"> Agregando producto </h1>
+            <button class="focus:outline-none">
+                <svg (click)="cerrarModalProductos()" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -16,7 +196,7 @@
                     class="p-2 border focus:outline-none text-sm border-primary-400" placeholder="Buscador">
                 <div (click)="seleccionarProducto(producto)"
                     *ngFor="let producto of productos | filtroProductos:this.filtro.parametro:'true'"
-                    class="my-3 border cursor-pointer hover:bg-red-50 hover:border-red-200 text-sm border-gray-300 p-2 rounded">
+                    class="my-3 border cursor-pointer hover:bg-red-50 hover:border-red-400 text-sm border-gray-400 p-2 rounded">
                     <h3 class="font-semibold"> {{ producto.descripcion }} </h3>
                     <p class="text-xs"> ${{ producto.precio_mayorista | moneda }} x {{
                         producto.unidad_medida.descripcion }} </p>
@@ -29,16 +209,16 @@
                 <div class="flex items-center">
                     <input (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" min="0" type="number"
                         placeholder="Cantidad"
-                        class="border text-sm mt-2 focus:outline-none border-gray-300 p-2 rounded">
+                        class="border text-sm mt-2 focus:outline-none border-gray-400 p-2 rounded">
                     <button (click)="agregarProducto()"
-                        class="p-2 focus:outline-none border mt-2 ml-2 hover:border-green-300 hover:bg-green-100 rounded border-gray-300 text-green-700">
+                        class="p-2 focus:outline-none bg-green-700 mt-2 ml-2 shadow rounded text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                     </button>
                     <button (click)="cerrarSeleccion()"
-                        class="p-2 focus:outline-none border mt-2 ml-2 hover:border-red-300 hover:bg-red-100 rounded border-gray-300 text-red-700">
+                        class="p-2 focus:outline-none bg-red-700 mt-2 ml-2 shadow rounded text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -50,105 +230,108 @@
     </div>
 </app-modal>
 
-<!-- Carrito de compras -->
+<!-- Pagina principal -->
 <div class="p-2 gsap-contenido">
-    <div *ngIf="carrito.length > 0" class="max-w-4xl mx-auto mt-4">
-        <div class="bg-primary-800 flex items-center justify-between p-2">
-            <h1 class="text-white text-xl"> Creando pedido </h1>
-            <div>
-                <button *ngIf="carrito.length > 0" (click)="crearPedido()" title="Enviar pedido"
-                    class="bg-white text-primary-800 p-2 focus:outline-none rounded hover:text-green-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                </button>
-                <button (click)="abrirModal()" title="Agregar producto"
-                    class="bg-white ml-2 text-primary-800 p-2 focus:outline-none rounded hover:text-secondaryColor">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <div class="p-2 border shadow border-gray-300">
-            <div class="md:flex md:items-center pb-2 border-b border-gray-400">
-                <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
-                    <p class="font-semibold text-sm"> Repartidor seleccionado </p>
-                    <select (change)="almacenarLocalStorage()" [(ngModel)]="repartidor"
-                        class="border my-2 w-full md:w-auto text-sm focus:outline-none border-gray-400 shadow rounded p-2">
-                        <option value=""> Seleccionar repartidor </option>
-                        <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido
-                            }} {{ repartidor.nombre }} </option>
-                    </select>
-                </div>
-                <div class="md:ml-2">
-                    <p class="font-semibold text-sm"> Mayorista seleccionado </p>
-                    <select (change)="almacenarLocalStorage()" [(ngModel)]="mayorista"
-                        class="border my-2 w-full md:w-auto text-sm focus:outline-none border-gray-400 shadow rounded p-2">
-                        <option value=""> Seleccionar mayorista </option>
-                        <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion
-                            }} </option>
-                    </select>
-                </div>
-            </div>
-            <p *ngIf="carrito.length > 0" class="text-lg font-semibold pt-2"> Listado de producto </p>
-            <p *ngIf="carrito.length > 0" class="text-sm"> Precio total: <span class="font-semibold"> ${{ precioCarrito
-                    | moneda }} </span></p>
-            <div class="max-h-screen overflow-y-auto mt-2">
-                <div class="border flex items-center justify-between border-gray-400 shadow p-2 my-2"
-                    *ngFor="let producto of carrito">
-                    <div>
-                        <p class="text-sm font-semibold"> {{ producto.descripcion }} </p>
-                        <p class="text-xs text-gray-500"> ${{ producto.precio_unitario | moneda }} x {{
-                            producto.unidad_medida_descripcion }} </p>
-                        <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
-                        <p class="text-xs font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
-                    </div>
-                    <button (click)="eliminarProducto(producto)"
-                        class="border border-gray-400 focus:outline-none p-2 rounded hover:bg-red-100 hover:border-red-300 text-red-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-
+    <!-- ETAPA: CREACION -->
     <div *ngIf="etapa === 'creacion'" class="text-center text-sm mt-10">
         <div>
-            <img class="md:w-1/2 mx-auto" src="assets/img/pedido.svg" alt="Pedidos.svg">
-            <!-- <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE'"> -->
+            <img class="w-1/2 md:w-1/6 mx-auto" src="assets/img/pedido.svg" alt="Pedidos.svg">
             <div>
                 <p class="mt-5 text-xl mb-2"> Creando nuevo paquete </p>
                 <div>
-                    <input [(ngModel)]="fecha_pedido" type="date"
-                        class="border focus:outline-none p-2 w-1/4 mt-2 border-gray-400 rounded">
-                    <select *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" [(ngModel)]="repartidor"
-                        class="border mb-2 mt-3 block mx-auto w-11/12 md:w-1/4 focus:outline-none border-gray-400 shadow rounded p-2">
-                        <option value=""> Seleccionar repartidor </option>
-                        <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido
-                            }} {{ repartidor.nombre }} </option>
-                    </select>
-                    <!-- <select [(ngModel)]="mayorista" class="border block mx-auto w-11/12 md:w-1/4 focus:outline-none border-gray-400 shadow rounded p-2">
-                  <option value=""> Seleccionar mayorista </option>
-                  <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
-                </select> -->
+                    <div>
+                        <input [(ngModel)]="fecha_paquete" type="date"
+                            class="border shadow focus:outline-none p-2 w-11/12 md:w-1/4 mt-2 border-gray-400 rounded">
+                        <select *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" [(ngModel)]="repartidor"
+                            class="border mb-2 mt-3 block mx-auto w-11/12 md:w-1/4 focus:outline-none border-gray-400 shadow rounded p-2">
+                            <option value=""> Seleccionar repartidor </option>
+                            <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido
+                                }} {{ repartidor.nombre }} </option>
+                        </select>
+                    </div>
                     <button (click)="crearPaquete()"
                         class="bg-secondaryColor text-white py-2 px-4 rounded shadow mt-4 focus:outline-none"> Crear
-                        paquete </button>
+                    paquete </button>
                 </div>
             </div>
-            <!-- <div *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'">
-            <h1 class="text-xl mt-10"> Solo los repartidores pueden crear pedidos </h1>
-          </div> -->
         </div>
     </div>
 
+    <!-- ETAPA: PAQUETE -->
+    <div class="max-w-4xl mx-auto text-sm" *ngIf="etapa === 'paquete'">
+        <div class="p-2">
+            <div class="p-2 bg-gray-100 w-full flex items-center justify-between border border-gray-400">
+                <div class="font-semibold text-lg flex items-center"> 
+                    <img class="w-10" src="assets/img/caja.svg">
+                    <span class="ml-2 text-primary-700">
+                        Paquete #{{ paquete.numero }} 
+                    </span>
+                </div>
+                <button (click)="completarPaquete()" class="bg-white border border-gray-400 focus:outline-none hover:text-secondaryColor rounded p-2" title="Completar paquete">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>                    
+                </button>
+            </div>
+            <div class="mt-2 flex items-center justify-between">
+                <div class="flex items-center">
+                    <input [(ngModel)]="fecha_paquete" type="date" class="border focus:outline-none border-gray-400 p-2 rounded">
+                    <select *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" [(ngModel)]="repartidor"
+                        class="border ml-2 block mx-auto w-40 md:w-56 focus:outline-none border-gray-400 shadow rounded p-2">
+                        <option value=""> Seleccionar repartidor </option>
+                        <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido
+                        }} {{ repartidor.nombre }} </option>
+                    </select>                    
+                </div>
+                <button (click)="abrirNuevoPedido()" title="Nuevo pedido" class="font-semibold p-2 rounded hover:text-secondaryColor border focus:outline-none border-gray-400 shadow">
+                    Agregar pedido
+                </button>
+            </div>
+        </div>
+
+        <!-- Listado de pedidos -->
+        <div *ngIf="pedidos?.length > 0" class="max-h-screen overflow-y-auto px-2">
+            <div class="border-b flex mt-2 items-center justify-between border-gray-400 pb-1 text-lg">
+                <h1 class="font-semibold "> Listado de pedidos ({{ pedidos?.length }}) </h1>
+                <p class="text-base"> <span class="font-semibold"> Precio total: </span> ${{ precio_total | moneda }} </p>
+            </div>
+            <div>
+                <div class="border flex items-center shadow justify-between border-gray-400 mt-2 p-2" *ngFor="let pedido of pedidos">
+                    <div>
+                        <p class="font-semibold"> Pedido Nro {{ pedido.numero }} </p>
+                        <p>
+                            <span class="font-semibold"> Mayorista: </span>
+                            <span> {{ pedido.mayorista.descripcion }} </span>
+                        </p> 
+                        <p class="mt-1">
+                            <span class="font-semibold"> Precio total: </span>
+                            <span> ${{ pedido.precio_total | moneda }} </span>
+                        </p>    
+                    </div>
+                    <div>
+                        <button (click)="abrirDetallesPedido(pedido)" title="Detalles de pedido" class="border border-gray-400 focus:outline-none mr-2 rounded p-2 hover:text-secondaryColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>                            
+                        </button>
+                        <button (click)="eliminarPedido(pedido._id)" title="Eliminar pedido" class="bg-red-700 focus:outline-none shadow font-semibold text-white p-2 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+        <!-- No hay pedidos cargados -->
+        <div *ngIf="pedidos?.length === 0" class="p-2 text-xl text-gray-700">
+            <p> El paquete no tiene pedidos cargados </p>
+            <button (click)="abrirNuevoPedido()" class="text-sm bg-secondaryColor focus:outline-none mt-2 text-white p-2 rounded shadow"> Agregar pedido </button>
+        </div>
+
+    </div>
     <div *ngIf="etapa === 'armado'" class="text-center text-sm mt-10">
         <p> Crear nuevo pedido </p>
     </div>

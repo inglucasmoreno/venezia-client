@@ -50,8 +50,8 @@ export class VentasMayoristasService {
 
   // Listar ventas
   listarVentas(
-    direccion: number = 1,
-    columna: string = 'apellido_nombre',
+    direccion: number = -1,
+    columna: string = 'createdAt',
     desde: number = 0,
     registerpp: number = 10,
     estado: string = '',
@@ -60,8 +60,10 @@ export class VentasMayoristasService {
     mayorista: string = '',
     fechaDesde: string = '',
     fechaHasta: string = '',
-    activo: string = ''
+    activo: string = '',
+    paquete: string = ''
   ): Observable<any> {
+    console.log(paquete);
     return this.http.get(`${base_url}/ventas-mayoristas`, {
       params: {
         direccion: String(direccion),
@@ -74,7 +76,8 @@ export class VentasMayoristasService {
         mayorista,
         fechaDesde,
         fechaHasta,
-        activo
+        activo,
+        paquete
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -94,6 +97,15 @@ export class VentasMayoristasService {
   // Completar venta
   completarVenta(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/ventas-mayoristas/completar/venta/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+  // Eliminar venta
+  eliminarVenta(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/ventas-mayoristas/eliminar/venta/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
