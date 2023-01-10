@@ -37,6 +37,8 @@ import { CobrosMayoristasComponent } from './cobros-mayoristas/cobros-mayoristas
 import { NuevoCobroMayoristaComponent } from './cobros-mayoristas/nuevo-cobro-mayorista.component';
 import { CajasMayoristasHistorialComponent } from './cajas-mayoristas/cajas-mayoristas-historial.component';
 import { PedidosCompletarComponent } from './pedidos/pedidos-completar.component';
+import { NuevoPaqueteComponent } from './paquetes/nuevo-paquete.component';
+import { PaquetesComponent } from './paquetes/paquetes.component';
 
 const routes: Routes = [
     {
@@ -78,8 +80,9 @@ const routes: Routes = [
             { path: 'cuentas-corrientes-mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: CuentasCorrientesMayoristasComponent },
             { path: 'cobros-mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: CobrosMayoristasComponent },
             { path: 'nuevo-cobro-mayorista', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoCobroMayoristaComponent },
-            { path: 'pedidos', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosComponent },
+            { path: 'paquetes', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PaquetesComponent },
             { path: 'nuevo-pedido', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoPedidoComponent },
+            { path: 'nuevo-paquete', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoPaqueteComponent },
             { path: 'pedidos-reportes', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosReportesComponent },
             { path: 'pedidos-gastos', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosGastosComponent },
             { path: 'pedidos-ingresos', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosIngresosComponent },

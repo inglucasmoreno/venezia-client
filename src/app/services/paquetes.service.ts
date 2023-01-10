@@ -41,13 +41,32 @@ export class PaquetesService {
 
   // Listar paquetes
   listarPaquetes(
-    direccion: number = 1,
-    columna: string = 'descripcion'  
+    direccion: number = -1,
+    columna: string = 'createdAt',
+    desde: number = 0,
+    registerpp: number = 10,
+    estado: string = '',
+    parametro: string = '',
+    repartidor: string = '',
+    fechaDesde: string = '',
+    fechaHasta: string = '',
+    activo: string = '',
   ): Observable<any> {
+
+    console.log(estado);
+
     return this.http.get(`${base_url}/paquetes`, {
       params: {
         direccion: String(direccion),
-        columna
+        columna,
+        desde,
+        registerpp,
+        estado,
+        parametro,
+        repartidor,
+        fechaDesde,
+        fechaHasta,
+        activo,
       },
       headers: {
         'Authorization': localStorage.getItem('token')

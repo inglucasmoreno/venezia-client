@@ -63,7 +63,6 @@ export class VentasMayoristasService {
     activo: string = '',
     paquete: string = ''
   ): Observable<any> {
-    console.log(paquete);
     return this.http.get(`${base_url}/ventas-mayoristas`, {
       params: {
         direccion: String(direccion),
