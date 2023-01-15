@@ -68,7 +68,6 @@ export class PedidosyaComponent implements OnInit {
 
     // Abrir modal
     abrirModal(estado: string, pedido: any = null): void {
-      window.scrollTo(0,0);
       this.reiniciarFormulario();
       this.monto = null;
       this.comentario = '';

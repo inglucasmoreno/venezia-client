@@ -115,7 +115,6 @@ constructor(private productosService: ProductosService,
 
   // Abrir modal
   abrirModal(estado: string, producto: any = null): void {
-    window.scrollTo(0,0);
     this.reiniciarFormulario();
     
     if(estado === 'editar') this.getProducto(producto);

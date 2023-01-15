@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { MayoristasService } from 'src/app/services/mayoristas.service';
 import { PaquetesService } from 'src/app/services/paquetes.service';
+import { VentasMayoristasProductosService } from 'src/app/services/ventas-mayoristas-productos.service';
+import { VentasMayoristasService } from 'src/app/services/ventas-mayoristas.service';
+import { environment } from 'src/environments/environment';
 import { UsuariosService } from '../../services/usuarios.service';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-paquetes',
@@ -13,11 +19,19 @@ import { UsuariosService } from '../../services/usuarios.service';
 })
 export class PaquetesComponent implements OnInit {
 
+  // Fecha
+  public fechaMasivo = format(new Date(),'yyyy-MM-dd')
+
   // Permisos de usuarios login
   public permisos = { all: false };
 
   // Modal
   public showModalPaquete = false;
+  public showModalProductosPendientes = false;
+  public showModalCompletarDeuda = false;
+  public showModalListadoPreparacion = false;
+  public showModalEnvioMasivo = false;
+  public showModalEnviar = false;
 
   // Estado formulario 
   public estadoFormulario = 'crear';
@@ -36,9 +50,14 @@ export class PaquetesComponent implements OnInit {
 
   // Repartidores
   public repartidores: any[] = [];
-  
+  public repartidoresLista: any[] = [];
+  public repartidorSeleccionado: any;
+
   // Mayoristas
   public mayoristas: any[] = [];
+
+  // Productos
+  public productosPendientes: any[] = [];
 
   // Filtrado
   public filtro = {
@@ -47,6 +66,7 @@ export class PaquetesComponent implements OnInit {
     parametroProductos: '',
     mayorista: '',
     repartidor: '',
+    fecha: '',
     fechaDesde: '',
     fechaHasta: '',
     activo: ''
@@ -54,13 +74,15 @@ export class PaquetesComponent implements OnInit {
 
   // Ordenar
   public ordenar = {
-    direccion: 1,  // Asc (1) | Desc (-1)
-    columna: 'descripcion'
+    direccion: -1,  // Asc (1) | Desc (-1)
+    columna: 'fecha_paquete'
   }
-
+  
   constructor(
     private paquetesService: PaquetesService,
     private mayoristasService: MayoristasService,
+    private ventasMayoristasService: VentasMayoristasService,
+    private ventasMayoristasProductosService: VentasMayoristasProductosService,
     public authService: AuthService,
     private usuariosService: UsuariosService,
     private alertService: AlertService,
@@ -81,13 +103,13 @@ export class PaquetesComponent implements OnInit {
     // Listado de repartidores
     this.usuariosService.listarUsuarios().subscribe({
       next: ({ usuarios }) => {
-        
+
         this.repartidores = usuarios.filter(usuario => usuario.role === 'DELIVERY_ROLE');
 
         // Listado de mayoristas
         this.mayoristasService.listarMayoristas().subscribe({
           next: ({ mayoristas }) => {
-            
+
             this.mayoristas = mayoristas;
 
             // Listado de pedidos
@@ -99,13 +121,13 @@ export class PaquetesComponent implements OnInit {
               this.filtro.estado,
               this.filtro.parametro,
               this.authService.usuario.role === 'DELIVERY_ROLE' ? this.authService.usuario.userId : this.filtro.repartidor,
-              this.filtro.fechaDesde,
-              this.filtro.fechaHasta,
+              this.filtro.fecha,
+              this.filtro.fecha,
               this.filtro.activo
             ).subscribe({
-              next: ({ paquetes, paquetesTotal }) => {
+              next: ({ paquetes, totalItems }) => {
                 this.paquetes = paquetes.filter(paquete => paquete.activo);
-                this.totalItems = paquetesTotal;
+                this.totalItems = totalItems;
                 this.alertService.close();
               },
               error: ({ error }) => {
@@ -127,7 +149,6 @@ export class PaquetesComponent implements OnInit {
 
   // Abrir modal
   abrirModal(estado: string, paquete: any = null): void {
-    window.scrollTo(0, 0);
     this.reiniciarFormulario();
     this.descripcion = '';
     this.idPaquete = '';
@@ -162,13 +183,13 @@ export class PaquetesComponent implements OnInit {
       this.filtro.estado,
       this.filtro.parametro,
       this.authService.usuario.role === 'DELIVERY_ROLE' ? this.authService.usuario.userId : this.filtro.repartidor,
-      this.filtro.fechaDesde,
-      this.filtro.fechaHasta,
+      this.filtro.fecha,
+      this.filtro.fecha,
       this.filtro.activo
     )
-      .subscribe(({ paquetes, totalPaquetes }) => {
+      .subscribe(({ paquetes, totalItems }) => {
         this.paquetes = paquetes;
-        this.totalItems = totalPaquetes;
+        this.totalItems = totalItems;
         this.showModalPaquete = false;
         this.alertService.close();
       }, (({ error }) => {
@@ -248,6 +269,188 @@ export class PaquetesComponent implements OnInit {
             this.alertService.close();
             this.alertService.errorApi(error.message);
           });
+        }
+      });
+
+  }
+
+  // Enviar paquete
+  enviarPaquete(): void {
+    this.alertService.question({ msg: '¿Quieres enviar el paquete?', buttonText: 'Enviar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.paquetesService.enviarPaquete(this.paqueteSeleccionado._id, this.fechaMasivo).subscribe({
+            next: () => {
+              this.listarPaquetes();
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
+  }
+
+  // Productos para elaboracion
+  productosParaElaboracion(): void {
+    this.alertService.loading();
+    this.ventasMayoristasProductosService.listarProductos(1, 'descripcion', '', 'true').subscribe({
+      next: ({ productos }) => {
+
+        let productoTMP = productos;
+
+        this.productosPendientes = [];
+
+        const agregados = [];
+
+        productoTMP.map(producto => {
+          if (!agregados.includes(producto.producto._id)) {
+            agregados.push(producto.producto._id);
+            this.productosPendientes.push(producto);
+          } else {
+            this.productosPendientes.map(elemento => {
+              if (elemento.producto._id === producto.producto._id) {
+                elemento.cantidad += producto.cantidad;
+              }
+            })
+          }
+        });
+
+        this.showModalProductosPendientes = true;
+        this.showModalCompletarDeuda = false;
+        this.alertService.close();
+
+      },
+
+      error: ({ error }) => this.alertService.errorApi(error.message)
+
+    })
+  }
+
+  // PDF - Productos para elaboracion
+  productosParaElaboracionPDF(): void {
+    this.alertService.loading();
+    this.ventasMayoristasProductosService.generarPDF().subscribe({
+      next: () => {
+        this.alertService.close();
+        window.open(`${base_url}/pdf/productos_pendientes.pdf`, '_blank');
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  // Generar listado de deudas PDF
+  generarListadoDeudas(): void {
+    this.alertService.question({ msg: '¿Quieres generar listado de deudas?', buttonText: 'Generar' })
+    .then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        this.alertService.loading();
+        this.ventasMayoristasService.detallesDeudasPDF().subscribe({
+          next: () => {
+            window.open(`${base_url}/pdf/deudas_mayoristas.pdf`, '_blank');
+            this.alertService.close();
+          }, error: ({ error }) => this.alertService.errorApi(error.message)
+        })     
+      }
+    }); 
+  }
+
+  // Abrir preparacion pedidos
+  abrirPreparacionPedidos(): void {
+    this.alertService.loading();
+    this.repartidorSeleccionado = '';
+    this.usuariosService.listarUsuarios().subscribe({
+      next: ({ usuarios }) => {
+        this.repartidoresLista = usuarios.filter(usuario => usuario.role === 'DELIVERY_ROLE');
+        this.showModalListadoPreparacion = true;
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  // Generar listado de preparacion
+  generarListadoPreparacion(): void {
+
+    this.alertService.loading();
+
+    if (this.repartidorSeleccionado === '') {
+      this.ventasMayoristasProductosService.generarPreparacionPedidosPDF().subscribe({
+        next: () => {
+          window.open(`${base_url}/pdf/productos_preparacion_pedidos.pdf`, '_blank');
+          this.alertService.close();
+        }, error: ({ error }) => this.alertService.errorApi(error.message)
+      })
+    } else {
+      this.ventasMayoristasProductosService.generarPreparacionPedidosPorRepartidorPDF(this.repartidorSeleccionado).subscribe({
+        next: () => {
+          window.open(`${base_url}/pdf/productos_preparacion_pedidos_por_repartidor.pdf`, '_blank');
+          this.alertService.close();
+        }, error: ({ error }) => this.alertService.errorApi(error.message)
+      })
+    }
+
+  }
+
+  // Impresion masiva
+  impresionMasiva(): void {
+    this.alertService.question({ msg: '¿Quieres realizar una impresion masiva?', buttonText: 'Imprimir' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.ventasMayoristasService.talonariosMasivosPDF().subscribe({
+            next: () => {
+              this.alertService.close();
+              window.open(`${base_url}/pdf/talonarios_masivos.pdf`, '_blank');
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+        }
+      });      
+  }
+
+  // Eliminar paquete
+  eliminarPaquete(paquete: any): void {
+    this.alertService.question({ msg: 'Eliminando paquete', buttonText: 'Eliminar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.paquetesService.eliminarPaquete(paquete._id).subscribe({
+            next: () => {
+              this.listarPaquetes();
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          });
+        };
+      });
+  }
+
+  // Abrir envio de paquete
+  abrirEnviosMasivos(): void {
+    this.fechaMasivo = format(new Date(),'yyyy-MM-dd');
+    this.showModalEnvioMasivo = true;
+  }
+
+  // Abrir envios masivos
+  abrirEnviarPaquete(paquete: any): void {
+    this.paqueteSeleccionado = paquete;
+    this.fechaMasivo = format(new Date(),'yyyy-MM-dd');
+    this.showModalEnviar = true;
+  }
+
+  // Envio masivo
+  envioMasivo(): void {
+
+    // Verificacion: Fecha de pedido
+    if(this.fechaMasivo === ''){
+      this.alertService.info('Debe colocar una fecha correcta');
+      return;
+    }
+
+    this.alertService.question({ msg: '¿Quieres realizar un envio masivo?', buttonText: 'Enviar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.paquetesService.envioMasivoPaquetes(this.fechaMasivo).subscribe({
+            next: () => {
+              this.showModalEnvioMasivo = false;
+              this.listarPaquetes();
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
         }
       });
 

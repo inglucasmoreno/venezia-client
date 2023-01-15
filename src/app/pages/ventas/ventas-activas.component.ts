@@ -258,7 +258,6 @@ export class VentasActivasComponent implements OnInit {
   abrirModalDetalles(venta: any): void {
     this.alertService.loading();
     this.ventasService.getVenta(venta._id).subscribe(({ venta, productos }) => {
-      window.scrollTo(0, 0);
       this.ventaSeleccionada = venta;
       this.productos = productos;
       this.showModalDetalle = true;

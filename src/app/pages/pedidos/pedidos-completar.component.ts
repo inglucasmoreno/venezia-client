@@ -303,7 +303,6 @@ export class PedidosCompletarComponent implements OnInit {
 
   // Abrir listado de productos
   abrirListadoProductos(pedido: any): void {
-    window.scrollTo(0, 0);
     this.alertService.loading();
     this.pedidoSeleccionado = pedido;
     this.ventasMayoristasProductosService.listarProductos(
@@ -312,7 +311,6 @@ export class PedidosCompletarComponent implements OnInit {
       pedido._id
     ).subscribe({
       next: ({ productos }) => {
-        window.scrollTo(0, 0);
         this.productos = productos;
         this.showListadoProductos = true;
         this.alertService.close();

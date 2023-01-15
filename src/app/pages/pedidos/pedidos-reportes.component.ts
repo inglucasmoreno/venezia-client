@@ -138,7 +138,6 @@ export class PedidosReportesComponent implements OnInit {
       next: ({productos}) => {
         this.productos = productos;
         this.showModal = true;
-        window.scrollTo(0,0);
         this.alertService.close();
       },
       error: ({error}) => {

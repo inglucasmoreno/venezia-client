@@ -77,7 +77,6 @@ constructor(private mayoristasService: MayoristasService,
   // Abrir modal
   abrirModal(estado: string, mayorista: any = null): void {
     
-    window.scrollTo(0,0);
     this.reiniciarFormulario();
     
     this.mayoristasForm = {  
@@ -281,7 +280,6 @@ constructor(private mayoristasService: MayoristasService,
   // Abrir nuevo mayorista
   abrirNuevoMayorista(): void {
 
-    window.scrollTo(0,0);
     this.reiniciarFormulario();
     
     this.mayoristasForm = {  

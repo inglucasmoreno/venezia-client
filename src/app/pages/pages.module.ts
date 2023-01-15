@@ -40,6 +40,7 @@ import { CajasMayoristasHistorialComponent } from './cajas-mayoristas/cajas-mayo
 import { PedidosCompletarComponent } from './pedidos/pedidos-completar.component';
 import { PaquetesComponent } from './paquetes/paquetes.component';
 import { NuevoPaqueteComponent } from './paquetes/nuevo-paquete.component';
+import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.component';
 
 
 @NgModule({
@@ -77,6 +78,7 @@ import { NuevoPaqueteComponent } from './paquetes/nuevo-paquete.component';
     PedidosCompletarComponent,
     PaquetesComponent,
     NuevoPaqueteComponent,
+    PaquetesDetallesComponent,
   ],
   imports: [
     CommonModule,

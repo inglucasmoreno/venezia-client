@@ -5,14 +5,14 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FiltroPedidoPipe implements PipeTransform {
 
-  transform(valores: any[], parametro: string, estado: string): any {
+  transform(valores: any[], parametro: string, mayorista: string): any {
     
     // Trabajando con activo boolean
     let filtrados: any[];
       
-    // Filtrado por estado
-    if(estado.trim() !== ''){
-      filtrados = valores.filter( valor => valor.estado === estado )  
+    // Filtrado por mayorista
+    if(mayorista.trim() !== ''){
+      filtrados = valores.filter( valor => valor.mayorista._id === mayorista )  
     }else{
       filtrados = valores;
     }
@@ -22,9 +22,7 @@ export class FiltroPedidoPipe implements PipeTransform {
   
     if(parametro.length !== 0){
       return filtrados.filter( valor => { 
-        return valor.mayorista.descripcion.toLocaleLowerCase().includes(parametro) ||
-               valor.repartidor.descripcion.toLocaleLowerCase().includes(parametro) ||
-               valor.numero == parametro
+        return valor.numero == parametro
       });
     }else{
       return filtrados;

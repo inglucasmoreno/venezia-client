@@ -110,7 +110,6 @@ export class CobrosMayoristasComponent implements OnInit {
 
   // Abrir modal
   abrirModal(estado: string, cobro: any = null): void {
-    window.scrollTo(0, 0);
     this.reiniciarFormulario();
     this.descripcion = '';
     this.idCobro = '';

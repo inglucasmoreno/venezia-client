@@ -233,7 +233,7 @@ export class NuevoPaqueteComponent implements OnInit {
     this.paquete = localStorage.getItem('pedidos-paquete') ? JSON.parse(localStorage.getItem('pedidos-paquete')) : null;
     this.etapa = localStorage.getItem('pedidos-etapa') ? JSON.parse(localStorage.getItem('pedidos-etapa')) : 'creacion';
     this.repartidor = localStorage.getItem('pedidos-repartidor') ? JSON.parse(localStorage.getItem('pedidos-repartidor')) : '';
-    this.fecha_paquete = localStorage.getItem('pedidos-fecha_paquete') && this.fecha_paquete !== '' ? JSON.parse(localStorage.getItem('pedidos-fecha_paquete')) : format(new Date(), 'yyyy-MM-dd');
+    this.fecha_paquete = localStorage.getItem('pedidos-fecha_paquete') && this.fecha_paquete !== '' && this.etapa !== 'creacion' ? JSON.parse(localStorage.getItem('pedidos-fecha_paquete')) : format(new Date(), 'yyyy-MM-dd');
     this.precioCarrito = localStorage.getItem('pedidos-precioCarrito') ? JSON.parse(localStorage.getItem('pedidos-precioCarrito')) : 0;
     this.carrito = localStorage.getItem('pedidos-carrito') ? JSON.parse(localStorage.getItem('pedidos-carrito')) : [];
     this.mayorista = localStorage.getItem('pedidos-mayorista') && this.carrito.length !== 0 ? JSON.parse(localStorage.getItem('pedidos-mayorista')) : '';

@@ -10,7 +10,7 @@ const base_url = environment.base_url;
 })
 export class PaquetesService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Nuevo paquete
   nuevoPaquete(data: any): Observable<any> {
@@ -32,7 +32,31 @@ export class PaquetesService {
 
   // Paquete por ID
   getPaquete(id: string): Observable<any> {
-    return this.http.get(`${base_url}/paquetes/${ id }`,{ 
+    return this.http.get(`${base_url}/paquetes/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Enviar paquete
+  enviarPaquete(id: string, fecha: any = ''): Observable<any> {
+    return this.http.get(`${base_url}/paquetes/enviar/${id}`, {
+      params: {
+        fecha
+      },
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Envio masivo de paquetes
+  envioMasivoPaquetes(fecha: any): Observable<any> {
+    return this.http.get(`${base_url}/paquetes/enviar/masivo/total`, {
+      params: {
+        fecha
+      },
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -75,12 +99,22 @@ export class PaquetesService {
   }
 
   // Actualizar paquetes
-  actualizarPaquete(id:string, data: any): Observable<any> {
+  actualizarPaquete(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/paquetes/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
-  }  
+  }
+
+  // Eliminar paquete
+  eliminarPaquete(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/paquetes/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
 
 }

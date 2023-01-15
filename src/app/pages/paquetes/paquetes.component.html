@@ -1,5 +1,116 @@
+<!-- Enviar paquete -->
+<app-modal [showModal]="showModalEnviar">
+    <div class="text-white bg-primary-800 flex items-center justify-between p-2 rounded-t">
+        <h1> Enviar paquete </h1>
+        <button (click)="showModalEnviar = false" class="focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>               
+        </button>
+ 
+    </div>
+    <div class="p-2 text-sm">
+        <div class="p-2 bg-gray-100 border border-gray-400">
+            <p> <span class="font-semibold"> Número de paquete: </span> {{ paqueteSeleccionado?.numero }}  </p>
+            <p class="mt-1"> <span class="font-semibold"> Repartidor: </span> {{ paqueteSeleccionado?.repartidor.apellido }} {{ paqueteSeleccionado?.repartidor.nombre }}  </p>      
+        </div>
+        <div class="mt-2">
+            <p class="font-semibold mb-1"> Fecha de paquete </p>
+            <input [(ngModel)]="fechaMasivo" class="border focus:outline-none border-gray-400 w-full rounded p-2" type="date">
+        </div> 
+        <button (click)="enviarPaquete()" class="bg-secondaryColor w-full focus:outline-none mt-3 text-white shadow p-2 rounded">
+            Enviar paquete
+        </button>
+    </div>
+</app-modal>
+
+<!-- Envio masivo -->
+<app-modal [showModal]="showModalEnvioMasivo">
+    <div class="text-white bg-primary-800 flex items-center justify-between p-2 rounded-t">
+        <h1> Envio masivo de paquetes </h1>
+        <button (click)="showModalEnvioMasivo = false" class="focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>               
+        </button>
+ 
+    </div>
+    <div class="p-2 text-sm">
+        <div>
+            <p class="font-semibold mb-1"> Fecha de paquete </p>
+            <input [(ngModel)]="fechaMasivo" class="border focus:outline-none border-gray-400 w-full rounded p-2" type="date">
+        </div> 
+        <!-- <div class="mt-2">
+            <p class="font-semibold mb-2"> Seleccionar repartidor </p>    
+            <select [(ngModel)]="envioMasivoRepartidor" class="w-full border focus:outline-none border-gray-400 p-2 rounded">
+                <option value="todos"> Todos los repartidores </option>
+                <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+            </select>    
+        </div> -->
+        <button (click)="envioMasivo()" class="bg-secondaryColor w-full focus:outline-none mt-3 text-white shadow p-2 rounded">
+            Enviar paquetes
+        </button>
+    </div>
+</app-modal>
+
+<!-- Listado de preparacion -->
+<app-modal [showModal]="showModalListadoPreparacion">
+    <div>
+        <div class="text-white bg-primary-800 flex items-center justify-between p-2 rounded-t">
+            <h1> Listado de preparación </h1>
+            <button (click)="showModalListadoPreparacion = false" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>               
+            </button>
+        </div>
+        <div class="text-sm p-2">
+            <p class="font-semibold"> Tipo de listado </p>
+            <div class="md:flex md:items-center">
+                <select [(ngModel)]="repartidorSeleccionado" class="border border-gray-400 mt-1 w-full md:w-1/2 focus:outline-none rounded p-2">
+                    <option value=""> Para todos los repartidores </option>
+                    <option *ngFor="let repartidor of repartidoresLista" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+                </select>
+                <button (click)="generarListadoPreparacion()" class="hover:text-secondaryColor w-full mt-2 md:mt-0 focus:outline-none font-semibold md:ml-1 text-center bg-gray-100 border border-gray-400 p-2 md:w-1/2 rounded"> Generar listado </button>
+            </div>
+        </div>
+    </div>
+</app-modal>
+
+<!-- Modal: Productos para elaboracion -->
+<app-modal [showModal]="showModalProductosPendientes">
+    <div>
+
+        <div class="bg-primary-800 text-white p-2 rounded-t flex items-center justify-between">
+            <h1> Productos para elaboración </h1>
+            <button (click)="showModalProductosPendientes = false" class="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>                   
+            </button>
+        </div> 
+
+        <div class="p-2 flex items-center border-b border-gray-400 bg-gray-100 justify-between">
+            <h1 class="font-semibold"> Listado de productos </h1>    
+            <button (click)="productosParaElaboracionPDF()" title="Imprimir listado" class="border shadow bg-white focus:outline-none border-gray-400 p-2 rounded hover:text-secondaryColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>                
+            </button>
+        </div>
+
+        <div class="max-h-96 overflow-y-auto">
+            <div class="border-b border-gray-400 text-sm p-3" *ngFor="let producto of productosPendientes">
+                <p class="font-semibold"> {{ producto.descripcion }} </p>
+                <p class="text-gray-700"> Cantidad: {{ producto.cantidad }} ({{ producto.unidad_medida.descripcion }}) </p>
+            </div>
+        </div> 
+    
+    </div>
+</app-modal>
+
 <!-- Listado de paquete -->
-<div class="md:max-w-5xl mx-auto">
+<div class="md:max-w-7xl mx-auto">
     <app-tarjeta-lista>
         <div class="container mx-auto">
             <div>
@@ -8,17 +119,25 @@
                         <h2 class="text-2xl leading-tight">
                             Listado de paquete
                         </h2>
-                        <p> Total de paquete: {{ paquetes.length }} </p>
+                        <p> Total de paquete: {{ totalItems }} </p>
                     </div>
-                    <!-- <div *ngIf="permisos.all">
-                        <button title="Nueva unidad" (click)="abrirModal('crear')"
-                            class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                            </svg>
+                    <div>
+                        <button (click)="generarListadoDeudas()" title="Listado de deudas" class="bg-white border focus:outline-none hover:text-secondaryColor p-2 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                              </svg>              
                         </button>
-                    </div> -->
+                        <button (click)="abrirPreparacionPedidos()" *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" title="Listado de preparación" class="bg-white border focus:outline-none hover:text-secondaryColor ml-2 p-2 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                              </svg>                
+                        </button>
+                        <button *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" (click)="productosParaElaboracion()" title="Productos para elaboracion" class="bg-white border focus:outline-none hover:text-secondaryColor ml-2 p-2 rounded">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                            </svg>                  
+                        </button>
+                    </div>
                 </div>
                 <div class="md:flex md:items-center md:justify-between px-4 py-2">
                     <div class="my-2 flex sm:flex-row flex-col">
@@ -28,7 +147,7 @@
                                     class="h-full text-sm rounded-r border-t border-l rounded-l sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
                                     <option value='Pendiente'> Pendientes </option>
                                     <option value='Enviado'> Enviados </option>
-                                    <option value='Cancelado'> Cancelados </option>
+                                    <!-- <option value='Cancelado'> Cancelados </option> -->
                                     <option value='Deuda'> Deudas </option>
                                     <option value='Completado'> Completados </option>
                                     <option value=''> Todos </option>
@@ -52,7 +171,7 @@
                                 </svg>
                             </span>
                             <input [(ngModel)]="filtro.parametro" placeholder="Nro de paquete"
-                                (change)="cambiarPagina(1)"
+                                (keyup.enter)="cambiarPagina(1)"
                                 class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none" />
                         </div>
                         <select
@@ -72,34 +191,53 @@
                             <option value="50"> 50 elementos </option>
                             <option value="100"> 100 elementos </option>
                         </select>
+                        <input (change)="cambiarPagina(1)" [(ngModel)]="filtro.fecha" type="date" class="border focus:outline-none text-sm md:ml-2 rounded border-gray-400 p-2 mt-2 md:mt-0 md:p-1">
                     </div>
                 </div>
-                <div class="px-4 py-2 overflow-x-auto">
-                    <div class="inline-block max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
+                <div class="px-4 overflow-x-auto">
+
+                    <div class="flex items-center justify-between">
+                        <div></div>
+                        <div  *ngIf="filtro.estado === 'Pendiente' && authService.usuario.role !== 'DELIVERY_ROLE'" class="flex items-center">
+                            <button (click)="abrirEnviosMasivos()" title="Envio masivo" class="border mr-2 shadow md:mb-0 mb-2 border-gray-400 hover:text-blue-600 focus:outline-none font-semibold text-sm bg-gray-50">
+                                <div class="border-l-8 border-blue-600 p-2">
+                                    Envio masivo
+                                </div>
+                            </button>
+                            <button (click)="impresionMasiva()" title="Impresion masiva" class="border mr-2 shadow md:mb-0 mb-2 border-gray-400 hover:text-secondaryColor focus:outline-none font-semibold text-sm bg-gray-50">
+                                <div class="border-l-8 border-secondaryColor p-2">
+                                    Impresion masiva
+                                </div>
+                            </button>
+                        </div> 
+                    </div>
+
+
+                    <div class="inline-block max-h-96 mt-2 overflow-y-auto min-w-full overflow-hidden pb-5">
                         <table class="min-w-full leading-normal">
                             <thead>
                                 <tr class="border">
                                     <th
                                         class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
-                                        <div (click)="ordenarPorColumna('createdAt')"
+                                        <div (click)="ordenarPorColumna('fecha_paquete')"
                                             class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
                                             <span>
-                                                Fecha de creación
+                                                Fecha de paquete
                                             </span>
                                             <span class="ml-2">
-                                                <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == 1"
+                                                <svg *ngIf="ordenar.columna == 'fecha_paquete' && ordenar.direccion == 1"
                                                     width="15" height="15" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="feather feather-chevron-down">
                                                     <polyline points="6 9 12 15 18 9"></polyline>
                                                 </svg>
-                                                <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == -1"
+                                                <svg *ngIf="ordenar.columna == 'fecha_paquete' && ordenar.direccion == -1"
                                                     width="15" height="15" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round" class="feather feather-chevron-up">
                                                     <polyline points="18 15 12 9 6 15"></polyline>
                                                 </svg>
-                                                <svg *ngIf="ordenar.columna != 'createdAt'" width="15" height="15"
+                                                <svg *ngIf="ordenar.columna != 'fecha_paquete'" width="15" height="15"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                     class="feather feather-minus">
@@ -135,6 +273,33 @@
                                             </span>
                                         </div>
                                     </th>
+                                    <th
+                                    class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('estado')"
+                                        class="cursor-pointer flex items-center focus:outline-none">
+                                        <span> Estado </span>
+                                        <span class="ml-2 text-gray-600">
+                                            <svg *ngIf="ordenar.columna == 'estado' && ordenar.direccion == 1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-down">
+                                                <polyline points="6 9 12 15 18 9"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna == 'estado' && ordenar.direccion == -1"
+                                                width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-chevron-up">
+                                                <polyline points="18 15 12 9 6 15"></polyline>
+                                            </svg>
+                                            <svg *ngIf="ordenar.columna != 'estado'" width="15"
+                                                height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-minus">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </th>
                                     <th
                                         class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
                                         <div (click)="ordenarPorColumna('repartidor.apellido')"
@@ -192,7 +357,7 @@
                                     <th
                                         class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
                                         <div (click)="ordenarPorColumna('precio_total')"
-                                            class="cursor-pointer flex items-center focus:outline-none">
+                                            class="cursor-pointer flex items-center focus:outline-none w-max">
                                             <span>
                                                 Precio total
                                             </span>
@@ -220,10 +385,8 @@
                                     </th>
                                     <th
                                         class="px-5 border-b-2 border-gray-200 bg-gray-100 text-center text-sm font-semibold text-gray-900 tracking-wider">
-                                        <div class="cursor-pointer flex items-center focus:outline-none">
-                                            <span>
-                                                Accion
-                                            </span>
+                                        <div class="cursor-pointer text-center focus:outline-none">
+                                            Accion
                                         </div>
                                     </th>
 
@@ -231,16 +394,21 @@
                             </thead>
                             <tbody *ngIf="paquetes">
                                 <tr class="animate__animated animate__fadeIn"
-                                    *ngFor="let paquete of paquetes | filtroUnidadMedida:filtro.parametro:filtro.activo">
+                                    *ngFor="let paquete of paquetes | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
                                     <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 whitespace-no-wrap">
-                                            {{ paquete.createdAt | fecha }}
+                                            {{ paquete.fecha_paquete | fecha }}
                                         </p>
                                     </td>
                                     <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 w-max whitespace-no-wrap">
                                             {{ paquete.numero }}
                                         </p>
+                                    </td>
+                                    <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                        <span [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': paquete.estado === 'Pendiente', 'bg-green-100 border-green-300 text-green-700': paquete.estado === 'Completado', 'bg-orange-100 border-orange-300 text-orange-700': paquete.estado === 'Cancelado', 'bg-blue-100 border-blue-300 text-blue-700': paquete.estado === 'Enviado', 'bg-red-100 border-red-300 text-red-700': paquete.estado === 'Deuda'}" class="text-gray-900 font-semibold p-1 rounded border w-max whitespace-no-wrap">
+                                            {{ paquete.estado }}
+                                        </span>
                                     </td>
                                     <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 w-max whitespace-no-wrap">
@@ -257,21 +425,32 @@
                                             ${{ paquete.precio_total | moneda }}
                                         </p>
                                     </td>
-                                    <td *ngIf="permisos.all"
-                                        class="px-5 py-2 border-b border-gray-200 text-xs text-center">
+                                    <td class="px-5 py-2 border-b border-gray-200 text-xs text-center">
                                         <span class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
-                                            <div
-                                                *ngIf="paquete._id === '000000000000000000000000' || paquete._id === '111111111111111111111111'">
-                                                <div class="p-4"></div>
-                                            </div>
                                             <app-boton-tabla
-                                                *ngIf="paquete._id !== '000000000000000000000000' && paquete._id !== '111111111111111111111111'"
-                                                (click)="abrirModal('editar', paquete)" title="Editar gasto">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                </svg>
+                                            *ngIf="paquete.estado === 'Pendiente'"
+                                            (click)="abrirEnviarPaquete(paquete)"
+                                            title="Enviar paquete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                                              </svg>
+                                            </app-boton-tabla>
+                                            <app-boton-tabla
+                                            class="ml-2"
+                                            [routerLink]="['/dashboard/paquetes/detalles/',paquete._id]" title="Detalles del paquete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                              </svg>
+                                            </app-boton-tabla>
+                                            <app-boton-tabla
+                                                *ngIf="paquete.estado === 'Pendiente' || paquete.estado === 'Enviado'"
+                                                (click)="eliminarPaquete(paquete)"
+                                                class="ml-2"
+                                                title="Eliminar paquete">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                  </svg>
                                             </app-boton-tabla>
                                         </span>
                                     </td>
@@ -281,9 +460,9 @@
                     </div>
                 </div>
             </div>
-            <!-- <div *ngIf="unidades.length > cantidadItems" class="px-5 py-5 mt-4 bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
-                <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="paginaActual = $event"></pagination-controls>
-            </div> -->
+            <div class="px-5 py-5 mt-4 text-sm bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+                <pagination-controls nextLabel="Siguiente" previousLabel="Anterior" (pageChange)="cambiarPagina($event)"></pagination-controls>
+            </div>
         </div>
     </app-tarjeta-lista>
 </div>

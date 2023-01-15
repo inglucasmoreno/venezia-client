@@ -122,8 +122,6 @@ export class PedidosIngresosComponent implements OnInit {
   // Abrir modal
   abrirModal(estado: string, ingreso: any = null): void {
 
-    window.scrollTo(0, 0);
-
     this.tipo = '';
     this.repartidor = '';
     this.monto = null;

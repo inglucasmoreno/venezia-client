@@ -249,7 +249,6 @@ export class PedidosComponent implements OnInit {
       this.pedidoSeleccionado._id
     ).subscribe({
       next: ({ productos }) => {
-        window.scrollTo(0, 0);
         this.productoSeleccionado = null;
         this.nuevaCantidad = null;
         this.productos = productos;
@@ -841,7 +840,6 @@ export class PedidosComponent implements OnInit {
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
-
   }
 
   // Calcular monto deuda
