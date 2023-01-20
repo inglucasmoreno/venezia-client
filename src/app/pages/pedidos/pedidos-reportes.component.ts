@@ -95,7 +95,6 @@ export class PedidosReportesComponent implements OnInit {
   // Listar pedidos
   listarPedidos(): void {
     this.alertService.loading();
-    this.showFiltros = false;
     this.ventasMayoristas.listarVentas(
       this.ordenar.direccion,
       this.ordenar.columna,
@@ -115,6 +114,7 @@ export class PedidosReportesComponent implements OnInit {
         this.totalIngresos = totalIngresos;
         this.totalDeuda = totalDeuda;
         this.totalItems = totalItems;
+        if(totalItems > 0) this.showFiltros = false;
         this.alertService.close();
       }, error: ({error}) => this.alertService.errorApi(error.message)
     });

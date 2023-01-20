@@ -118,7 +118,6 @@
             <option value=""> Todos los estados </option>
             <option value='Pendiente'> Pedientes </option>
             <option value='Enviado'> Enviados </option>
-            <option value='Cancelado'> Cancelados </option>
             <option value='Deuda'> Deudas </option>
             <option value='Completado'> Completados </option>
           </select>
@@ -150,24 +149,30 @@
                 </div>
                 <div class="md:flex px-4 py-2 md:items-center text-sm md:justify-between">
                     <div class="text-sm mt-3 md:flex md:items-center pb-4"> 
-                        <p class="p-1 text-primary-900 border-b-8 border-gray-200">
-                            <span class="font-semibold">
-                                Total:
-                            </span>
-                             ${{ totalMonto | moneda }} 
-                        </p>
-                        <p class="p-1 text-green-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-green-200">
-                            <span class="font-semibold">
-                                Total ingresos:
-                            </span>
-                             ${{ totalIngresos | moneda }} 
-                        </p>
-                        <p class="p-1 text-red-700 mt-2 md:mt-0 md:ml-2 border-b-8 border-red-200">
-                            <span class="font-semibold">
-                                Total deuda:
-                            </span>
-                             ${{ totalDeuda | moneda }} 
-                        </p>
+                        <div class="border border-gray-400">
+                            <div class="p-2 border-l-8 border-gray-400">
+                                <span class="font-semibold">
+                                    Total:
+                                </span>
+                                 ${{ totalMonto | moneda }} 
+                            </div> 
+                        </div>
+                        <div class="mt-2 md:mt-0 md:ml-2 border border-gray-400">
+                            <div class="p-2 border-l-8 border-green-700">
+                                <span class="font-semibold">
+                                    Total ingresos:
+                                </span>
+                                 ${{ totalIngresos | moneda }} 
+                            </div> 
+                        </div>
+                        <div class="mt-2 md:mt-0 md:ml-2 border border-gray-400">
+                            <div class="p-2 border-l-8 border-red-700">
+                                <span class="font-semibold">
+                                    Total deuda:
+                                </span>
+                                 ${{ totalDeuda | moneda }} 
+                            </div> 
+                        </div>
                     </div>  
                   <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
                       <option value="10"> 10 elementos </option>

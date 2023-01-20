@@ -94,6 +94,7 @@ export class PedidosGastosComponent implements OnInit {
       this.filtro.repartidor
     )
       .subscribe(({ gastos, totalItems, montoTotal }) => {
+        console.log(gastos);
         this.gastos = gastos;
         this.totalItems = totalItems;
         this.montoTotal = montoTotal;

@@ -46,6 +46,32 @@ export class MayoristasService {
     });
   }
 
+  // Listar mayoristas con cuenta corriente
+  listarMayoristasConCC(
+    direccion: number = 1,
+    columna: string = 'descripcion',
+    desde: number = 0,
+    registerpp: number = 10,
+    parametro: string = '',
+    activo: string = '',
+    estado: string = '', 
+  ): Observable<any> {
+    return this.http.get(`${base_url}/mayoristas/parametro/cuenta-corriente`, {
+      params: {
+        direccion: String(direccion),
+        columna,
+        desde,
+        registerpp,
+        parametro,
+        activo,
+        estado
+      },
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
   // Actualizar mayorista
   actualizarMayorista(id:string, data: any): Observable<any> {
     return this.http.put(`${base_url}/mayoristas/${id}`, data, {

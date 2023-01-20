@@ -282,6 +282,7 @@ export class PaquetesComponent implements OnInit {
           this.alertService.loading();
           this.paquetesService.enviarPaquete(this.paqueteSeleccionado._id, this.fechaMasivo).subscribe({
             next: () => {
+              this.showModalEnviar = false;
               this.listarPaquetes();
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })

@@ -13,5 +13,5 @@ export const itemsMayoristas = [
   { svg: 'pedidos-ingresos', route: 'pedidos-ingresos', item: 'Listado de ingresos', permiso:['MAYORISTAS_NAV'] },
   { svg: 'pedidos-tipos-gastos', route: 'pedidos-gastos-tipos', item: 'Tipos de gastos', permiso:['MAYORISTAS_NAV'] },
   { svg: 'pedidos-tipos-ingresso', route: 'pedidos-ingresos-tipos', item: 'Tipos de ingresos', permiso:['MAYORISTAS_NAV'] },
-  { svg: 'cajas-mayoristas', route: 'cajas-mayoristas', item: 'Cierre de caja', permiso:['MAYORISTAS_NAV'] },
+  // { svg: 'cajas-mayoristas', route: 'cajas-mayoristas', item: 'Cierre de caja', permiso:['MAYORISTAS_NAV'] },
 ];

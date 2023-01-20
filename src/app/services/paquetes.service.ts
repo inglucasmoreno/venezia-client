@@ -98,6 +98,15 @@ export class PaquetesService {
     });
   }
 
+  // Cerrar paquete
+  cerrarPaquete(id: string, data: any): Observable<any> {
+    return this.http.put(`${base_url}/paquetes/cerrar/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
   // Actualizar paquetes
   actualizarPaquete(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/paquetes/${id}`, data, {
