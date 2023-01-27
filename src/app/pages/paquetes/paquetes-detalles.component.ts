@@ -14,6 +14,8 @@ import { MayoristasGastosService } from 'src/app/services/mayoristas-gastos.serv
 import { MayoristasIngresosService } from 'src/app/services/mayoristas-ingresos.service';
 import { MayoristasTiposGastosService } from 'src/app/services/mayoristas-tipos-gastos.service';
 import { MayoristasTiposIngresosService } from 'src/app/services/mayoristas-tipos-ingresos.service';
+import { CobrosMayoristasService } from 'src/app/services/cobros-mayoristas.service';
+import { CobrosPedidosService } from 'src/app/services/cobros-pedidos.service';
 
 @Component({
   selector: 'app-paquetes-detalles',
@@ -23,10 +25,14 @@ import { MayoristasTiposIngresosService } from 'src/app/services/mayoristas-tipo
 })
 export class PaquetesDetallesComponent implements OnInit {
 
+  // Generales
+  public urlRegreso: string = '';
+
   // Flag
-  public inicio = true;
-  public mostrarGastos = false;
-  public mostrarIngresos = false;
+  public inicio: boolean = true;
+  public mostrarGastos: boolean = false;
+  public mostrarIngresos: boolean = false;
+  public mostrarCobros: boolean = false;
 
   // Fecha de paquete
   public fecha = format(new Date(), 'yyyy-MM-dd');
@@ -38,6 +44,8 @@ export class PaquetesDetallesComponent implements OnInit {
   public showModalEnviar: boolean = false;
   public showModalNuevoGasto: boolean = false;
   public showModalNuevoIngreso: boolean = false;
+  public showModalNuevoCobro: boolean = false;
+  public showModalDetallesCobro: boolean = false;
 
   // Gastos
   public gastos: any[] = [];
@@ -50,6 +58,11 @@ export class PaquetesDetallesComponent implements OnInit {
   public tipos_ingresos: any[] = [];
   public tipo_ingreso: string = "";
   public monto_ingreso: number = null;
+
+  // Cobros
+  public cobros: any[] = [];
+  public cobroSeleccionado: any;
+  public cobros_pedidos: any[] = [];
 
   // Nuevo producto
   public nuevoProductoSeleccionado: any;
@@ -83,6 +96,18 @@ export class PaquetesDetallesComponent implements OnInit {
   public total_gastos: number = 0;
   public total_ingresos: number = 0;
   public total_cuenta_corriente: number = 0;
+  public total_cobros: number = 0;
+
+  // Cobros
+  public montoRecibidoFijo: number = 0;
+  public deudaTotalFijo: number = 0;
+  public montoCobroTotal: number = 0;
+  public montoCobro: number = null;
+  public deudas: any[] = [];
+  public mayoristaCobro: string = '';
+  public mayoristaCobroSeleccionado: any;
+  public deudaTotal: number = 0;
+  public pedidosCancelados: number = 0;
 
   // Filtrado
   public filtro = {
@@ -107,6 +132,8 @@ export class PaquetesDetallesComponent implements OnInit {
     private paquetesService: PaquetesService,
     private pedidosService: VentasMayoristasService,
     private ventasMayoristasProductosService: VentasMayoristasProductosService,
+    private cobrosMayoristasService: CobrosMayoristasService,
+    private cobrosPedidosService: CobrosPedidosService,
     private productosService: ProductosService,
     private mayoristasGastosService: MayoristasGastosService,
     private mayoristasIngresosService: MayoristasIngresosService,
@@ -120,19 +147,37 @@ export class PaquetesDetallesComponent implements OnInit {
     gsap.from('.gsap-contenido', { y: 100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = "Dashboard - Detalles de paquete";
     this.activatedRoute.params.subscribe({
-      next: ({ id }) => {
+      next: ({ id, origen }) => {
         this.idPaquete = id;
         this.alertService.loading();
+        this.direccionRegreso(origen);
         this.getPaquete();
       }
     })
   }
 
+  // Direccion de regreso
+  direccionRegreso(origen: string): void {
+    if(origen === 'listado-paquetes'){
+      this.urlRegreso = '/dashboard/paquetes';
+    }else if(origen === 'reportes-pedidos'){
+      this.urlRegreso = '/dashboard/pedidos-reportes';
+    }else if(origen === 'reportes-paquetes'){
+      this.urlRegreso = '/dashboard/paquetes-reportes';      
+    }else if(origen === 'listado-ingresos'){
+      this.urlRegreso = '/dashboard/pedidos-ingresos';      
+    }else if(origen === 'listado-gastos'){
+      this.urlRegreso = '/dashboard/pedidos-gastos';      
+    }
+  }
+
   // Detalles del paquete
   getPaquete(): void {
     this.paquetesService.getPaquete(this.idPaquete).subscribe({
-      next: ({ paquete, ingresos, gastos }) => {
+      next: ({ paquete, ingresos, gastos, cobros }) => {
+        
         this.paquete = paquete;
+        this.cobros = cobros;
         this.ingresos = ingresos;
         this.gastos = gastos;
         this.fecha = format(new Date(paquete.fecha_paquete), 'yyyy-MM-dd');
@@ -157,6 +202,7 @@ export class PaquetesDetallesComponent implements OnInit {
             this.pedidos = ventas;
             
             if(paquete.estado === 'Enviado'){
+
               ventas.map( venta => {
                 
                 venta.estado = 'Completado';
@@ -176,7 +222,6 @@ export class PaquetesDetallesComponent implements OnInit {
               });
             }
 
-            console.log(ventas);
             this.showModalNuevoPedido = false;
 
             if(this.inicio){
@@ -189,6 +234,7 @@ export class PaquetesDetallesComponent implements OnInit {
                 }, error: ({ error }) => this.alertService.errorApi(error.message)
               })              
             }else{
+              this.calcularTotalesCierre();
               this.alertService.close();
             }
 
@@ -303,23 +349,23 @@ export class PaquetesDetallesComponent implements OnInit {
     pedido.productos.map(producto => {
       totalTMP += producto.precio;
     })
+
     pedido.precio_total = totalTMP;
 
-    if(this.paquete.estado === 'Enviado'){
-      if(pedido.cuenta_corriente.saldo > 0 && (pedido.cuenta_corriente.saldo >= pedido.precio_total)){
-        pedido.monto_recibido = 0;
-        pedido.monto_cuenta_corriente = pedido.precio_total;
-      }else if(pedido.cuenta_corriente.saldo > 0 && (pedido.cuenta_corriente.saldo < pedido.precio_total)){
-        pedido.monto_recibido = pedido.precio_total - pedido.cuenta_corriente.saldo;
-        pedido.monto_cuenta_corriente = pedido.cuenta_corriente.saldo;                
-      }else{
-        pedido.monto_recibido = pedido.precio_total;
-        pedido.monto_cuenta_corriente = 0;
-      }
-      this.calcularDeuda(pedido);
-    }
-
     this.calcularTotalPaquete();
+
+    if(pedido.cuenta_corriente.saldo > 0 && (pedido.cuenta_corriente.saldo >= pedido.precio_total)){
+      pedido.monto_recibido = 0;
+      pedido.monto_cuenta_corriente = pedido.precio_total;
+    }else if(pedido.cuenta_corriente.saldo > 0 && (pedido.cuenta_corriente.saldo < pedido.precio_total)){
+      pedido.monto_recibido = pedido.precio_total - pedido.cuenta_corriente.saldo;
+      pedido.monto_cuenta_corriente = pedido.cuenta_corriente.saldo;                
+    }else{
+      pedido.monto_recibido = pedido.precio_total;
+      pedido.monto_cuenta_corriente = 0;
+    }
+    this.calcularDeuda(pedido);
+
   }
 
   // Calcular totales de paquete
@@ -329,6 +375,7 @@ export class PaquetesDetallesComponent implements OnInit {
       totalTMP += pedido.precio_total;
     });
     this.paquete.precio_total = totalTMP;
+    console.log(this.paquete.precio_total);
   }
 
   // Cerrar seleccion de nuevo producto
@@ -612,6 +659,7 @@ export class PaquetesDetallesComponent implements OnInit {
     let totalCuentaCorrienteTMP = 0;
     let totalGastosTMP = 0;
     let totalIngresosTMP = 0;
+    let totalCobrosTMP = 0;
 
     this.pedidos.map( pedido => {
       totalDeudaTMP += pedido.deuda_monto;
@@ -625,17 +673,22 @@ export class PaquetesDetallesComponent implements OnInit {
     this.total_parcial = this.paquete.precio_total - this.total_deuda + this.total_anticipo - this.total_cuenta_corriente;
 
     this.gastos.map( gasto => {
-      totalGastosTMP += gasto.monto
+      totalGastosTMP += gasto.monto;
     })
 
     this.ingresos.map( ingreso => {
-      totalIngresosTMP += ingreso.monto
+      totalIngresosTMP += ingreso.monto;
+    })
+
+    this.cobros.map( cobro => {
+      totalCobrosTMP += cobro.monto_total_recibido;
     })
 
     this.total_ingresos = totalIngresosTMP;
     this.total_gastos = totalGastosTMP;
+    this.total_cobros = totalCobrosTMP;
 
-    this.total_recibir = this.total_parcial - this.total_gastos + this.total_ingresos;
+    this.total_recibir = this.total_parcial - this.total_gastos + this.total_ingresos + this.total_cobros;
 
   }
 
@@ -792,6 +845,7 @@ export class PaquetesDetallesComponent implements OnInit {
             total_parcial: this.total_parcial,
             total_gastos: this.total_gastos,
             total_ingresos: this.total_ingresos,
+            total_cobros: this.total_cobros,
             total_cuenta_corriente: this.total_cuenta_corriente,
             total_recibir: this.total_recibir,
             estado: this.total_deuda > 0 ? 'Deuda' : 'Completado'
@@ -799,10 +853,8 @@ export class PaquetesDetallesComponent implements OnInit {
           pedidos: this.pedidos
         }
         
-        console.log(data);
-
         this.paquetesService.cerrarPaquete(this.idPaquete, data).subscribe({
-          next: () => {
+          next: () => {     
             this.alertService.close();
             this.paquete.estado = this.total_deuda > 0 ? 'Deuda' : 'Completado';
           }, error: ({error}) => this.alertService.errorApi(error.message)
@@ -810,6 +862,81 @@ export class PaquetesDetallesComponent implements OnInit {
       
       };
     }); 
+  }
+
+  // Buscar deudas de mayorista
+  buscarDeudas(): void {
+
+    // Verificacion: mayorista
+    if(this.mayoristaCobro === ''){
+      this.alertService.info('Debe seleccionar un mayorista');
+      return;
+    }
+
+    // Verificacion: Monto recibido
+    if(!this.montoCobro || this.montoCobro <= 0){
+      this.alertService.info('Debe colocar un monto válido');
+      return;
+    }
+
+    this.alertService.loading();
+
+    this.pedidosService.listarVentas(
+      -1,
+      'createdAt',
+      0,
+      1000,
+      'Deuda',
+      '',
+      '',
+      this.mayoristaCobro,
+      '',
+      ''
+    ).subscribe({
+      next: ({ventas}) => {
+        this.deudas = ventas;
+        this.montoRecibidoFijo = this.montoCobro;
+        this.montoCobroTotal = 0;
+        this.deudaTotalFijo = 0;
+        this.pedidosCancelados = 0;
+        this.deudas.map( deuda => {
+          deuda.seleccionado = false;
+          deuda.montoCobro = 0;
+          deuda.cancelado = false;
+          deuda.parcial = false;
+        })
+        this.mayoristaCobroSeleccionado = this.mayoristas.find( mayorista => String(mayorista._id) === String(this.mayoristaCobro) );
+        this.calcularDeudaTotal();
+        this.alertService.close();
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })
+
+  }
+
+  // Calcular deuda total
+  calcularDeudaTotal(): void {
+    let deudaTotalTMP = 0;
+    this.deudas.map( deuda => {
+      deudaTotalTMP += deuda.deuda_monto;
+    });
+
+    this.deudaTotalFijo = deudaTotalTMP;
+    this.deudaTotal = deudaTotalTMP;
+  }
+
+  // Abrir nuevo cobro
+  abrirNuevoCobro(mayorista: string = ''): void {
+    this.mayoristaCobro = mayorista;
+    this.montoCobro = null;
+    this.mayoristaCobroSeleccionado = null;
+    this.showModalNuevoCobro = true;
+  }
+
+  // Regresar a nuevo cobro
+  regresarNuevoCobro(): void {
+    this.montoCobro = null;
+    this.mayoristaCobro = '';
+    this.mayoristaCobroSeleccionado = null;
   }
 
   // Abrir envio de paquete
@@ -834,5 +961,167 @@ export class PaquetesDetallesComponent implements OnInit {
     this.cantidad = null;
     this.productoSeleccionado = null;
   }
+
+  // Seleccionar/Deseleccionar deuda
+  seleccionarDeseleccionarDeuda(deuda: any, tipo: string): void {
+    
+    if(this.montoCobro === 0 && tipo === 'Cobrar'){
+      this.alertService.info('Su saldo de cobro es cero');
+      return;
+    }
+
+    if(tipo === 'Cobrar'){ // Se cobra
+      
+      deuda.seleccionado = true;
+      
+      if(deuda.deuda_monto <= this.montoCobro ){  // Cobro total
+        this.pedidosCancelados += 1;
+        deuda.estado = 'Completado';
+        deuda.montoCobro = deuda.deuda_monto;
+        deuda.cancelado = true;
+        deuda.parcial = false;
+        this.montoCobroTotal += deuda.deuda_monto;
+        this.deudaTotal -= deuda.deuda_monto;
+        this.montoCobro -= deuda.deuda_monto;
+      }else if(deuda.deuda_monto > this.montoCobro){ // Cobro parcial
+        deuda.estado = 'Deuda';
+        deuda.montoCobro = this.montoCobro;
+        deuda.cancelado = false;
+        deuda.parcial = true;
+        this.montoCobroTotal += this.montoCobro;
+        this.deudaTotal -= this.montoCobro;
+        this.montoCobro = 0;
+      }
+      
+    }else{ // No se cobra
+      
+      if(deuda.estado === 'Completado') this.pedidosCancelados -= 1;
+      deuda.seleccionado = false;
+      deuda.estado = 'Deuda';
+      this.montoCobroTotal -= deuda.montoCobro;
+      this.deudaTotal += deuda.montoCobro;
+      this.montoCobro += deuda.montoCobro;
+      deuda.montoCobro = 0;
+      deuda.completado = false;
+      deuda.parcial = false;
+    
+    }
+
+    console.log(deuda);
+
+  }
+
+  // Completar cobro
+  completarCobro(): void {
+    this.alertService.question({ msg: 'Completando cobro', buttonText: 'Completar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+
+          this.alertService.loading();
+
+          // Se genera el carro de cobro
+
+          let carroCobro: any[] = [];
+
+          this.deudas.map( deuda => {
+
+            if(deuda.seleccionado){
+              carroCobro.push({
+                mayorista: this.mayoristaCobroSeleccionado._id,
+                // cobro: '',
+                pedido: deuda._id,
+                cancelado: deuda.cancelado,
+                monto_total: deuda.precio_total,
+                paquete_cobro: this.idPaquete,
+                paquete_pedido: deuda.paquete, 
+                monto_deuda: deuda.deuda_monto,
+                monto_cobrado: deuda.montoCobro,
+                creatorUser: this.authService.usuario.userId,
+                updatorUser: this.authService.usuario.userId,
+              });
+            }
+
+          });
+          
+          const data: any = {
+            fecha_cobro: this.fecha,
+            tipo: this.montoCobroTotal === 0 ? 'Anticipo' : 'Cobro',
+            paquete: this.paquete._id,
+            mayorista: this.mayoristaCobroSeleccionado._id,
+            repartidor: this.paquete.repartidor._id,
+            pedidos: carroCobro,
+            monto_anticipo: this.montoCobro,
+            monto_cancelar_deuda: this.montoCobroTotal,
+            monto_total_recibido: this.montoRecibidoFijo,
+            deuda_total: this.deudaTotalFijo,
+            deuda_restante: this.deudaTotal,
+            creatorUser: this.authService.usuario.userId,
+            updatorUser: this.authService.usuario.userId
+          };
+
+          this.cobrosMayoristasService.nuevoCobro(data).subscribe({
+            next: ({ cobro }) => {
+              this.cobros.push(cobro);
+              this.mostrarCobros = true;
+              this.showModalNuevoCobro = false;
+              this.calcularTotalesCierre();
+              this.alertService.close();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+
+        };
+      });    
+  }
+
+  // Eliminar cobro
+  eliminarCobro(cobro: any): void {
+    this.alertService.question({ msg: 'Eliminando cobro', buttonText: 'Eliminar' })
+    .then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        this.alertService.loading();
+        this.cobrosMayoristasService.eliminarCobro(cobro._id).subscribe({
+          next: () => {
+            this.cobros = this.cobros.filter( elemento => elemento._id !== cobro._id );
+            this.alertService.close();
+            this.calcularTotalesCierre();
+          }, error: ({error}) => this.alertService.errorApi(error.message)
+        })
+      };
+    });
+  }
+
+  abrirDetallesCobro(cobro): void {
+    this.alertService.loading();
+    this.cobrosMayoristasService.getCobro(cobro._id).subscribe({
+      next: ({ cobro }) => {
+
+        this.cobroSeleccionado = cobro;
+
+        // Listado de pedidos afectados
+        if(cobro.tipo !== 'Anticipo'){
+
+          this.cobrosPedidosService.listarRelaciones(
+            1,
+            'createdAt',
+            cobro._id
+          ).subscribe({
+            next: ({ relaciones }) => {
+              console.log(relaciones);
+              this.cobros_pedidos = relaciones;
+              this.showModalDetallesCobro = true;
+              this.alertService.close();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+
+        }else{
+          this.cobroSeleccionado = cobro;
+          this.showModalDetallesCobro = true;
+          this.alertService.close();
+        }
+
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })  
+  }
+
 
 }

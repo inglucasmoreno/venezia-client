@@ -42,7 +42,8 @@ export class CobrosMayoristasService {
     mayorista: string = '',
     fechaDesde: string = '',
     fechaHasta: string = '',
-    tipo: string = ''
+    tipo: string = '',
+    paquete: string = ''
   ): Observable<any> {
     return this.http.get(`${base_url}/cobros-mayoristas`, {
       params: {
@@ -73,5 +74,13 @@ export class CobrosMayoristasService {
     });
   }  
 
+  // Eliminar cobro
+  eliminarCobro(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/cobros-mayoristas/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
 
 }

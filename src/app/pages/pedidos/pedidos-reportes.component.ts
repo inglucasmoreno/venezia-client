@@ -72,7 +72,7 @@ export class PedidosReportesComponent implements OnInit {
 
   ngOnInit(): void {
     gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
-    this.dataService.ubicacionActual = 'Dashboard - Reportes pedidos';
+    this.dataService.ubicacionActual = 'Dashboard - Reportes de pedidos';
     this.cargaInicial();
   }
 

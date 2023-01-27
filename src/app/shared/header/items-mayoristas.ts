@@ -9,6 +9,7 @@ export const itemsMayoristas = [
   { svg: 'paquetes', route: 'paquetes', item: 'Listado de paquetes', permiso:['MAYORISTAS_NAV'] },
   { svg: 'nuevo-paquete', route: 'nuevo-paquete', item: 'Nuevo paquete', permiso:['MAYORISTAS_NAV'] },
   { svg: 'pedidos-reportes', route: 'pedidos-reportes', item: 'Reporte de pedidos', permiso:['MAYORISTAS_NAV'] },
+  { svg: 'paquetes-reportes', route: 'paquetes-reportes', item: 'Reporte de paquetes', permiso:['MAYORISTAS_NAV'] },
   { svg: 'pedidos-gastos', route: 'pedidos-gastos', item: 'Listado de gastos', permiso:['MAYORISTAS_NAV'] },
   { svg: 'pedidos-ingresos', route: 'pedidos-ingresos', item: 'Listado de ingresos', permiso:['MAYORISTAS_NAV'] },
   { svg: 'pedidos-tipos-gastos', route: 'pedidos-gastos-tipos', item: 'Tipos de gastos', permiso:['MAYORISTAS_NAV'] },

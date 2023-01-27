@@ -77,8 +77,6 @@ export class PaquetesService {
     activo: string = '',
   ): Observable<any> {
 
-    console.log(estado);
-
     return this.http.get(`${base_url}/paquetes`, {
       params: {
         direccion: String(direccion),

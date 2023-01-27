@@ -1,73 +1,4 @@
 
-<!-- Modal: Detalles de pedido -->
-<app-modal [showModal]="showModal">
-  <div class="text-white flex rounded-t items-center bg-primary-800 p-2 justify-between">
-      <h1> Detalles de pedido - Nro {{ pedidoSeleccionado?.numero }} </h1>
-      <button class="focus:outline-none" (click)="showModal = false">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>            
-      </button>
-  </div>
-  <div class="p-2 text-sm">
-      <div class="flex items-center justify-between">
-          <h1 class="px-2"> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.fecha_pedido ? (pedidoSeleccionado?.fecha_pedido | fecha) : (pedidoSeleccionado?.createdAt | fecha) }} </h1>
-          <p class="px-2 mt-1"> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
-      </div>
-      <p class="p-2"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
-      <p class="p-2"> 
-        <span class="font-semibold"> Estado: </span> 
-        <span class="border p-1 rounded font-semibold text-xs" [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': pedidoSeleccionado?.estado === 'Pendiente', 'bg-green-100 border-green-300 text-green-700': pedidoSeleccionado?.estado === 'Completado', 'bg-orange-100 border-orange-300 text-orange-700': pedidoSeleccionado?.estado === 'Cancelado', 'bg-blue-100 border-blue-300 text-blue-700': pedidoSeleccionado?.estado === 'Enviado', 'bg-red-100 border-red-300 text-red-700': pedidoSeleccionado?.estado === 'Deuda'}"> 
-            {{ pedidoSeleccionado?.estado }} 
-        </span> 
-        <span class="bg-gray-100 font-semibold text-xs p-1 rounded border ml-1 border-gray-300"> {{ pedidoSeleccionado?.repartidor.apellido }} {{ pedidoSeleccionado?.repartidor.nombre }} </span>  
-    </p>
-    <p *ngIf="pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda'" class="p-1 ml-1 mt-2 border-l-8 border-green-200 text-green-800 w-max"> 
-        <span class="font-semibold"> 
-            Monto recibido: 
-        </span>
-        <span>
-            ${{ pedidoSeleccionado?.monto_recibido | moneda }} 
-        </span>
-      </p>
-      <p *ngIf="(pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda') && pedidoSeleccionado?.monto_anticipo > 0"class="p-1 ml-1 mt-2 border-l-8 border-primary-200 w-max"> 
-        <span class="font-semibold"> 
-            A favor del cliente: 
-        </span>
-        <span>
-            ${{ pedidoSeleccionado?.monto_anticipo | moneda }} 
-        </span>
-      </p>
-      <p *ngIf="(pedidoSeleccionado?.estado === 'Completado' || pedidoSeleccionado?.estado === 'Deuda') && pedidoSeleccionado?.monto_cuenta_corriente > 0"class="p-1 ml-1 mt-2 border-l-8 border-blue-200 text-blue-900 w-max"> 
-        <span class="font-semibold"> 
-            Con cuenta corriente: 
-        </span>
-        <span>
-            ${{ pedidoSeleccionado?.monto_cuenta_corriente | moneda }} 
-        </span>
-      </p>
-      <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="p-1 mt-2 ml-1 border-l-8 border-red-200 text-red-700 w-max"> 
-        <span class="font-semibold"> 
-            Monto deuda: 
-        </span>
-        <span>
-            ${{ pedidoSeleccionado?.deuda_monto | moneda }} 
-        </span>
-      </p>
-      <div class="flex items-center justify-between mt-2">
-          <p class="px-2 mt-1 font-semibold text-lg"> Listado de productos </p>
-      </div>
-      <div class="max-h-80 mt-2 overflow-y-auto">
-          <div *ngFor="let producto of productos" class="border shadow p-2 my-2 border-gray-400 mx-2">
-              <p class="font-semibold"> {{ producto.descripcion }} </p>
-              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
-              <p class="text-sm"> Cantidad: {{ producto.cantidad }} </p>
-              <p class="text-sm"> Precio: ${{ producto.precio | moneda }} </p>
-          </div>
-      </div>
-  </div> 
-</app-modal>
-
 <div class="gsap-contenido">
 
     <!-- FILTROS -->
@@ -75,7 +6,7 @@
      
       <div (click)="showFiltros = !showFiltros" class="bg-primary-800 w-full cursor-pointer flex items-center justify-between p-2 rounded-t mt-10 text-center text-white">
         <h1> 
-          Reporte de pedidos
+          Reporte de paquetes
         </h1>
         <button class="focus:outline-none">
           <svg *ngIf="showFiltros" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -106,14 +37,7 @@
           </select>
         </div>
         <div class="mt-2">
-          <p class="font-semibold"> Mayorista </p>
-          <select [(ngModel)]="mayorista" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
-            <option value=""> Todos los mayoristas </option>
-            <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
-          </select>
-        </div>
-        <div class="mt-2">
-          <p class="font-semibold"> Estado de pedido </p>
+          <p class="font-semibold"> Estado de paquete </p>
           <select [(ngModel)]="estado" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
             <option value=""> Todos los estados </option>
             <option value='Pendiente'> Pedientes </option>
@@ -122,8 +46,8 @@
             <option value='Completado'> Completados </option>
           </select>
         </div>
-        <button (click)="listarPedidos()" class="bg-gray-100 focus:outline-none border border-gray-400 p-2 rounded w-full font-semibold mt-3 hover:text-secondaryColor">
-          Buscar pedidos
+        <button (click)="listarPaquetes()" class="bg-gray-100 focus:outline-none border border-gray-400 p-2 rounded w-full font-semibold mt-3 hover:text-secondaryColor">
+          Buscar paquetes
         </button>
       </div>
     </div>
@@ -135,16 +59,16 @@
 
     <!-- REPORTE -->
     
-    <div *ngIf="pedidos.length > 0" class="mx-auto md:max-w-7xl gsap-contenido">
+    <div *ngIf="paquetes.length > 0" class="mx-auto md:max-w-7xl gsap-contenido">
       <app-tarjeta-lista>
         <div class="container mx-auto">
             <div>
                 <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
                     <div class="ml-2 text-white">
                         <h2 class="text-2xl leading-tight">
-                          Listado de pedidos
+                          Listado de paquetes
                         </h2>
-                        <p> Total de pedidos: {{ totalItems }} </p>
+                        <p> Total de paquetes: {{ totalItems }} </p>
                     </div>
                 </div>
                 <div class="md:flex px-4 py-2 md:items-center text-sm md:justify-between">
@@ -152,17 +76,17 @@
                         <div class="border border-gray-400">
                             <div class="p-2 border-l-8 border-gray-400">
                                 <span class="font-semibold">
-                                    Total:
+                                    Total ventas:
                                 </span>
-                                 ${{ totalMonto | moneda }} 
+                                 ${{ totales.precio_total | moneda }} 
                             </div> 
                         </div>
                         <div class="mt-2 md:mt-0 md:ml-2 border border-gray-400">
                             <div class="p-2 border-l-8 border-green-700">
                                 <span class="font-semibold">
-                                    Total ingresos:
+                                    Total cobrado:
                                 </span>
-                                 ${{ totalIngresos | moneda }} 
+                                 ${{ (totales.precio_total - totales.total_deuda) | moneda }} 
                             </div> 
                         </div>
                         <div class="mt-2 md:mt-0 md:ml-2 border border-gray-400">
@@ -170,7 +94,7 @@
                                 <span class="font-semibold">
                                     Total deuda:
                                 </span>
-                                 ${{ totalDeuda | moneda }} 
+                                 ${{ totales.total_deuda | moneda }} 
                             </div> 
                         </div>
                     </div>  
@@ -217,6 +141,16 @@
                                         </div>
                                     </th>
                                     <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                      <div (click)="ordenarPorColumna('cantidad_pedidos')" class="cursor-pointer flex items-center focus:outline-none">
+                                          <span> Pedidos </span>
+                                          <span class="ml-2 text-gray-600">    
+                                              <svg *ngIf="ordenar.columna == 'cantidad_pedidos' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                              <svg *ngIf="ordenar.columna == 'cantidad_pedidos' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                              <svg *ngIf="ordenar.columna != 'cantidad_pedidos'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                          </span>
+                                      </div>
+                                  </th>
+                                    <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
                                         <div (click)="ordenarPorColumna('mayorista.activo')" class="cursor-pointer flex items-center focus:outline-none">
                                             <span> Estado </span>
                                             <span class="ml-2 text-gray-600">    
@@ -243,44 +177,43 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody *ngIf="pedidos">
-                                <tr class="animate__animated animate__fadeIn" *ngFor="let pedido of pedidos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
+                            <tbody *ngIf="paquetes">
+                                <tr class="animate__animated animate__fadeIn" *ngFor="let paquete of paquetes | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
                                     <td class="px-5 py-4 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 w-max whitespace-no-wrap">
-                                            {{ pedido.fecha_pedido ? (pedido.fecha_pedido | fecha) : (pedido.createdAt | fecha) }}
+                                            {{ paquete.fecha_paquete | fecha }}
                                         </p>
                                     </td>
                                     <td class="px-5 py-4 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 text-center whitespace-no-wrap">
-                                            {{ pedido.numero }}
+                                            {{ paquete.numero }}
                                         </p>
                                     </td>
                                     <td class="px-5 py-4 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 w-max whitespace-no-wrap">
-                                            {{ pedido.mayorista.descripcion }}
+                                            {{ paquete.repartidor.apellido }} {{ paquete.repartidor.nombre }}
                                         </p>
                                     </td>
+                                    <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                                      <p class="text-gray-900 w-max whitespace-no-wrap">
+                                        {{ paquete.cantidad_pedidos }}
+                                      </p>
+                                  </td>
                                     <td class="px-5 py-4 border-b border-gray-200 w-max text-xs">
                                         <div class="flex items-center">
-                                            <span [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': pedido.estado === 'Pendiente', 'bg-green-100 border-green-300 text-green-700': pedido.estado === 'Completado', 'bg-orange-100 border-orange-300 text-orange-700': pedido.estado === 'Cancelado', 'bg-blue-100 border-blue-300 text-blue-700': pedido.estado === 'Enviado', 'bg-red-100 border-red-300 text-red-700': pedido.estado === 'Deuda'}" class="text-gray-900 font-semibold p-1 rounded border w-max whitespace-no-wrap">
-                                                {{ pedido.estado }}
+                                            <span [ngClass]="{'bg-yellow-100 border-yellow-300 text-yellow-700': paquete.estado === 'Pendiente', 'bg-green-100 border-green-300 text-green-700': paquete.estado === 'Completado', 'bg-orange-100 border-orange-300 text-orange-700': paquete.estado === 'Cancelado', 'bg-blue-100 border-blue-300 text-blue-700': paquete.estado === 'Enviado', 'bg-red-100 border-red-300 text-red-700': paquete.estado === 'Deuda'}" class="text-gray-900 font-semibold p-1 rounded border w-max whitespace-no-wrap">
+                                                {{ paquete.estado }}
                                             </span>
-                                            <span class="bg-gray-100 w-max p-1 rounded ml-2 font-semibold border border-gray-300 text-xs"> {{ pedido.repartidor.apellido }} {{ pedido.repartidor.nombre }} </span>
                                         </div>
                                     </td>
                                     <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 whitespace-no-wrap">
-                                            ${{ pedido.precio_total | moneda }}
+                                            ${{ paquete.precio_total | moneda }}
                                         </p>
                                     </td>
                                     <td class="px-5 py-3 flex items-center justify-center border-b border-gray-200 text-xs text-center">
                                       <span class="flex items-center justify-center ml-2 text-gray-900 whitespace-no-wrap">
-                                        <app-boton-tabla [routerLink]="['/dashboard/paquetes/detalles/',pedido.paquete._id,'reportes-pedidos']" title="Ir al paquete">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                                              </svg>
-                                        </app-boton-tabla>  
-                                        <app-boton-tabla class="ml-2" (click)="seleccionarPedido(pedido)" title="Detalles del pedido">
+                                          <app-boton-tabla [routerLink]="['/dashboard/paquetes/detalles/',paquete._id,'reportes-paquetes']" title="Detalles del paquete">
                                               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                   <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                                               </svg>
@@ -300,7 +233,7 @@
       </app-tarjeta-lista>
     </div>
     
-    <div *ngIf="pedidos.length === 0 && inicio === false" class="mx-auto mt-5 text-center text-xl md:max-w-7xl gsap-contenido">
+    <div *ngIf="paquetes.length === 0 && inicio === false" class="mx-auto mt-5 text-center text-xl md:max-w-7xl gsap-contenido">
         <p> No se encontraron resultados </p>
         <p class="text-sm"t> Intente nuevamente </p>
     </div> 

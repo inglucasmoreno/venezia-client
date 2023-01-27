@@ -33,7 +33,7 @@ export class CobrosPedidosService {
   // Listar relaciones
   listarRelaciones(
     direccion: number = 1,
-    columna: string = 'descripcion',
+    columna: string = 'createdAt',
     cobro: string = ''  
   ): Observable<any> {
     return this.http.get(`${base_url}/cobros-pedidos`, {

@@ -41,6 +41,7 @@ import { PedidosCompletarComponent } from './pedidos/pedidos-completar.component
 import { PaquetesComponent } from './paquetes/paquetes.component';
 import { NuevoPaqueteComponent } from './paquetes/nuevo-paquete.component';
 import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.component';
+import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.component';
 
 
 @NgModule({
@@ -79,6 +80,7 @@ import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.componen
     PaquetesComponent,
     NuevoPaqueteComponent,
     PaquetesDetallesComponent,
+    PaquetesReportesComponent,
   ],
   imports: [
     CommonModule,

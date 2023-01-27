@@ -17,7 +17,7 @@
         <h1 class="text-lg font-semibold"> Listado de productos </h1>
         <div class="max-h-52 overflow-y-auto">
             <div class="p-2 border border-gray-400 mt-2" *ngFor="let producto of productos">
-                <p class="font-semibold text-lg"> {{producto.descripcion}} </p>
+                <p class="font-semibold text-base"> {{producto.descripcion}} </p>
                 <p class="text-gray-500 text-xs"> ${{producto.precio_unitario | moneda}} x {{ producto.unidad_medida.descripcion }} </p>
                 <p class="text-gray-800"> Cantidad: {{producto.cantidad}} </p>
                 <p class="text-gray-800"> Precio: ${{producto.precio | moneda}} </p>
@@ -33,16 +33,33 @@
         <svg (click)="showModalDetallesCobro = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </div>
     <div class="p-2 text-sm">
-        <div class="flex items-center justify-between pb-1">
+        <div class="flex items-center bg-gray-100 border border-gray-400 p-2 justify-between">
             <p> <span class="font-semibold"> Número de cobro: </span> {{ cobroSeleccionado?.nro }} </p>
             <p> <span class="font-semibold"> Fecha: </span> {{ cobroSeleccionado?.fecha_cobro ? (cobroSeleccionado?.fecha_cobro | fecha) : (cobroSeleccionado?.createdAt | fecha) }} </p>
         </div>
         <div class="mt-2">
-            <p class="bg-gray-100 border border-gray-300 p-1 w-full font-semibold"> Cobro realizado </p>
             <div class="mt-2">
-                <p class="mt-2"> <span class="font-semibold"> Tipo: </span> {{ cobroSeleccionado?.tipo }} </p>
-                <p class="mt-2"> <span class="font-semibold"> Mayorista: </span> {{ cobroSeleccionado?.mayorista.descripcion }} </p>
-                <p class="mt-2"> <span class="font-semibold"> Encargado del cobro: </span> 
+                <p class="mt-2 border border-gray-400 p-2"> 
+                    <span class="font-semibold"> 
+                        Tipo: 
+                    </span>
+                    <span>
+                        {{ cobroSeleccionado?.tipo }} 
+                    </span>
+                </p>
+                <p class="border border-gray-400 p-2 border-t-0"> 
+                    <span class="font-semibold"> Paquete: </span> 
+                    <span>
+                        {{ cobroSeleccionado?.paquete.numero }}         
+                    </span>
+                </p>
+                <p class="border border-gray-400 p-2 border-t-0"> 
+                    <span class="font-semibold"> Mayorista: </span> 
+                    <span>
+                        {{ cobroSeleccionado?.mayorista.descripcion }}         
+                    </span>
+                </p>
+                <p class="border border-gray-400 p-2 border-t-0"> <span class="font-semibold"> Encargado del cobro: </span> 
                     <span *ngIf="cobroSeleccionado?.repartidor._id !== '000000000000000000000000'">
                         {{ cobroSeleccionado?.repartidor.apellido }} {{ cobroSeleccionado?.repartidor.nombre }} 
                     </span>
@@ -50,31 +67,38 @@
                         SUCURSAL
                     </span>
                 </p>
-                <p class="mt-2"> <span class="font-semibold"> Carga en sistema: </span> {{ cobroSeleccionado?.creatorUser.apellido}} {{ cobroSeleccionado?.creatorUser.nombre}}</p>
-                <div *ngIf="cobroSeleccionado?.tipo === 'Anticipo'" class="flex items-center justify-between border mt-2 border-gray-400 p-2">
+                <p class="border border-gray-400 p-2 border-t-0"> 
+                    <span class="font-semibold"> Carga en sistema: </span> 
+                    <span>
+                        {{ cobroSeleccionado?.creatorUser.apellido}} {{ cobroSeleccionado?.creatorUser.nombre}}
+                    </span>    
+                </p>
+               
+                <div *ngIf="cobroSeleccionado?.tipo === 'Anticipo'" class="flex bg-green-100 items-center justify-between border mt-2 border-gray-400 p-2">
                     <p class="font-semibold"> Monto de anticipo </p>
-                    <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto }} </p>      
+                    <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto_anticipo | moneda }} </p>      
                 </div>
+               
                 <div *ngIf="cobroSeleccionado?.tipo !== 'Anticipo'">
                     <div  class="border mt-2 border-gray-400 p-2">
                         <div class="flex items-center justify-between py-1">
                             <p class="font-semibold"> <span class="font-semibold text-green-700"> (+) </span> Cobro de deuda </p>
-                            <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto - cobroSeleccionado?.anticipo }} </p>      
+                            <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto_cancelar_deuda | moneda }} </p>      
                         </div>
-                        <div *ngIf="cobroSeleccionado?.anticipo > 0" class="flex items-center justify-between py-1">
-                            <p class="font-semibold"> <span class="font-semibold text-green-700"> (+) </span> A favor del cliente </p>
-                            <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.anticipo }} </p>      
+                        <div *ngIf="cobroSeleccionado?.monto_anticipo > 0" class="flex items-center justify-between py-1">
+                            <p class="font-semibold"> <span class="font-semibold text-green-700"> (+) </span> Anticipo </p>
+                            <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto_anticipo | moneda }} </p>      
                         </div>
                         <div class="flex items-center justify-between border-t-2 mt-1 border-gray-300 py-2">
                             <p class="font-semibold"> Total cobrado </p>
-                            <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto }} </p>      
+                            <p class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto_total_recibido | moneda }} </p>      
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div *ngIf="cobroSeleccionado?.tipo !== 'Anticipo'" class="mt-2">
-            <p class="bg-gray-100 border border-gray-300 p-1 w-full font-semibold"> Pedidos afectados </p>
+            <p class="bg-gray-100 border border-gray-400 p-2 w-full font-semibold"> Pedidos afectados </p>
             <div *ngIf="cobroSeleccionado?.tipo !== 'Anticipo'" class="mt-2 max-h-56 overflow-y-auto">
                 <div (click)="abrirDetallesPedido(relacion.pedido)" class="mt-1 border p-2 border-gray-400 mb-2 hover:border-secondaryColor cursor-pointer" *ngFor="let relacion of relacionCobroPedidos">
                     <div class="flex items-center justify-between">
@@ -165,11 +189,11 @@
                       <p> Total de cobros: {{ totalItems }} </p>
                   </div>
                   <div>
-                    <button title="Nuevo cobro" routerLink="/dashboard/nuevo-cobro-mayorista" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
+                    <!-- <button title="Nuevo cobro" routerLink="/dashboard/nuevo-cobro-mayorista" class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
-                    </button>
+                    </button> -->
                   </div>
               </div>
               <div class="md:flex md:items-center md:justify-between px-4 py-2">
@@ -260,14 +284,14 @@
                                     </div>
                                   </th>
                                   <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
-                                    <div (click)="ordenarPorColumna('monto')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                    <div (click)="ordenarPorColumna('monto_total_recibido')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
                                         <span>
                                             Cobro total                                               
                                         </span>
                                         <span class="ml-2">
-                                            <svg *ngIf="ordenar.columna == 'monto' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
-                                            <svg *ngIf="ordenar.columna == 'monto' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                            <svg *ngIf="ordenar.columna != 'monto'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                            <svg *ngIf="ordenar.columna == 'monto_total_recibido' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'monto_total_recibido' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'monto_total_recibido'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         </span>
                                     </div>
                                   </th>
@@ -334,7 +358,7 @@
                                     </td>
                                     <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 whitespace-no-wrap">
-                                            ${{ cobro.monto | number }}
+                                            ${{ cobro.monto_total_recibido | number }}
                                         </p>
                                     </td>
                                     <td  class="px-5 py-2 border-b border-gray-200 text-xs">
@@ -342,8 +366,8 @@
                                             <span class="font-semibold rounded p-1 border" [ngClass]="{'bg-yellow-100 text-yellow-700 border-yellow-300':cobro.tipo === 'Anticipo', 'bg-green-100 text-green-700 border-green-300':cobro.tipo !== 'Anticipo'}">
                                                 {{ cobro.tipo }}
                                             </span>
-                                            <span *ngIf="cobro.anticipo > 0 && cobro.tipo !== 'Anticipo'" class="bg-green-100 font-semibold px-2 py-1 ml-1 rounded border border-green-300 text-green-700">
-                                                ${{ cobro.anticipo | moneda }}
+                                            <span *ngIf="cobro.monto_anticipo > 0 && cobro.tipo !== 'Anticipo'" class="bg-green-100 font-semibold px-2 py-1 ml-1 rounded border border-green-300 text-green-700">
+                                                ${{ cobro.monto_anticipo | moneda }}
                                             </span>
                                         </p>
                                     </td>

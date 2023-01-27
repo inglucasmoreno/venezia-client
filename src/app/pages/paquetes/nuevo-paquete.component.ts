@@ -404,8 +404,6 @@ export class NuevoPaqueteComponent implements OnInit {
             productos: this.carrito
           };
 
-          console.log(data);
-
           this.ventasMayoristasService.nuevaVenta(data).subscribe({
             next: () => {
               this.showModalNuevoPedido = false;
@@ -701,6 +699,28 @@ export class NuevoPaqueteComponent implements OnInit {
     this.filtro.parametro = '';
   }
 
+  // Eliminar paquete
+  eliminarPaquete(): void {
+    this.alertService.question({ msg: 'Eliminando paquete', buttonText: 'Eliminar' })
+    .then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        this.alertService.loading();
+        this.paquetesService.eliminarPaquete(this.paquete._id).subscribe({
+          next: () => {
+            this.paquete = null;
+            this.carrito = [];
+            this.productos = [];
+            this.pedidos = [];
+            this.repartidor = '';
+            this.fecha_paquete = format(new Date(), 'yyyy-MM-dd');
+            this.etapa = 'creacion';
+            this.almacenarLocalStorage();
+            this.alertService.success('Paquete eliminado correctamente');
+          }, error: ({ error }) => this.alertService.errorApi(error.message)
+        })
+      };
+    });
+  }
 
   // Calcular precio total
   calcularPrecioTotal(): void {

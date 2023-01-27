@@ -17,8 +17,6 @@ export class FiltroPedidoPipe implements PipeTransform {
       filtrados = valores;
     }
 
-    console.log(filtrados);
-
     // Filtrado por estado
     if(estado === 'deuda'){
       filtrados = filtrados.filter( valor => valor.deuda_monto !== 0 )  

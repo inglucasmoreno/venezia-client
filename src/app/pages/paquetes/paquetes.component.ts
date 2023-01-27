@@ -126,6 +126,7 @@ export class PaquetesComponent implements OnInit {
               this.filtro.activo
             ).subscribe({
               next: ({ paquetes, totalItems }) => {
+                console.log(paquetes);
                 this.paquetes = paquetes.filter(paquete => paquete.activo);
                 this.totalItems = totalItems;
                 this.alertService.close();

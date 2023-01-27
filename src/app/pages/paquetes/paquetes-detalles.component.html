@@ -1,3 +1,174 @@
+<!-- Modal: Detalles de cobro -->
+<app-modal [showModal]="showModalDetallesCobro">
+  
+  <div class="text-white bg-primary-800 flex items-center justify-between p-2 rounded-t">
+    <h1> Detalles de cobro </h1>
+    <button (click)="showModalDetallesCobro = false" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>               
+    </button> 
+  </div>
+
+  <!-- Detalles generales -->
+  <div class="p-2 text-sm">
+    <div class="flex p-2 bg-gray-100 items-center border border-gray-400 justify-between">
+      <p> <span class="font-semibold"> Número de cobro: </span> {{ cobroSeleccionado?.nro }} </p>
+      <p> <span class="font-semibold"> Fecha: </span> {{ cobroSeleccionado?.fecha_cobro | fecha }} </p>
+    </div>
+    
+    <p class="p-2 border border-gray-400 border-t-0"> <span class="font-semibold"> Mayorista: </span> {{ cobroSeleccionado?.mayorista.descripcion }} </p>
+    
+    <p class="p-2 border border-gray-400 border-t-0"> <span class="font-semibold"> Tipo: </span> <span [ngClass]="{'text-green-700':cobroSeleccionado?.tipo === 'Cobro', 'text-yellow-700':cobroSeleccionado?.tipo === 'Anticipo'}" class="p-1 rounded font-semibold"> {{ cobroSeleccionado?.tipo }} </span> </p>
+    
+    <p *ngIf="cobroSeleccionado?.tipo !== 'Anticipo'" class="p-2 border border-gray-400 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Deuda total </span> <span class="text-red-700 font-semibold"> ${{ cobroSeleccionado?.deuda_total | moneda }} </span> </p>
+    
+    <p class="p-2 border border-gray-400 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Monto recibido </span> <span class="text-blue-700 font-semibold"> ${{ cobroSeleccionado?.monto_total_recibido | moneda }} </span> </p>
+    
+    <!-- <p class="p-2 border border-gray-400 bg-orange-50 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Cobrado </span> <span class="text-orange-700"> ${{ cobroSeleccionado?.monto_cancelar_deuda | moneda }} </span> </p> -->
+    
+    <p *ngIf="cobroSeleccionado?.tipo !== 'Anticipo'" class="p-2 border border-gray-400 bg-red-50 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Deuda restante </span> <span class="text-red-700 font-semibold"> ${{ cobroSeleccionado?.deuda_restante | moneda }} </span> </p>
+    
+    <p *ngIf="cobroSeleccionado?.monto_anticipo > 0" class="p-2 border border-gray-400 bg-green-50 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Anticipo </span> <span class="text-green-700 font-semibold"> ${{ cobroSeleccionado?.monto_anticipo | moneda }} </span> </p>
+  </div> 
+  
+  <!-- Listado de pedidos afectados -->
+  <div *ngIf="cobroSeleccionado?.tipo !== 'Anticipo'" class="px-2 text-sm">
+    <p class="p-2 bg-gray-100 border border-gray-400 font-semibold"> Pedidos afectados ({{ cobros_pedidos?.length }}) </p> 
+    <div class="mt-2 max-h-64 overflow-y-auto">
+      <div class="mb-2" *ngFor="let cobro of cobros_pedidos">
+        <div class="flex bg-gray-100 border border-gray-400 p-2 items-center justify-between">
+          <p> <span class="font-semibold"> Número de pedido: </span> {{ cobro?.pedido.numero }} </p>
+          <p> <span class="font-semibold"> Fecha: </span> {{ cobro?.pedido.fecha_pedido | fecha }} </p>
+        </div>
+       
+        <p class="p-2 border border-gray-400 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Estado </span> <span [ngClass]="{'text-green-700':cobro.cancelado, 'text-blue-700':!cobro.cancelado}" class="font-semibold"> {{ cobro?.cancelado ? 'Cancelado' : 'Cobro parcial' }} </span> </p>
+       
+        <!-- <p class="p-2 border border-gray-400 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Precio total </span> <span class="font-semibold"> ${{ cobro?.monto_total | moneda }} </span> </p> -->
+       
+        <p class="p-2 border border-gray-400 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Deuda total </span> <span class="text-red-700 font-semibold"> ${{ cobro?.monto_deuda | moneda }} </span> </p>
+       
+        <p [ngClass]="{'bg-green-50': cobro?.cancelado, 'bg-blue-50': !cobro?.cancelado}"  class="p-2 border border-gray-400 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Monto cobrado </span> <span [ngClass]="{'text-green-700': cobro?.cancelado, 'text-blue-700': !cobro?.cancelado}" class="font-semibold"> ${{ cobro?.monto_cobrado | moneda }} </span> </p>
+       
+        <p class="p-2 border border-gray-400 bg-red-50 border-t-0 flex items-center justify-between"> <span class="font-semibold"> Deuda restante </span> <span class="text-red-700 font-semibold"> ${{ cobro?.monto_deuda - cobro?.monto_cobrado | moneda }} </span> </p>
+      
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Modal: Nuevo cobro -->
+<app-modal [showModal]="showModalNuevoCobro">
+  <div class="text-white bg-primary-800 flex items-center justify-between p-2 rounded-t">
+    <h1> Cobros y anticipos </h1>
+    <button (click)="showModalNuevoCobro = false" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>               
+    </button> 
+  </div>
+  <div class="p-2 text-sm">
+    <div *ngIf="!mayoristaCobroSeleccionado">
+      <div class="flex items-center">
+        <div class="w-1/2">
+          <p class="font-semibold"> Seleccionar mayorista </p>
+          <select [(ngModel)]="mayoristaCobro" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none rounded"> 
+            <option value=""> Listado de mayoristas </option>  
+            <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
+          </select>
+        </div>
+        <div class="w-1/2 ml-4">
+          <p class="font-semibold"> Monto recibido </p>
+          <input (keyup.enter)="buscarDeudas()" [(ngModel)]="montoCobro" type="number" placeholder="Ej. 3600" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none rounded">
+        </div>
+      </div> 
+      <button (click)="buscarDeudas()" class="bg-secondaryColor w-full mt-2 focus:outline-none text-white p-2 shadow rounded"> Continuar </button>
+    </div>
+    <div *ngIf="mayoristaCobroSeleccionado">
+      <div class="border flex items-center justify-between rounded border-gray-400 p-2 bg-gray-100">
+          <div class="flex items-center">
+            <button (click)="regresarNuevoCobro()" class="hover:text-secondaryColor p-2 rounded bg-white border border-gray-400 focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            <p class="font-semibold ml-2 text-base"> Detalles de cobro </p>
+          </div>
+          <button (click)="completarCobro()" title="Completar cobro" class="p-2 focus:outline-none border rounded border-gray-400 bg-white hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>            
+          </button>
+      </div>
+      <div class="mt-2">
+        <div class="border p-2 flex items-center justify-between border-gray-400"> 
+          <span class="font-semibold"> 
+            Mayorista
+          </span> 
+          <span>
+            {{ mayoristaCobroSeleccionado?.descripcion }} 
+          </span>
+        </div>
+      </div>
+      <div class="border border-gray-400 border-t-0 p-2 flex items-center justify-between"> 
+          <span class="font-semibold"> Monto recibido </span>
+          <span class="text-blue-700 font-semibold"> ${{ montoRecibidoFijo | moneda }} </span> 
+      </div>
+      <div class="border border-gray-400 border-t-0 p-2 flex items-center justify-between"> 
+        <span class="font-semibold"> Deuda actual </span>
+        <span class="text-red-700 font-semibold"> ${{ deudaTotal | moneda }} </span> 
+      </div>
+      <div class="border border-gray-400 border-t-0 p-2 flex items-center justify-between"> 
+        <span class="font-semibold"> Anticipo </span>
+        <span class="text-green-700 font-semibold"> ${{ montoCobro | moneda }} </span> 
+      </div>
+      
+      <div *ngIf="deudas.length > 0" class="mt-2 rounde border border-gray-400 w-max"> 
+        <div class="p-2 border-l-8 border-green-500">
+          <span class="font-semibold"> Pedidos cancelados: </span> {{ pedidosCancelados }} 
+        </div>
+      </div>
+      
+      <p *ngIf="deudas.length <= 0" class="mt-2 bg-gray-100 p-1 rounde border border-gray-400 text-center"> El mayoristas no tiene deuda, el monto se colocara como <span class="font-semibold"> anticipo </span> </p>
+      
+      <p *ngIf="deudas.length > 0" class="mt-2 p-1 bg-gray-50 font-semibold border border-gray-400"> <span class="font-semibold"> Listado de deudas </span> </p>
+
+      <div class="max-h-80 overflow-y-auto">
+        <div *ngFor="let deuda of deudas" class="border border-gray-400 mt-2">
+          <div [ngClass]="{'bg-green-100':(deuda.cancelado && !deuda.parcial && deuda.seleccionado), 'bg-blue-100':(!deuda.cancelado && deuda.parcial && deuda.seleccionado)}" class="flex items-center bg-gray-100 justify-between border-b border-gray-400 p-2">
+            <p> <span class="font-semibold"> Número de pedido: </span> {{ deuda?.numero }} </p>
+            <p> <span class="font-semibold"> Fecha: </span> {{ deuda?.createdAt | fecha }} </p>
+          </div>
+          <div class="p-2 flex items-center justify-between">
+            <div>
+              <p> <span class="font-semibold"> Precio total: </span> ${{ deuda.precio_total | moneda }} </p>
+              <div class="flex items-center">
+                <p class="bg-red-50 border border-red-400 mt-1 p-1 w-max"> <span class="font-semibold"> Deuda: </span> ${{ deuda?.deuda_monto | moneda }} </p>
+                <p [ngClass]="{'bg-blue-50 border-blue-400':(deuda?.parcial && !deuda?.cancelado)}" *ngIf="deuda?.montoCobro > 0" class="bg-green-50 border ml-1 border-green-400 mt-1 p-1 w-max"> <span class="font-semibold"> Cobrado: </span> ${{ deuda?.montoCobro | moneda }} </p>
+              </div>
+            </div>
+            <div>
+              <button (click)="seleccionarDeseleccionarDeuda(deuda, 'Cobrar')" *ngIf="!deuda.seleccionado" title="Cobrar" class="border bg-white border-gray-400 p-2 rounded hover:text-green-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>             
+              </button>
+              <button (click)="seleccionarDeseleccionarDeuda(deuda, 'NoCobrar')" *ngIf="deuda.seleccionado" title="No cobrar" class="border bg-white border-gray-400 p-2 rounded hover:text-red-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>           
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="mt-2" *ngIf="deudas?.length === 0">
+      <p class="text-gray-700 text-lg"> Este mayorista no tiene deudas </p>
+    </div> -->
+  </div>
+</app-modal>
+
 <!-- Modal: Agregar gasto -->
 <app-modal [showModal]="showModalNuevoGasto">
   <div class="text-white bg-primary-800 flex items-center justify-between p-2 rounded-t">
@@ -245,7 +416,7 @@
 <div class="p-4 gsap-contenido">
   <div class="border mx-auto border-gray-400 max-w-4xl">
     <div class="flex items-center bg-primary-800 p-2">
-      <app-boton-regresar routerLink="/dashboard/paquetes"></app-boton-regresar>
+      <app-boton-regresar [routerLink]="urlRegreso"></app-boton-regresar>
       <h1 class="ml-2 text-xl text-white"> 
         Paquete N° {{ paquete?.numero }}
       </h1>
@@ -312,7 +483,12 @@
         <div class="bg-gray-100 flex items-center justify-between p-2 border-b border-gray-400">
           <h2 class="font-semibold "> Cierre de paquete </h2>
           <div *ngIf="paquete?.estado !== 'Completado' && paquete?.estado !== 'Deuda' && authService.usuario.role !== 'DELIVERY_ROLE'">
-            <button (click)="abrirNuevoIngreso()" title="Nuevo ingreso" class="border border-gray-400 rounded focus:outline-none p-2 bg-white hover:text-green-700">
+            <button (click)="abrirNuevoCobro()" title="Cobros y anticipos" class="border border-gray-400 rounded focus:outline-none p-2 bg-white hover:text-green-700">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+              </svg>   
+            </button>
+            <button (click)="abrirNuevoIngreso()" title="Nuevo ingreso" class="border ml-2 border-gray-400 rounded focus:outline-none p-2 bg-white hover:text-green-700">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
               </svg>  
@@ -393,7 +569,7 @@
           </div>
 
           <div *ngIf="mostrarGastos">
-            <div *ngFor="let gasto of gastos" class="border bg-red-50 border-t-0 flex items-center p-2 justify-between border-gray-400"> 
+            <div *ngFor="let gasto of gastos" class="border text-xs bg-red-50 border-t-0 flex items-center p-2 justify-between border-gray-400"> 
               <p class="flex items-center">
                 <button (click)="eliminarGasto(gasto)" *ngIf="paquete?.estado === 'Enviado'" title="Eliminar gasto" class="p-1 text-primary-700 bg-white rounded hover:text-red-700 border focus:outline-none border-gray-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -430,7 +606,7 @@
           </div>
 
           <div *ngIf="mostrarIngresos">
-            <div *ngFor="let ingreso of ingresos" class="border bg-green-50 border-t-0 flex items-center p-2 justify-between border-gray-400"> 
+            <div *ngFor="let ingreso of ingresos" class="border text-xs bg-green-50 border-t-0 flex items-center p-2 justify-between border-gray-400"> 
               <p class="flex items-center">
                 <button (click)="eliminarIngreso(ingreso)" *ngIf="paquete?.estado === 'Enviado' && authService.usuario.role !== 'DELIVERY_ROLE'" title="Eliminar ingreso" class="p-1 text-primary-700 bg-white rounded hover:text-red-700 border focus:outline-none border-gray-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -446,6 +622,49 @@
               </span>
             </div>
           </div>
+
+          <div [ngClass]="{'cursor-pointer':cobros.length > 0}" (click)="mostrarCobros = !mostrarCobros" class="border border-t-0 flex items-center p-2 justify-between border-gray-400"> 
+            <p class="font-semibold flex items-center"> 
+              <span>
+                Cobros
+              </span>
+              <span *ngIf="cobros.length > 0">
+                <svg *ngIf="mostrarCobros" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>   
+                <svg *ngIf="!mostrarCobros" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            </p> 
+            <span class="text-green-700">
+              +${{ total_cobros | moneda }} 
+            </span>
+          </div>
+
+          <div *ngIf="mostrarCobros">
+            <div *ngFor="let cobro of cobros" class="border text-xs bg-green-50 border-t-0 flex items-center p-2 justify-between border-gray-400"> 
+              <p class="flex items-center">
+                <button (click)="eliminarCobro(cobro)" *ngIf="paquete?.estado === 'Enviado' && authService.usuario.role !== 'DELIVERY_ROLE'" title="Eliminar cobro" class="p-1 text-primary-700 mr-1 bg-white rounded hover:text-red-700 border focus:outline-none border-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button> 
+                <button (click)="abrirDetallesCobro(cobro)" *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" title="Detalles de cobro" class="p-1 text-primary-700 bg-white rounded hover:text-red-700 border focus:outline-none border-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  </svg>
+                </button> 
+                <span class="ml-2 font-semibold">
+                  {{ cobro.tipo }} #{{ cobro.nro }} - {{ cobro.mayorista.descripcion }}
+                </span>
+              </p> 
+              <span class="text-green-700">
+                +${{ cobro.monto_total_recibido | moneda }} 
+              </span>
+            </div>
+          </div>
+
 
           <p class="border bg-yellow-100 border-t-0 flex items-center p-2 justify-between border-gray-400"> 
             <span class="font-semibold"> 
@@ -496,8 +715,13 @@
                       <p class="mt-1"> <span class="font-semibold"> Precio total: </span> ${{ pedido.precio_total | moneda }} </p>
                     </div>
   
-                    <div *ngIf="paquete?.estado !== 'Completado' && paquete?.estado !== 'Deuda' && authService.usuario.role !== 'DELIVERY_ROLE'">
-                      <button (click)="eliminarPedido(pedido)" title="Eliminar pedido" class="text-xs shadow border border-gray-400 bg-white font-semibold focus:outline-none hover:text-red-700">
+                    <div class="flex items-center" *ngIf="paquete?.estado !== 'Completado' && paquete?.estado !== 'Deuda' && authService.usuario.role !== 'DELIVERY_ROLE'">
+                      <button (click)="abrirNuevoCobro(pedido.mayorista._id)" title="Cobros y anticipos" class="border border-gray-400 rounded focus:outline-none p-2 bg-white hover:text-green-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                        </svg>   
+                      </button>
+                      <button (click)="eliminarPedido(pedido)" title="Eliminar pedido" class="text-xs ml-2 shadow border border-gray-400 bg-white font-semibold focus:outline-none hover:text-red-700">
                         <div class="border-l-8 border-red-500 p-2">
                           Eliminar pedido
                         </div>

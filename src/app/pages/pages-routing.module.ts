@@ -22,7 +22,6 @@ import { CajasHistorialComponent } from './caja/cajas-historial.component';
 import { VentasActivasComponent } from './ventas/ventas-activas.component';
 import { PedidosyaComponent } from './pedidosya/pedidosya.component';
 import { PedidosyaHistorialComponent } from './pedidosya/pedidosya-historial.component';
-import { PedidosComponent } from './pedidos/pedidos.component';
 import { MayoristasComponent } from './mayoristas/mayoristas.component';
 import { RepartidoresComponent } from './repartidores/repartidores.component';
 import { NuevoPedidoComponent } from './pedidos/nuevo-pedido.component';
@@ -40,6 +39,7 @@ import { PedidosCompletarComponent } from './pedidos/pedidos-completar.component
 import { NuevoPaqueteComponent } from './paquetes/nuevo-paquete.component';
 import { PaquetesComponent } from './paquetes/paquetes.component';
 import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.component';
+import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.component';
 
 const routes: Routes = [
     {
@@ -81,8 +81,11 @@ const routes: Routes = [
             { path: 'cuentas-corrientes-mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: CuentasCorrientesMayoristasComponent },
             { path: 'cobros-mayoristas', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: CobrosMayoristasComponent },
             { path: 'nuevo-cobro-mayorista', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoCobroMayoristaComponent },
+            
             { path: 'paquetes', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PaquetesComponent },
-            { path: 'paquetes/detalles/:id', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PaquetesDetallesComponent },
+            { path: 'paquetes-reportes', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PaquetesReportesComponent },
+            { path: 'paquetes/detalles/:id/:origen', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PaquetesDetallesComponent },
+
             { path: 'nuevo-pedido', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoPedidoComponent },
             { path: 'nuevo-paquete', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: NuevoPaqueteComponent },
             { path: 'pedidos-reportes', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: PedidosReportesComponent },
