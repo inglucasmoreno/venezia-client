@@ -42,6 +42,7 @@ import { PaquetesComponent } from './paquetes/paquetes.component';
 import { NuevoPaqueteComponent } from './paquetes/nuevo-paquete.component';
 import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.component';
 import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.component';
+import { ReportesMayoristasGeneralesComponent } from './reportes-mayoristas/reportes-mayoristas-generales.component';
 
 
 @NgModule({
@@ -81,6 +82,7 @@ import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.componen
     NuevoPaqueteComponent,
     PaquetesDetallesComponent,
     PaquetesReportesComponent,
+    ReportesMayoristasGeneralesComponent,
   ],
   imports: [
     CommonModule,

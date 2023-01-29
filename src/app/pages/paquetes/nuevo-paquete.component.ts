@@ -282,7 +282,7 @@ export class NuevoPaqueteComponent implements OnInit {
 
           this.ventasMayoristasService.nuevaVenta(data).subscribe({
             next: () => {
-              this.alertService.success('Pedido enviado!');
+              this.alertService.success('Paquete creado correctamente');
               this.reiniciarPedido();
             },
             error: ({ error }) => {
@@ -369,7 +369,6 @@ export class NuevoPaqueteComponent implements OnInit {
   }
 
   completarPedido(): void {
-
     // Verificacion: Mayorista
     if (this.mayorista === '') {
       this.alertService.info('Debe seleccionar un mayorista');
@@ -378,6 +377,7 @@ export class NuevoPaqueteComponent implements OnInit {
 
     // Adaptando productos
     this.carrito.map(producto => {
+      producto.paquete = this.paquete._id;
       producto.creatorUser = this.mayorista;
       producto.updatorUser = this.mayorista;
     });
@@ -424,16 +424,15 @@ export class NuevoPaqueteComponent implements OnInit {
   completarPaquete(): void {
 
     // Verificacion: Cantidad de productos
-    if (this.pedidos.length === 0) {
-      this.alertService.info('Debe agregar al menos un pedido');
-      return;
-    }
+    // if (this.pedidos.length === 0) {
+    //   this.alertService.info('Debe agregar al menos un pedido');
+    //   return;
+    // }
 
     this.alertService.question({ msg: 'Completando paquete', buttonText: 'Completar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
           this.alertService.loading();
-          console.log(this.pedidos.length);
           const data = {
             paquete: this.paquete._id,
             fecha: this.fecha_paquete,
@@ -651,6 +650,7 @@ export class NuevoPaqueteComponent implements OnInit {
       this.alertService.loading();
 
       const dataProducto = {
+        paquete: this.paquete._id,
         ventas_mayorista: this.pedidoSeleccionado._id,
         producto: this.nuevoProductoSeleccionado,
         descripcion: this.nuevoProductoSeleccionado.descripcion,

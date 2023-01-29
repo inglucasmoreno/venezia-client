@@ -92,7 +92,6 @@
                   <div class="my-2 flex sm:flex-row flex-col">
                       <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.repartidor">
                         <option value=""> Todos los repartidores </option>
-                        <option value="000000000000000000000000"> SUCURSAL </option>
                         <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
                       </select> 
                       <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="filtro.tipo_gasto">
@@ -121,6 +120,18 @@
                       <table class="min-w-full leading-normal">
                           <thead>
                               <tr class="border">
+                                  <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('fecha_gasto')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                                        <span>
+                                            Fecha de gasto                                              
+                                        </span>
+                                        <span class="ml-2">
+                                            <svg *ngIf="ordenar.columna == 'fecha_gasto' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'fecha_gasto' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'fecha_gasto'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                  </th>
                                   <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
                                       <div (click)="ordenarPorColumna('repartidor.apellido')" class="cursor-pointer flex items-center focus:outline-none">
                                           <span> Repartidor </span>
@@ -162,18 +173,6 @@
                                     </div>
                                   </th>
                                   <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
-                                      <div (click)="ordenarPorColumna('fecha_gasto')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
-                                          <span>
-                                              Fecha de gasto                                              
-                                          </span>
-                                          <span class="ml-2">
-                                              <svg *ngIf="ordenar.columna == 'fecha_gasto' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
-                                              <svg *ngIf="ordenar.columna == 'fecha_gasto' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                              <svg *ngIf="ordenar.columna != 'fecha_gasto'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                          </span>
-                                      </div>
-                                  </th>
-                                  <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
                                     <div class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
                                         <span>
                                             Accion                                             
@@ -184,6 +183,11 @@
                           </thead>
                           <tbody *ngIf="gastos">
                               <tr class="animate__animated animate__fadeIn" *ngFor="let gasto of gastos | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap">
+                                        {{ gasto.fecha_gasto | fecha }}
+                                    </p>
+                                  </td>
                                   <td class="px-5 py-3 border-b border-gray-200 text-xs">
                                       <p class="text-gray-900 w-max whitespace-no-wrap">
                                           {{ gasto.repartidor.apellido }} {{ gasto.repartidor._id !== '000000000000000000000000' ? gasto.repartidor.nombre : null }}
@@ -203,11 +207,6 @@
                                     <p class="text-gray-900 w-max whitespace-no-wrap">
                                         ${{ gasto.monto | moneda }}
                                     </p>
-                                  </td>
-                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                      <p class="text-gray-900 whitespace-no-wrap">
-                                          {{ gasto.fecha_gasto | fecha }}
-                                      </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <app-boton-tabla [routerLink]="['/dashboard/paquetes/detalles/',gasto.paquete._id,'listado-gastos']" title="Ir al paquete">

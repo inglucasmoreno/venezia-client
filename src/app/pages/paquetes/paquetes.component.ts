@@ -93,6 +93,7 @@ export class PaquetesComponent implements OnInit {
     this.dataService.ubicacionActual = 'Dashboard - Unidades de medida';
     this.permisos.all = this.permisosUsuarioLogin();
     this.alertService.loading();
+    this.recuperarLocalStorage();
     this.cargaInicial();
   }
 
@@ -126,9 +127,9 @@ export class PaquetesComponent implements OnInit {
               this.filtro.activo
             ).subscribe({
               next: ({ paquetes, totalItems }) => {
-                console.log(paquetes);
                 this.paquetes = paquetes.filter(paquete => paquete.activo);
                 this.totalItems = totalItems;
+                this.almacenarLocalStorage();
                 this.alertService.close();
               },
               error: ({ error }) => {
@@ -192,6 +193,7 @@ export class PaquetesComponent implements OnInit {
         this.paquetes = paquetes;
         this.totalItems = totalItems;
         this.showModalPaquete = false;
+        this.almacenarLocalStorage();
         this.alertService.close();
       }, (({ error }) => {
         this.alertService.errorApi(error.msg);
@@ -495,6 +497,37 @@ export class PaquetesComponent implements OnInit {
     this.desde = (this.paginaActual - 1) * this.cantidadItems;
     this.alertService.loading();
     this.listarPaquetes();
+  }
+
+  // Recuperar info del localStorage
+  recuperarLocalStorage(): void {
+    this.filtro = localStorage.getItem('listado-paquetes-filtro') ? JSON.parse(localStorage.getItem('listado-paquetes-filtro')) : {
+      estado: 'Pendiente',
+      parametro: '',
+      parametroProductos: '',
+      mayorista: '',
+      repartidor: '',
+      fecha: '',
+      fechaDesde: '',
+      fechaHasta: '',
+      activo: ''
+    };
+    this.ordenar = localStorage.getItem('listado-paquetes-ordenar') ? JSON.parse(localStorage.getItem('listado-paquetes-ordenar')) : {
+      direccion: -1,
+      columna: 'fecha_paquete'
+    }
+    this.desde = localStorage.getItem('listado-paquetes-desde') ? JSON.parse(localStorage.getItem('listado-paquetes-desde')) : 0;
+    this.paginaActual = localStorage.getItem('listado-paquetes-paginaActual') ? JSON.parse(localStorage.getItem('listado-paquetes-paginaActual')) : 1;
+    this.cantidadItems = localStorage.getItem('listado-paquetes-cantidadItems') ? JSON.parse(localStorage.getItem('listado-paquetes-cantidadItems')) : 10;
+  }
+
+  // Almacenar en localStorage
+  almacenarLocalStorage(): void {
+    localStorage.setItem('listado-paquetes-filtro', JSON.stringify(this.filtro));
+    localStorage.setItem('listado-paquetes-ordenar', JSON.stringify(this.filtro));
+    localStorage.setItem('listado-paquetes-desde', JSON.stringify(this.desde));
+    localStorage.setItem('listado-paquetes-paginaActual', JSON.stringify(this.paginaActual));
+    localStorage.setItem('listado-paquetes-cantidadItems', JSON.stringify(this.cantidadItems));
   }
 
 }

@@ -75,7 +75,11 @@ export class MayoristasComponent implements OnInit {
     this.dataService.ubicacionActual = 'Dashboard - Mayoristas';
     this.permisos.all = this.permisosUsuarioLogin();
     this.alertService.loading();
-    this.listarMayoristas();
+    this.cuentasService.inicializarCuentasCorrientes(this.authService.usuario.userId).subscribe({ // Inicializando CC faltantes
+      next: () => {
+        this.listarMayoristas();
+      }, error: ({error}) => this.alertService.errorApi(error.message) 
+    })
   }
 
   // Asignar permisos de usuario login

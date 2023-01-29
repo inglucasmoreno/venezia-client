@@ -105,6 +105,15 @@ export class PaquetesService {
     });
   }
 
+  // Reportes generales
+  reportesGenerales(data: any): Observable<any> {
+    return this.http.post(`${base_url}/paquetes/reportes/general`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
   // Actualizar paquetes
   actualizarPaquete(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/paquetes/${id}`, data, {
@@ -122,6 +131,25 @@ export class PaquetesService {
       }
     });
   }
+
+  // Talonarios masivos PDF
+  talonariosMasivosPDF(idPaquete: string): Observable<any> {
+    return this.http.get(`${base_url}/paquetes/talonarios-masivos/pdf/${idPaquete}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Generar lista de preparacion de pedidos - PDF
+  generarPreparacionPedidosPDF(idPaquete: string): Observable<any> {
+    return this.http.get(`${base_url}/paquetes/preparacion-pedidos/pdf/${idPaquete}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  } 
+
 
 
 }

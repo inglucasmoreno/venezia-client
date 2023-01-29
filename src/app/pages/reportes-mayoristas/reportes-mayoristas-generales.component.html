@@ -1,0 +1,97 @@
+
+<div class="gsap-contenido">
+
+  <!-- FILTROS -->
+  <div *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL'))" class="mx-auto max-w-xl w-11/12">
+   
+    <div (click)="showFiltros = !showFiltros" class="bg-primary-800 w-full cursor-pointer flex items-center justify-between p-2 rounded-t mt-10 text-center text-white">
+      <h1> 
+        Reportes generales
+      </h1>
+      <button class="focus:outline-none">
+        <svg *ngIf="showFiltros" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg> 
+        <svg *ngIf="!showFiltros"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+        </svg>          
+      </button>
+    </div>
+   
+    <div *ngIf="showFiltros" class="text-sm border shadow border-gray-400 p-2">
+      <div class="md:flex md:items-center">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> Fecha desde </p>
+          <input [(ngModel)]="fechaDesde" type="date" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
+        </div>
+        <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+          <p class="font-semibold"> Fecha hasta </p>
+          <input [(ngModel)]="fechaHasta" type="date" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
+        </div>
+      </div>
+      <div class="mt-2">
+        <p class="font-semibold"> Repartidor </p>
+        <select [(ngModel)]="repartidor" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
+          <option value=""> Todos los repartidores </option>
+          <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+        </select>
+      </div>
+      <button (click)="generarReporte()" class="bg-gray-100 focus:outline-none border border-gray-400 p-2 rounded w-full font-semibold mt-3 hover:text-secondaryColor">
+        Generar reporte
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="authService.usuario.role === 'DELIVERY_ROLE' || (authService.usuario.role === 'USER_ROLE' && !authService.usuario.permisos.includes('MAYORISTAS_ALL'))" class="mx-auto w-11/12">
+    <img class="mt-10 mx-auto" src="assets/img/not_access.svg" alt="No se tiene permisos">
+    <h1 class="mt-5 text-center md:text-lg"> Usted no tiene permisos para acceder a esta seccion </h1>
+  </div>
+
+  <div *ngIf="totales" class="mx-auto max-w-3xl text-sm p-2 mt-4">
+    <div class="flex">
+      <img src="/assets/img/caja.svg" class="w-56 mr-5 hidden md:block" alt="caja.svg">
+      <div class="w-full">
+        <h2 class="font-semibold text-base bg-gray-50 p-2 mb-2 border border-gray-400 text-center"> Reporte general </h2>
+        <div class="flex items-center justify-between border border-gray-400 p-2">
+          <p class="font-semibold"> Cantidad de paquetes </p>
+          <p> {{ totales?.cantidad_paquetes }} </p>
+        </div>
+        <div class="flex items-center justify-between border-t-0 border border-gray-400 p-2">
+          <p class="font-semibold"> Cantidad de ventas </p>
+          <p> {{ cantidad_pedidos }} </p>
+        </div>
+        <div class="flex items-center justify-between border border-gray-400 border-t-0 p-2">
+          <p class="font-semibold"> Precio total paquetes </p>
+          <p> ${{ totales?.precio_total | moneda }} </p>
+        </div>
+        <div class="flex items-center justify-between border border-gray-400 border-t-0 p-2">
+          <p class="font-semibold"> Total deuda </p>
+          <p class="text-red-700"> -${{ totales?.total_deudas | moneda }} </p>
+        </div>
+        <div class="flex items-center bg-green-50 justify-between border border-gray-400 border-t-0 p-2">
+          <p class="font-semibold"> Ganancia en ventas </p>
+          <p class="font-semibold"> ${{ (totales?.precio_total - totales?.total_deudas) | moneda }} </p>
+        </div>
+        <div class="flex items-center justify-between border border-gray-400 border-t-0 p-2">
+          <p class="font-semibold"> Total otros ingresos </p>
+          <p class="text-green-700"> +${{ totales?.total_ingresos | moneda }} </p>
+        </div>
+        <div class="flex items-center justify-between border border-gray-400 border-t-0 p-2">
+          <p class="font-semibold"> Total gastos </p>
+          <p class="text-red-700"> -${{ totales?.total_gastos | moneda }} </p>
+        </div>
+        <div class="flex items-center bg-green-50 justify-between border border-gray-400 border-t-0 p-2">
+          <p class="font-semibold"> Ganancia total </p>
+          <p class="font-semibold"> ${{ totalFinal | moneda }} </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!totales && !inicio" class="mx-auto mt-5 text-center text-xl md:max-w-7xl gsap-contenido">
+    <p> No se encontraron resultados </p>
+    <p class="text-sm"t> Intente nuevamente </p>
+  </div> 
+
+</div>
+
