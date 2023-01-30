@@ -181,8 +181,6 @@ export class PaquetesDetallesComponent implements OnInit {
     this.paquetesService.getPaquete(this.idPaquete).subscribe({
       next: ({ paquete, ingresos, gastos, cobros, cobros_externos }) => {
 
-        console.log(cobros_externos);
-
         this.paquete = paquete;
         this.cobros = cobros;
         this.ingresos = ingresos;
@@ -438,10 +436,10 @@ export class PaquetesDetallesComponent implements OnInit {
       // Agregar producto
       this.ventasMayoristasProductosService.nuevoProducto(dataProducto).subscribe({
         next: ({ producto }) => {
-          console.log(producto);
           this.nuevoProductoSeleccionado = null;
           this.nuevoProductoCantidad = null;
           this.pedidoSeleccionado.productos.unshift(producto);
+          this.ordenarProductos();
           this.calcularTotalPedido(this.pedidoSeleccionado);
           this.alertService.close();
         }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -491,6 +489,7 @@ export class PaquetesDetallesComponent implements OnInit {
     );
 
     this.filtro.parametro = '';
+    this.ordenarProductosCarrito();
     this.calculoPrecio();
     this.cerrarSeleccion();
 
@@ -1218,6 +1217,34 @@ export class PaquetesDetallesComponent implements OnInit {
       }); 
   }
 
+  ordenarProductos(): void {
+    this.pedidos.map(pedido => {
+      pedido.productos.sort(function (a, b) {
+        // A va primero que B
+        if (a.descripcion < b.descripcion)
+          return -1;
+        // B va primero que A
+        else if (a.descripcion > b.descripcion)
+          return 1;
+        // A y B son iguales
+        else
+          return 0;
+      });
+    })
+  }
 
+  ordenarProductosCarrito(): void {
+    this.carrito.sort(function (a, b) {
+      // A va primero que B
+      if (a.descripcion < b.descripcion)
+        return -1;
+      // B va primero que A
+      else if (a.descripcion > b.descripcion)
+        return 1;
+      // A y B son iguales
+      else
+        return 0;
+    });
+  }
 
 }

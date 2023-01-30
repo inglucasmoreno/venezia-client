@@ -202,6 +202,7 @@ export class NuevoPaqueteComponent implements OnInit {
     );
 
     this.filtro.parametro = '';
+    this.ordenarProductosCarrito();
     this.calculoPrecio();
     this.cerrarSeleccion();
 
@@ -680,6 +681,8 @@ export class NuevoPaqueteComponent implements OnInit {
 
           this.pedidoSeleccionado.precio_total = precioTMP;
 
+          this.ordenarProductosPedido();
+
           // Se actualizar el pedido
           this.ventasMayoristasService.actualizarVenta(this.pedidoSeleccionado._id, {
             precio_total: this.pedidoSeleccionado.precio_total,
@@ -702,24 +705,24 @@ export class NuevoPaqueteComponent implements OnInit {
   // Eliminar paquete
   eliminarPaquete(): void {
     this.alertService.question({ msg: 'Eliminando paquete', buttonText: 'Eliminar' })
-    .then(({ isConfirmed }) => {
-      if (isConfirmed) {
-        this.alertService.loading();
-        this.paquetesService.eliminarPaquete(this.paquete._id).subscribe({
-          next: () => {
-            this.paquete = null;
-            this.carrito = [];
-            this.productos = [];
-            this.pedidos = [];
-            this.repartidor = '';
-            this.fecha_paquete = format(new Date(), 'yyyy-MM-dd');
-            this.etapa = 'creacion';
-            this.almacenarLocalStorage();
-            this.alertService.success('Paquete eliminado correctamente');
-          }, error: ({ error }) => this.alertService.errorApi(error.message)
-        })
-      };
-    });
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.paquetesService.eliminarPaquete(this.paquete._id).subscribe({
+            next: () => {
+              this.paquete = null;
+              this.carrito = [];
+              this.productos = [];
+              this.pedidos = [];
+              this.repartidor = '';
+              this.fecha_paquete = format(new Date(), 'yyyy-MM-dd');
+              this.etapa = 'creacion';
+              this.almacenarLocalStorage();
+              this.alertService.success('Paquete eliminado correctamente');
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        };
+      });
   }
 
   // Calcular precio total
@@ -749,6 +752,34 @@ export class NuevoPaqueteComponent implements OnInit {
     this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
     this.alertService.loading();
     this.listarProductos();
+  }
+
+  ordenarProductosCarrito(): void {
+    this.carrito.sort(function (a, b) {
+      // A va primero que B
+      if (a.descripcion < b.descripcion)
+        return -1;
+      // B va primero que A
+      else if (a.descripcion > b.descripcion)
+        return 1;
+      // A y B son iguales
+      else
+        return 0;
+    });
+  }
+
+  ordenarProductosPedido(): void {
+    this.pedidos_productos.sort(function (a, b) {
+      // A va primero que B
+      if (a.descripcion < b.descripcion)
+        return -1;
+      // B va primero que A
+      else if (a.descripcion > b.descripcion)
+        return 1;
+      // A y B son iguales
+      else
+        return 0;
+    });
   }
 
 }
