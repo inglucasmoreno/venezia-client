@@ -28,8 +28,13 @@ export class ReportesMayoristasGeneralesComponent implements OnInit {
 
   // Reportes
   public totales: any;
+  public totalGastos: number = 0;
+  public totalIngresos: number = 0;
   public totalFinal: number = 0;
+  public dataRepartidores: any[] = [];
   public cantidad_pedidos: number;
+  public gastos: any;
+  public ingresos: any;
 
   constructor(
     private usuariosService: UsuariosService,
@@ -52,7 +57,6 @@ export class ReportesMayoristasGeneralesComponent implements OnInit {
       next: ({ usuarios }) => {
         this.repartidores = usuarios.filter( usuario => usuario.role === 'DELIVERY_ROLE');
         this.alertService.close();
-        console.log(this.repartidores); 
       }, error: ({error}) => this.alertService.errorApi(error.message)
     })
   }
@@ -66,11 +70,16 @@ export class ReportesMayoristasGeneralesComponent implements OnInit {
       repartidor: ''
     }
     this.paquetesService.reportesGenerales(parametros).subscribe({
-      next: ({ totales, cantidad_pedidos }) => {
+      next: ({ totales, cantidad_pedidos, gastos, totalGastos, ingresos, totalIngresos, dataRepartidores }) => {
         if(totales && cantidad_pedidos){
           this.totales = totales;
           this.cantidad_pedidos = cantidad_pedidos;
-          this.totalFinal = totales?.precio_total - totales?.total_deudas + totales.total_ingresos - totales.total_gastos;
+          this.dataRepartidores = dataRepartidores;
+          this.gastos = gastos;
+          this.totalGastos = totalGastos,
+          this.ingresos = ingresos;
+          this.totalIngresos = totalIngresos,
+          this.totalFinal = totales?.precio_total - totales?.total_deudas + totalIngresos - totalGastos;
           this.alertService.close();
         }else{
           this.cantidad_pedidos = 0;
@@ -78,6 +87,7 @@ export class ReportesMayoristasGeneralesComponent implements OnInit {
           this.alertService.close();
         }
         this.inicio = false;
+        console.log(this.dataRepartidores);
       }, error: ({error}) => this.alertService.errorApi(error.message)
     })
   }

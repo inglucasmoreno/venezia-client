@@ -1,5 +1,5 @@
 
-<div class="gsap-contenido">
+<div class="gsap-contenido mb-10">
 
   <!-- FILTROS -->
   <div *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL'))" class="mx-auto max-w-xl w-11/12">
@@ -48,10 +48,19 @@
   </div>
 
   <div *ngIf="totales" class="mx-auto max-w-3xl text-sm p-2 mt-4">
+
+    <!-- Reporte: Datos generales -->
     <div class="flex">
-      <img src="/assets/img/caja.svg" class="w-56 mr-5 hidden md:block" alt="caja.svg">
+      <img src="/assets/img/caja.svg" class="w-56 mr-5 py-2 px-5 hidden md:block" alt="caja.svg">
       <div class="w-full">
-        <h2 class="font-semibold text-base bg-gray-50 p-2 mb-2 border border-gray-400 text-center"> Reporte general </h2>
+        <div class="flex items-center justify-between border border-gray-400 mb-2 bg-gray-50 p-2 ">
+          <h2 class="font-semibold text-base"> Reporte general </h2>
+          <button title="Generar reporte PDF" class="p-2 border focus:outline-none border-gray-400 rounded bg-white hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>          
+          </button>
+        </div>
         <div class="flex items-center justify-between border border-gray-400 p-2">
           <p class="font-semibold"> Cantidad de paquetes </p>
           <p> {{ totales?.cantidad_paquetes }} </p>
@@ -74,11 +83,11 @@
         </div>
         <div class="flex items-center justify-between border border-gray-400 border-t-0 p-2">
           <p class="font-semibold"> Total otros ingresos </p>
-          <p class="text-green-700"> +${{ totales?.total_ingresos | moneda }} </p>
+          <p class="text-green-700"> +${{ totalIngresos | moneda }} </p>
         </div>
         <div class="flex items-center justify-between border border-gray-400 border-t-0 p-2">
           <p class="font-semibold"> Total gastos </p>
-          <p class="text-red-700"> -${{ totales?.total_gastos | moneda }} </p>
+          <p class="text-red-700"> -${{ totalGastos | moneda }} </p>
         </div>
         <div class="flex items-center bg-green-50 justify-between border border-gray-400 border-t-0 p-2">
           <p class="font-semibold"> Ganancia total </p>
@@ -86,7 +95,109 @@
         </div>
       </div>
     </div>
+    
+    <!-- Reporte: Gastos e Ingresos -->
+    <div class="mt-4">
+      <div class="p-2 border border-gray-400 bg-gray-100 shadow font-semibold text-base flex items-center justify-between">
+        <h1> Gasto e Ingresos </h1>
+        <button title="Generar reporte PDF" class="p-2 border focus:outline-none border-gray-400 rounded bg-white hover:text-secondaryColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>          
+        </button>
+      </div>
+      <div>
+        <p class="p-2 border border-gray-400 border-y-0 bg-red-700 text-white"> Listado de gastos </p>
+        
+        <!-- Gastos -->
+        <p class="flex items-center justify-between p-2 border border-gray-400 border-t-0" *ngFor="let gasto of gastos">
+          <span class="font-semibold"f>
+            {{ gasto._id }}
+          </span>
+          <span class="text-red-700">
+            ${{ gasto.total | moneda }}
+          </span>
+        </p>
+        <p class="p-2 border border-gray-400 flex items-center justify-between font-semibold border-t-0 bg-red-50 text-red-700">
+          <span>
+            Total gastos
+          </span>
+          <span>
+            ${{ totalGastos | moneda }}
+          </span>  
+        </p>
+      </div>
+
+      <!-- Ingresos -->
+      <div>
+        <p class="p-2 border border-gray-400 border-y-0 bg-green-700 text-white"> Listado de ingresos </p>
+        <p class="flex items-center justify-between p-2 border border-gray-400 border-t-0" *ngFor="let ingreso of ingresos">
+          <span class="font-semibold"f>
+            {{ ingreso._id }}
+          </span>
+          <span class="text-green-700">
+            ${{ ingreso.total | moneda }}
+          </span>
+        </p>
+        <p class="p-2 border border-gray-400 flex items-center justify-between font-semibold border-t-0 bg-green-50 text-green-700">
+          <span>
+            Total ingresos
+          </span>
+          <span>
+            ${{ totalIngresos | moneda }}
+          </span>  
+        </p>
+      </div>
+    </div>
+
+    <!-- Reporte: Reportes por repartidor -->
+    <div class="mt-4">
+      
+      <div class="p-2 border border-gray-400 bg-gray-100 shadow font-semibold text-base flex items-center justify-between">
+        <h1> Detalles de repartidores </h1>
+        <button title="Generar reporte PDF" class="p-2 border focus:outline-none border-gray-400 rounded bg-white hover:text-secondaryColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>          
+        </button>
+      </div>
+      
+        <div class="mt-4" *ngFor="let data of dataRepartidores">
+          <p class="mb-2"> <span class="font-semibold"> Repartidor: </span> {{ data.repartidor_descripcion }} </p>
+          <div class="flex items-center justify-between p-2 border border-gray-400">
+            <p class="font-semibold"> Total en ventas </p>
+            <p> ${{ data.ganancia | moneda }} </p>
+          </div>
+          <div *ngFor="let gasto of data.gastos" class="flex text-xs border-t-0 bg-red-50 items-center justify-between p-2 border border-gray-400">
+            <p> {{ gasto.tipo_gasto }} </p>
+            <p class="text-red-700"t> -${{ gasto.total | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2 border border-t-0 border-gray-400">
+            <p class="font-semibold"> Total gastos </p>
+            <p class="font-semibold text-red-700"> -${{ data.total_gastos | moneda }} </p>
+          </div>
+          <div *ngFor="let ingreso of data.ingresos" class="flex text-xs border-t-0 bg-green-50 items-center justify-between p-2 border border-gray-400">
+            <p> {{ ingreso.tipo_ingreso }} </p>
+            <p class="text-green-700"> -${{ ingreso.total | moneda }} </p>
+          </div>
+          <div class="flex items-center justify-between p-2 border border-t-0 border-gray-400">
+            <p class="font-semibold"> Total otros ingresos </p>
+            <p class="font-semibold text-green-700"> +${{ data.total_ingresos | moneda }} </p>
+          </div>
+          <div class="flex items-center bg-gray-50 justify-between p-2 border border-gray-400 border-t-0">
+            <p class="font-semibold"> Ganancia total </p>
+            <p class="font-semibold"> ${{ (data.ganancia - data.total_gastos + data.total_ingresos) | moneda }} </p>
+          </div>
+        </div>
+      
+      <div>
+
+      </div> 
+
+    </div>
+
   </div>
+
 
   <div *ngIf="!totales && !inicio" class="mx-auto mt-5 text-center text-xl md:max-w-7xl gsap-contenido">
     <p> No se encontraron resultados </p>

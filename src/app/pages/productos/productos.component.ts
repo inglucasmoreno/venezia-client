@@ -56,6 +56,8 @@ public productoForm: any = {
 public paginaActual: number = 1;
 public cantidadItems: number = 10;
 
+public texto = '';
+
 // Filtrado
 public filtro = {
   activo: 'true',
@@ -88,6 +90,7 @@ constructor(private productosService: ProductosService,
     // Listado de productos
     this.productosService.listarProductos().subscribe({
       next: ({ productos }) => {
+        console.log(productos);
         this.productos = productos;
 
         // Listado de unidades de medida
