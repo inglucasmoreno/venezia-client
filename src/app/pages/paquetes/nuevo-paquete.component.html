@@ -68,7 +68,7 @@
                     </button>
                 </div>
                 <div *ngIf="!productoSeleccionado" class="max-h-80 mt-2 overflow-y-auto">
-                    <div (click)="authService.usuario.role !== 'DELIVERY_ROLE' ? seleccionarProducto(producto) : null" *ngFor="let producto of pedidos_productos" class="border shadow cursor-pointer hover:border-secondaryColor p-2 my-2 border-gray-400 mx-2">
+                    <div (click)="seleccionarProducto(producto)" *ngFor="let producto of pedidos_productos" class="border shadow cursor-pointer hover:border-secondaryColor p-2 my-2 border-gray-400 mx-2">
                         <p class="font-semibold"> {{ producto.descripcion }} </p>
                         <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
                         <p class="text-sm"> Cantidad: {{ producto.cantidad }} </p>
