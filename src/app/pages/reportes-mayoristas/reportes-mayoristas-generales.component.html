@@ -29,13 +29,13 @@
           <input [(ngModel)]="fechaHasta" type="date" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
         </div>
       </div>
-      <div class="mt-2">
+      <!-- <div class="mt-2">
         <p class="font-semibold"> Repartidor </p>
         <select [(ngModel)]="repartidor" class="border mt-1 focus:outline-none border-gray-400 p-2 rounded w-full">
           <option value=""> Todos los repartidores </option>
           <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
         </select>
-      </div>
+      </div> -->
       <button (click)="generarReporte()" class="bg-gray-100 focus:outline-none border border-gray-400 p-2 rounded w-full font-semibold mt-3 hover:text-secondaryColor">
         Generar reporte
       </button>
@@ -106,7 +106,7 @@
           </svg>          
         </button>
       </div>
-      <div>
+      <div class="mt-2">
         <p class="p-2 border border-gray-400 border-y-0 bg-red-700 text-white"> Listado de gastos </p>
         
         <!-- Gastos -->
@@ -129,7 +129,7 @@
       </div>
 
       <!-- Ingresos -->
-      <div>
+      <div class="mt-2">
         <p class="p-2 border border-gray-400 border-y-0 bg-green-700 text-white"> Listado de ingresos </p>
         <p class="flex items-center justify-between p-2 border border-gray-400 border-t-0" *ngFor="let ingreso of ingresos">
           <span class="font-semibold"f>

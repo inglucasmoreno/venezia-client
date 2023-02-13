@@ -5,6 +5,9 @@ import { DataService } from 'src/app/services/data.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import gsap from 'gsap';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-ventas',
@@ -30,6 +33,9 @@ export class VentasComponent implements OnInit {
     'PedidosYa - Efectivo'
   ];
   
+  // Flag - Impresion
+  public imprimir: boolean = false;
+
   // Ventas
   public comprobante = 'Normal';
   public showModalVenta = false;
@@ -346,7 +352,8 @@ export class VentasComponent implements OnInit {
               updatorUser: this.authService.usuario.userId,
             };
             this.ventasService.nuevaVenta(data).subscribe({
-              next: () => {
+              next: ({venta}) => {
+                
                 this.productoActual = null;
                 this.precio_total = 0;
                 this.precio_total_limpio = 0;
@@ -357,10 +364,23 @@ export class VentasComponent implements OnInit {
                 this.formaPago = 'Efectivo';
                 this.vuelto = 0;
                 this.pedidosya_comprobante = '';
+                
                 this.reiniciarValores();
                 this.metodoPagoUnico();
                 this.almacenamientoLocalStorage();  // Alamacenamiento de valores en localStorage
-                this.alertService.success('Venta completada')
+                  
+                // Imprimir comprobante
+                if(this.imprimir){
+                  this.ventasService.getComprobante(venta._id).subscribe({
+                    next: () => {
+                      window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
+                      this.alertService.success('Venta completada');
+                    }, error: (error) => this.alertService.errorApi(error.message)
+                  })
+                }else{
+                  this.alertService.success('Venta completada');
+                }
+
               },
               error: ({error}) => this.alertService.errorApi(error.message) 
             });  
@@ -499,8 +519,14 @@ export class VentasComponent implements OnInit {
     this.almacenamientoLocalStorage();
   }
 
+  cambiarImprimir(): void {
+    this.imprimir = !this.imprimir;
+    this.almacenamientoLocalStorage();
+  }
+
   // Almacenamiento en localstorage
   almacenamientoLocalStorage(): void {
+    localStorage.setItem('imprimir', JSON.stringify(this.imprimir));
     localStorage.setItem('precio_total', JSON.stringify(this.precio_total));
     localStorage.setItem('precio_total_limpio', JSON.stringify(this.precio_total_limpio));  
     localStorage.setItem('productos', JSON.stringify(this.productos));
@@ -518,6 +544,7 @@ export class VentasComponent implements OnInit {
 
   // Recuperacion de valores de localStorage
   recuperarLocalStorage(): void {
+    this.imprimir = localStorage.getItem('imprimir') ? JSON.parse(localStorage.getItem('imprimir')) : false;  
     this.precio_total = localStorage.getItem('precio_total') ? JSON.parse(localStorage.getItem('precio_total')) : 0;  
     this.precio_total_limpio = localStorage.getItem('precio_total_limpio') ? JSON.parse(localStorage.getItem('precio_total_limpio')) : 0; 
     this.productos = localStorage.getItem('productos') ? JSON.parse(localStorage.getItem('productos')) : [];

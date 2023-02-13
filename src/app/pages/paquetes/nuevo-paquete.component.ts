@@ -97,6 +97,17 @@ export class NuevoPaqueteComponent implements OnInit {
 
   calculosIniciales(): void {
 
+    // Se verifica si el paquete existe
+    if(this.paquete){
+      this.paquetesService.getPaquete(this.paquete._id).subscribe({
+        next: () => {}, error: () => {
+          this.mayorista = '';
+          this.repartidor = '';
+          this.etapa = "creacion";
+        }
+      })
+    }
+
     // Se listan los mayoristas activos
     this.mayoristasService.listarMayoristas().subscribe({
       next: ({ mayoristas }) => {
