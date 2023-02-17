@@ -10,7 +10,7 @@
                 </svg>           
             </button>
         </div>
-        <div class="p-4 text-sm">
+        <div class="p-4 max-h-96 overflow-y-auto text-sm">
             <div class="md:flex md:justify-between border-gray-300">
                 <p class="text-left"> <span class="font-semibold"> Fecha: </span>  {{ ventaSeleccionada?.createdAt | fecha }} </p>  
                 <p class="md:text-right capitalize mt-2 md:mt-0"> <span class="font-semibold"> Creador: </span> {{ ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{ ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>  
@@ -64,22 +64,22 @@
 </app-modal>
 
 <!-- Busqueda por fechas -->
-<div class="border gsap-contenido border-gray-300 rounded-t shadow w-max mt-4 mx-auto">
+<div class="border gsap-contenido border-gray-300 rounded-t shadow w-11/12 md:max-w-xl mt-4 mx-auto">
     <div class="bg-primary-800 p-2 flex items-center text-white rounded-t">
         <app-boton-regresar class="mr-2" routerLink="/dashboard/ventas"></app-boton-regresar>
         <h1 class="text-lg"> Buscador de ventas </h1>
     </div>
-    <div class="p-4 text-center flex justify-center">
-        <div class="flex items-center text-sm">
-            <div>
+    <div class="p-4 text-center md:flex md:justify-center">
+        <div class="md:flex md:items-center text-sm w-full">
+            <div class="md:w-full">
                 <p class="font-semibold"> Fecha desde </p>
-                <input [(ngModel)]="filtro.fechaDesde" type="date" class="border mt-1 focus:outline-none border-gray-300 p-2 rounded">
+                <input [(ngModel)]="filtro.fechaDesde" type="date" class="border mt-1 w-full focus:outline-none border-gray-400 p-2 rounded">
             </div>
-            <div class="ml-2">
+            <div class="md:ml-2 mt-2 md:mt-0 md:w-full">
                 <p class="font-semibold"> Fecha hasta </p>
-                <input [(ngModel)]="filtro.fechaHasta" type="date" class="border mt-1 focus:outline-none border-gray-300 p-2 rounded">
+                <input [(ngModel)]="filtro.fechaHasta" type="date" class="border mt-1 w-full focus:outline-none border-gray-400 p-2 rounded">
             </div>
-            <button (click)="cambiarPagina(1)" class="p-2 rounded focus:outline-none bg-secondaryColor mt-5 ml-2 shadow text-white"> Buscar ventas </button>
+            <button (click)="cambiarPagina(1)" class="p-2 rounded focus:outline-none bg-secondaryColor w-full mt-5 md:ml-2 shadow text-white"> Buscar ventas </button>
         </div>
     </div>
 </div>
@@ -109,7 +109,7 @@
                                 <option value="PedidosYa - Efectivo"> PedidosYa - Efectivo </option>
                                 <option value="SinPedidosYa"> Sin PedidosYa </option>
                             </select>
-                            <select (change)="cambiarPagina(1)" [(ngModel)]="filtro.facturacion" class="bg-white ml-2 text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
+                            <select (change)="cambiarPagina(1)" [(ngModel)]="filtro.facturacion" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
                                 <option value=""> Todos </option>
                                 <option value="Normal"> Normal </option>
                                 <option value="Fiscal"> Guia de despacho </option>

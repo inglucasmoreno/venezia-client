@@ -4,7 +4,7 @@
     <!-- FILTROS -->
     <div *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL'))" class="mx-auto max-w-xl w-11/12">
      
-      <div (click)="showFiltros = !showFiltros" class="bg-primary-800 w-full cursor-pointer flex items-center justify-between p-2 rounded-t mt-10 text-center text-white">
+      <div (click)="showFiltros = !showFiltros" class="bg-primary-800 w-full cursor-pointer flex items-center justify-between p-2 rounded-t mt-4 md:mt-10 text-center text-white">
         <h1> 
           Reporte de paquetes
         </h1>

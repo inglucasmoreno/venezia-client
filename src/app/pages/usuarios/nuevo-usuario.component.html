@@ -85,7 +85,7 @@
         <div [formGroup]="usuarioForm" class="">
             <div class="flex items-center p-2 bg-primary-800 rounded-t">
                 <app-boton-regresar routerLink="/dashboard/usuarios"></app-boton-regresar>
-                <h1 class="ml-2 text-2xl text-white"> Datos de usuario </h1>
+                <h1 class="ml-2 text-xl md:text-2xl text-white"> Datos de usuario </h1>
             </div>
             <div class="px-4 p-2">
                 <div class="flex flex-col lg:flex-row">
@@ -204,7 +204,7 @@
                     <div class="mt-1">
 
                         <!-- Usuario de sistema -->
-                        <div class="text-xl lg:text-3xl">
+                        <div class="text-lg lg:text-3xl">
                             <p *ngIf="usuarioForm.value.usuario.trim() !== ''" class="font-semibold"> {{ usuarioForm.value.usuario }} </p>
                             <p class="text-gray-400" *ngIf="usuarioForm.value.usuario.trim() == ''"> Nombre de usuario </p>
                         </div>

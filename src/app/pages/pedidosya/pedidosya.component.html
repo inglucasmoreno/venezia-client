@@ -5,7 +5,7 @@
           <h1 class=" text-white px-2 py-1 rounded-t text-lg"> {{ estadoFormulario == 'crear' ? 'Creando ingreso' : 'Editando ingreso' }} </h1>
           <svg (click)="showModalPedidosYa = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </div>
-      <div class="p-4 text-sm">
+      <div class="px-4 pt-2 max-h-96 overflow-y-auto text-sm">
         <div class="md:w-1/2">
           <p class="font-semibold"> <span class="text-red-500"> * </span> Monto </p>
           <input [(ngModel)]="monto" min="1" type="number" class="py-2 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 30000">
@@ -42,9 +42,11 @@
                 </div>
             </div>
         </div>   
-          <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoPedidoYa()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear ingreso </button>
-          <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarPedidoYa()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Actualizar ingreso </button>
-      </div>
+    </div>
+    <div class="px-4 pb-2">
+        <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoPedidoYa()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear ingreso </button>
+        <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarPedidoYa()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Actualizar ingreso </button>
+    </div>
   </div>
 </app-modal>
 
@@ -55,8 +57,8 @@
           <div>
               <div class="flex items-center justify-between bg-primary-800 px-4 py-3 rounded-t">
                     <div class="ml-2 text-white">
-                        <h2 class="md:text-2xl leading-tight">
-                            PedidosYa - Listado de ingresos
+                        <h2 class="text-xl md:text-2xl leading-tight">
+                            Listado de ingresos
                         </h2>
                         <p> Total de ingresos: {{ pedidosYa.length }} </p>
                     </div>

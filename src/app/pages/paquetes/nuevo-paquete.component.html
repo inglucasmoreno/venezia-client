@@ -9,7 +9,7 @@
                 </svg>               
             </button>
         </div>
-        <div class="max-h-screen overflow-y-auto">
+        <div class="max-h-96 overflow-y-auto">
             <div *ngIf="!nuevoProductoSeleccionado" class="p-4">
                 <input [(ngModel)]="filtro.parametro" type="text" class="p-2 border focus:outline-none text-sm border-primary-400" placeholder="Buscador">
                 <div (click)="seleccionarNuevoProducto(producto)" *ngFor="let producto of listaProductos | filtroProductos:this.filtro.parametro:'true'" class="my-3 border cursor-pointer hover:bg-red-50 hover:border-red-400 text-sm border-gray-400 p-2 rounded">
@@ -21,7 +21,7 @@
                 <p class="font-semibold"> {{ nuevoProductoSeleccionado.descripcion }} </p>
                 <p class="text-xs"> ${{ nuevoProductoSeleccionado.precio_mayorista | moneda }} x {{ nuevoProductoSeleccionado.unidad_medida.descripcion }} </p>    
                 <div class="flex items-center">
-                    <input (keyup.enter)="agregarNuevoProducto()" [(ngModel)]="nuevoProductoCantidad" min="0" type="number" placeholder="Cantidad" class="border text-sm mt-2 focus:outline-none border-gray-300 p-2 rounded">
+                    <input (keyup.enter)="agregarNuevoProducto()" [(ngModel)]="nuevoProductoCantidad" min="0" type="number" placeholder="Cantidad" class="border text-sm mt-2 focus:outline-none border-gray-400 p-2 rounded">
                     <button (click)="agregarNuevoProducto()" class="p-2 focus:outline-none shadow bg-green-600 hover:bg-green-700 mt-2 ml-2 rounded text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -50,13 +50,13 @@
                 </svg>
             </button>
         </div> 
-        <div class="p-2 text-sm">
+        <div class="p-2 max-h-96 overflow-y-auto text-sm">
             <div>  
-                <div class="flex items-center justify-between">
+                <div class="md:flex md:items-center md:justify-between">
                     <p> <span class="font-semibold"> Número de pedido: </span> {{ pedidoSeleccionado?.numero }} </p>
                     <p class="mt-2"> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
                 </div>
-                <p class="mt-1"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
+                <p class="mt-2 md:mt-1"> <span class="font-semibold"> Mayorista: </span> {{ pedidoSeleccionado?.mayorista.descripcion }} </p>
             </div>
             <div class="mt-2">
                 <div class=" border border-gray-400 bg-gray-100 flex items-center justify-between p-2">
@@ -115,7 +115,7 @@
 
 <!-- Nuevo pedido -->
 <app-modal [showModal]="showModalNuevoPedido">
-    <div>
+    <div class="max-h-96 overflow-y-auto">
         <div class="text-white bg-primary-800 flex items-center justify-between py-2 px-4 rounded-t">
             <h1 class="text-lg"> Nuevo pedido </h1>
             <button class="focus:outline-none">
@@ -127,7 +127,7 @@
         </div>  
         <div class="text-sm">
             <div class="p-2 flex items-center">
-                <select [(ngModel)]="mayorista" class="p-2 w-50 md:w-80 border focus:outline-none border-gray-400 shadow rounded">
+                <select [(ngModel)]="mayorista" class="p-2 w-52 md:w-80 border focus:outline-none border-gray-400 shadow rounded">
                     <option value=""> Seleccionar mayorista </option>
                     <option *ngFor="let mayorista of mayoristas" [value]="mayorista._id"> {{ mayorista.descripcion }} </option>
                 </select>
@@ -170,7 +170,7 @@
                 </div>
             </div>
             <div class="px-2 pb-3" *ngIf="carrito.length === 0">
-                <p class="text-lg text-gray-700"> El pedido no tiene productos cargados </p>
+                <p class="md:text-lg text-gray-700"> El pedido no tiene productos cargados </p>
                 <button (click)="abrirModalProductos()" class="bg-secondaryColor text-white focus:outline-none p-2 shadow rounded mt-2"> Agregar productos </button>
             </div>
         </div>
@@ -189,7 +189,7 @@
                 </svg>
             </button>
         </div>
-        <div class="max-h-screen overflow-y-auto">
+        <div class="max-h-96 overflow-y-auto">
             <div *ngIf="!productoSeleccionado" class="p-4">
                 <input [(ngModel)]="filtro.parametro" type="text"
                     class="p-2 border focus:outline-none text-sm border-primary-400" placeholder="Buscador">
@@ -230,13 +230,13 @@
 </app-modal>
 
 <!-- Pagina principal -->
-<div class="p-2 gsap-contenido">
+<div class="p-2 w-full gsap-contenido">
 
     <!-- ETAPA: CREACION -->
-    <div *ngIf="etapa === 'creacion'" class="text-center text-sm mt-10">
-        <div>
+    <div *ngIf="etapa === 'creacion'" class="text-center text-sm mt-10 w-full">
+        <div class="w-full">
             <img class="w-1/2 md:w-1/6 mx-auto" src="assets/img/caja.svg" alt="Pedidos.svg">
-            <div>
+            <div class="w-full">
                 <p class="mt-5 text-xl mb-2"> Creando nuevo paquete </p>
                 <div>
                     <div>
@@ -258,8 +258,8 @@
     </div>
 
     <!-- ETAPA: PAQUETE -->
-    <div class="max-w-4xl mx-auto text-sm" *ngIf="etapa === 'paquete'">
-        <div class="p-2">
+    <div class="w-full max-w-4xl mx-auto text-sm" *ngIf="etapa === 'paquete'">
+        <div class="p-2 w-full">
             <div class="p-2 bg-gray-100 w-full flex items-center justify-between border border-gray-400">
                 <div class="font-semibold text-lg flex items-center"> 
                     <img class="w-10" src="assets/img/caja.svg">
@@ -280,17 +280,17 @@
                     </button>
                 </div>
             </div>
-            <div class="mt-2 flex items-center justify-between">
-                <div class="flex items-center">
-                    <input [(ngModel)]="fecha_paquete" type="date" class="border focus:outline-none border-gray-400 p-2 rounded">
+            <div class="mt-2 md:flex md:items-center justify-between">
+                <div class="md:flex md:items-center">
+                    <input [(ngModel)]="fecha_paquete" type="date" class="border w-full md:w-auto focus:outline-none border-gray-400 p-2 rounded">
                     <select *ngIf="authService.usuario.role !== 'DELIVERY_ROLE'" [(ngModel)]="repartidor"
-                        class="border ml-2 block mx-auto w-40 md:w-56 focus:outline-none border-gray-400 shadow rounded p-2">
+                        class="border md:ml-2 mt-2 md:mt-0 block mx-auto w-full md:w-56 focus:outline-none border-gray-400 shadow rounded p-2">
                         <option value=""> Seleccionar repartidor </option>
                         <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido
                         }} {{ repartidor.nombre }} </option>
                     </select>                    
                 </div>
-                <button (click)="abrirNuevoPedido()" title="Nuevo pedido" class="font-semibold p-2 rounded hover:text-secondaryColor border focus:outline-none border-gray-400 shadow">
+                <button (click)="abrirNuevoPedido()" title="Nuevo pedido" class="font-semibold w-full md:w-auto mt-2 md:mt-0 p-2 rounded hover:text-secondaryColor border focus:outline-none border-gray-400 shadow">
                     Agregar pedido
                 </button>
             </div>
@@ -298,13 +298,13 @@
 
         <!-- Listado de pedidos -->
         <div *ngIf="pedidos?.length > 0" class="max-h-screen overflow-y-auto px-2">
-            <div class="border-b flex mt-2 items-center justify-between border-gray-400 pb-1 text-lg">
+            <div class="border-b md:flex mt-2 md:items-center md:justify-between border-gray-400 pb-1 text-lg">
                 <h1 class="font-semibold "> Listado de pedidos ({{ pedidos?.length }}) </h1>
                 <p class="text-base"> <span class="font-semibold"> Precio total: </span> ${{ precio_total | moneda }} </p>
             </div>
             <div>
                 <div class="border flex items-center shadow justify-between border-gray-400 mt-2 p-2" *ngFor="let pedido of pedidos">
-                    <div>
+                    <div class="w-52 md:max-w-96">
                         <p class="font-semibold"> Pedido Nro {{ pedido.numero }} </p>
                         <p>
                             <span class="font-semibold"> Mayorista: </span>

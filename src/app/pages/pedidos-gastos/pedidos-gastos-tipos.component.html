@@ -5,7 +5,7 @@
           <h1 class=" text-white px-2 py-1 rounded-t text-lg"> {{ estadoFormulario == 'crear' ? 'Creando tipo' : 'Editando tipo' }} </h1>
           <svg (click)="showModalTipo = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </div>
-      <div class="p-4 text-sm">
+      <div class="px-4 pt-2 max-h-96 overflow-y-auto text-sm">
           <p class="font-semibold"> <span class="text-red-500"> * </span> Descripción </p>
           <input [(ngModel)]="descripcion" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. Combustible" type="text">
           <div *ngIf="tipoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
@@ -36,9 +36,11 @@
                 </div>
             </div>
         </div>   
-          <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoTipo()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear tipo </button>
-          <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarTipo()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Actualizar tipo </button>
-      </div>
+    </div>
+    <div class="px-4 pb-2">
+        <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoTipo()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear tipo </button>
+        <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarTipo()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Actualizar tipo </button>
+    </div>
   </div>
 </app-modal>
 

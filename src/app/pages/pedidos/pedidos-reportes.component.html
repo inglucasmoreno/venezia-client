@@ -9,7 +9,7 @@
           </svg>            
       </button>
   </div>
-  <div class="p-2 text-sm">
+  <div class="p-2 max-h-96 overflow-y-auto text-sm">
       <div class="flex items-center justify-between">
           <h1 class="px-2"> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.fecha_pedido ? (pedidoSeleccionado?.fecha_pedido | fecha) : (pedidoSeleccionado?.createdAt | fecha) }} </h1>
           <p class="px-2 mt-1"> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
@@ -73,7 +73,7 @@
     <!-- FILTROS -->
     <div *ngIf="authService.usuario.role === 'ADMIN_ROLE' || (authService.usuario.role === 'USER_ROLE' && authService.usuario.permisos.includes('MAYORISTAS_ALL'))" class="mx-auto max-w-xl w-11/12">
      
-      <div (click)="showFiltros = !showFiltros" class="bg-primary-800 w-full cursor-pointer flex items-center justify-between p-2 rounded-t mt-10 text-center text-white">
+      <div (click)="showFiltros = !showFiltros" class="bg-primary-800 w-full cursor-pointer flex items-center justify-between p-2 rounded-t mt-4 md:mt-10 text-center text-white">
         <h1> 
           Reporte de pedidos
         </h1>

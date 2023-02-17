@@ -15,7 +15,7 @@
       </button>
     </div>
   </div>
-  <div class="border text-sm borde-gray-300 rounded-t h-full">
+  <div class="border max-h-96 overflow-y-auto text-sm borde-gray-300 rounded-t h-full">
     <div class="px-2">
 
       <div class="mt-2">
@@ -174,14 +174,14 @@
     <div class="flex items-center">
       <div class="w-1/2">
         <p class="font-semibold"> Fecha desde </p>
-        <input [(ngModel)]="fechaDesde" type="date" class="w-full border rounded border-gray-300 focus:outline-none p-2">
+        <input [(ngModel)]="fechaDesde" type="date" class="w-full border rounded border-gray-400 focus:outline-none p-2">
       </div>
       <div class="w-1/2 ml-2">
         <p class="font-semibold"> Fecha desde </p>
-        <input [(ngModel)]="fechaHasta" type="date" class="w-full rounded border border-gray-300 focus:outline-none p-2">
+        <input [(ngModel)]="fechaHasta" type="date" class="w-full rounded border border-gray-400 focus:outline-none p-2">
       </div>
     </div>
-    <button (click)="generarReporte()" class="border border-gray-300 mt-2 p-2 focus:outline-none hover:text-secondaryColor rounded w-full bg-gray-100 font-semibold">
+    <button (click)="generarReporte()" class="border border-gray-400 mt-2 p-2 focus:outline-none hover:text-secondaryColor rounded w-full bg-gray-100 font-semibold">
       Generar reporte
     </button>  
   </div>
@@ -385,7 +385,7 @@
                 <div class="flex items-center">
                   <app-boton-regresar routerLink="/dashboard/caja"></app-boton-regresar>
                   <div class="ml-3">
-                      <h2 class="text-2xl leading-tight">
+                      <h2 class="text-xl md:text-2xl leading-tight">
                           Listado de cajas
                       </h2>
                       <p> Total de cajas: {{ totalItems }} </p>
@@ -399,7 +399,7 @@
               </div>
               <div class="md:flex md:items-center text-sm px-4 py-3">
                 <input (change)="cambiarPagina(1)" [(ngModel)]="filtro.parametro" type="text" class="p-2 md:w-auto border text-sm focus:outline-none border-gray-400 rounded" placeholder="Usuario creador">
-                <select (change)="cambiarCantidadItems()" class="bg-white ml-2 text-sm focus:outline-none w-max px-2 py-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
+                <select (change)="cambiarCantidadItems()" class="bg-white md:ml-2 text-sm focus:outline-none w-max px-2 py-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
                   <option value="10"> 10 elementos </option>
                   <option value="20"> 20 elementos </option>
                   <option value="50"> 50 elementos </option>

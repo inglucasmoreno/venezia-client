@@ -4,24 +4,26 @@
         <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Detalles de pedido - Nro {{ pedidoSeleccionado?.numero }} </h1>
         <svg (click)="cerrarDetallesPedido()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </div>
-    <div class="p-2 text-sm">
-        <div class="flex items-center justify-between">
-            <p *ngIf="pedidoSeleccionado?.fecha_pedido || pedidoSeleccionado?.createdAt"> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.fecha_pedido ? (pedidoSeleccionado?.fecha_pedido | fecha) : (pedidoSeleccionado?.createdAt | fecha) }} </p>
-            <p> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
+    <div class="max-h-96 overflow-y-auto">
+        <div class="p-2 text-sm">
+            <div class="flex items-center justify-between">
+                <p *ngIf="pedidoSeleccionado?.fecha_pedido || pedidoSeleccionado?.createdAt"> <span class="font-semibold"> Fecha: </span> {{ pedidoSeleccionado?.fecha_pedido ? (pedidoSeleccionado?.fecha_pedido | fecha) : (pedidoSeleccionado?.createdAt | fecha) }} </p>
+                <p> <span class="font-semibold"> Precio total: </span> ${{ pedidoSeleccionado?.precio_total | moneda }} </p>
+            </div>
+            <p class="mt-2"> <span class="font-semibold"> Mayorista: </span> {{ cobroSeleccionado?.mayorista.descripcion }} </p>
+            <p class="mt-2"> <span class="font-semibold"> Estado: </span> <span class="font-semibold" [ngClass]="{'text-green-700':pedidoSeleccionado?.estado === 'Completado', 'text-red-700':pedidoSeleccionado?.estado === 'Deuda'}"> {{ pedidoSeleccionado?.estado }} </span> </p>
+            <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="mt-2"> <span class="font-semibold"> Monto deuda: </span> <span class="text-red-700"> ${{ pedidoSeleccionado?.deuda_monto | moneda }} </span> </p>
         </div>
-        <p class="mt-2"> <span class="font-semibold"> Mayorista: </span> {{ cobroSeleccionado?.mayorista.descripcion }} </p>
-        <p class="mt-2"> <span class="font-semibold"> Estado: </span> <span class="font-semibold" [ngClass]="{'text-green-700':pedidoSeleccionado?.estado === 'Completado', 'text-red-700':pedidoSeleccionado?.estado === 'Deuda'}"> {{ pedidoSeleccionado?.estado }} </span> </p>
-        <p *ngIf="pedidoSeleccionado?.estado === 'Deuda'" class="mt-2"> <span class="font-semibold"> Monto deuda: </span> <span class="text-red-700"> ${{ pedidoSeleccionado?.deuda_monto | moneda }} </span> </p>
-    </div>
-    <div class="px-2 text-sm pb-4">
-        <h1 class="text-lg font-semibold"> Listado de productos </h1>
-        <div class="max-h-52 overflow-y-auto">
-            <div class="p-2 border border-gray-400 mt-2" *ngFor="let producto of productos">
-                <p class="font-semibold text-base"> {{producto.descripcion}} </p>
-                <p class="text-gray-500 text-xs"> ${{producto.precio_unitario | moneda}} x {{ producto.unidad_medida.descripcion }} </p>
-                <p class="text-gray-800"> Cantidad: {{producto.cantidad}} </p>
-                <p class="text-gray-800"> Precio: ${{producto.precio | moneda}} </p>
-            </div> 
+        <div class="px-2 text-sm pb-4">
+            <h1 class="text-lg font-semibold"> Listado de productos </h1>
+            <div class="max-h-52 overflow-y-auto">
+                <div class="p-2 border border-gray-400 mt-2" *ngFor="let producto of productos">
+                    <p class="font-semibold text-base"> {{producto.descripcion}} </p>
+                    <p class="text-gray-500 text-xs"> ${{producto.precio_unitario | moneda}} x {{ producto.unidad_medida.descripcion }} </p>
+                    <p class="text-gray-800"> Cantidad: {{producto.cantidad}} </p>
+                    <p class="text-gray-800"> Precio: ${{producto.precio | moneda}} </p>
+                </div> 
+            </div>
         </div>
     </div>
 </app-modal>
@@ -32,7 +34,7 @@
         <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Detalles de cobro </h1>
         <svg (click)="showModalDetallesCobro = false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cursor-pointer feather feather-x text-white mr-2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </div>
-    <div class="p-2 text-sm">
+    <div class="p-2 max-h-96 overflow-y-auto text-sm">
         <div class="flex items-center bg-gray-100 border border-gray-400 p-2 justify-between">
             <p> <span class="font-semibold"> Número de cobro: </span> {{ cobroSeleccionado?.nro }} </p>
             <p> <span class="font-semibold"> Fecha: </span> {{ cobroSeleccionado?.fecha_cobro ? (cobroSeleccionado?.fecha_cobro | fecha) : (cobroSeleccionado?.createdAt | fecha) }} </p>
