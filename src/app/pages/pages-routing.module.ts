@@ -41,6 +41,7 @@ import { PaquetesComponent } from './paquetes/paquetes.component';
 import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.component';
 import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.component';
 import { ReportesMayoristasGeneralesComponent } from './reportes-mayoristas/reportes-mayoristas-generales.component';
+import { ClientesComponent } from './clientes/clientes.component';
 
 const routes: Routes = [
     {
@@ -65,6 +66,9 @@ const routes: Routes = [
             { path: 'usuarios/nuevo', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: NuevoUsuarioComponent },
             { path: 'usuarios/editar/:id', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: EditarUsuarioComponent },
             { path: 'usuarios/password/:id', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: EditarPasswordComponent },
+
+            // Clientes
+            { path: 'clientes', data: { permisos: 'CLIENTES_NAV' }, canActivate: [PermisosGuard], component: ClientesComponent },
 
             // Unidad de medida
             { path: 'unidad-medida', data: { permisos: 'UNIDAD_MEDIDA_NAV' }, canActivate: [PermisosGuard], component: UnidadMedidaComponent },

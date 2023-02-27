@@ -43,6 +43,7 @@ import { NuevoPaqueteComponent } from './paquetes/nuevo-paquete.component';
 import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.component';
 import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.component';
 import { ReportesMayoristasGeneralesComponent } from './reportes-mayoristas/reportes-mayoristas-generales.component';
+import { ClientesComponent } from './clientes/clientes.component';
 
 
 @NgModule({
@@ -83,6 +84,7 @@ import { ReportesMayoristasGeneralesComponent } from './reportes-mayoristas/repo
     PaquetesDetallesComponent,
     PaquetesReportesComponent,
     ReportesMayoristasGeneralesComponent,
+    ClientesComponent,
   ],
   imports: [
     CommonModule,

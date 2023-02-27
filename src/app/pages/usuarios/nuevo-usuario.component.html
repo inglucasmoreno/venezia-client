@@ -6,7 +6,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
     </div>
-    <div class="p-2">
+    <div class="p-2 max-h-96 overflow-y-auto">
         <div class="flex items-center text-sm p-2">
             <div class="w-1/2">
                 <p class="font-semibold"> Usuarios </p>
@@ -63,13 +63,20 @@
         </div>
         <div class="flex items-center text-sm p-2">
             <div class="w-1/2">
+                <p class="font-semibold"> Clientes </p>
+                <select [(ngModel)]="permisos.clientes" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="CLIENTES_NOT_ACCESS"> Sin acceso </option>
+                    <option value="CLIENTES_ALL"> Permiso total </option>
+                    <option value="CLIENTES_READ"> Solo lectura </option>
+                </select>  
+            </div>
+            <div class="w-1/2 ml-4">
                 <p class="font-semibold"> Cierre de caja </p>
                 <select [(ngModel)]="permisos.cajas" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
                     <option value="CAJAS_NOT_ACCESS"> Sin acceso </option>
                     <option value="CAJAS_ALL"> Permiso total </option>
                 </select>  
-            </div>
-            <div class="w-1/2 ml-4"></div>   
+            </div>   
         </div>
     </div>
     <div class="p-2">

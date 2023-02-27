@@ -20,6 +20,7 @@ export class NuevoUsuarioComponent implements OnInit {
   public permisos = {
     usuarios: 'USUARIOS_NOT_ACCESS',
     ventas: 'VENTAS_NOT_ACCESS',
+    clientes: 'CLIENTES_NOT_ACCESS',
     productos: 'PRODUCTOS_NOT_ACCESS',
     unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
     pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
@@ -34,16 +35,16 @@ export class NuevoUsuarioComponent implements OnInit {
   public usuarioForm: FormGroup;
 
   constructor(private fb: FormBuilder,
-              private router: Router,
-              private usuariosService: UsuariosService,
-              private alertService: AlertService,
-              private dataService: DataService
-              ) { }
+    private router: Router,
+    private usuariosService: UsuariosService,
+    private alertService: AlertService,
+    private dataService: DataService
+  ) { }
 
   ngOnInit(): void {
-    
+
     // Animaciones y Datos de ruta
-    gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
+    gsap.from('.gsap-contenido', { y: 100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = 'Dashboard - Creando usuario';
 
     // Formulario reactivo
@@ -65,35 +66,35 @@ export class NuevoUsuarioComponent implements OnInit {
   nuevoUsuario(): void {
 
     const { status } = this.usuarioForm;
-    const {usuario, apellido, nombre, dni, email, role, password, repetir} = this.usuarioForm.value;
-    
+    const { usuario, apellido, nombre, dni, email, role, password, repetir } = this.usuarioForm.value;
+
     console.log(this.usuarioForm.valid);
 
     // Se verifica que los campos no tengan un espacio vacio
-    const campoVacio = usuario.trim() === '' || 
-                       apellido.trim() === '' ||
-                       dni.trim() === '' || 
-                       email.trim() === '' || 
-                       nombre.trim() === '' ||
-                       password.trim() === '' ||
-                       repetir.trim() === '';
+    const campoVacio = usuario.trim() === '' ||
+      apellido.trim() === '' ||
+      dni.trim() === '' ||
+      email.trim() === '' ||
+      nombre.trim() === '' ||
+      password.trim() === '' ||
+      repetir.trim() === '';
 
     // Se verifica si los campos son invalidos
-    if(status === 'INVALID' || campoVacio){
+    if (status === 'INVALID' || campoVacio) {
       this.alertService.formularioInvalido();
       return;
     }
 
     // Se verifica si las contraseñas coinciden
-    if(password !== repetir){
+    if (password !== repetir) {
       this.alertService.info('Las contraseñas deben coincidir');
-      return;   
+      return;
     }
 
     // Se agregan los permisos
     let data: any = this.usuarioForm.value;
-    
-    if(role !== 'ADMIN_ROLE') data.permisos = this.adicionarPermisos();
+
+    if (role !== 'ADMIN_ROLE') data.permisos = this.adicionarPermisos();
     else data.permisos = [];
 
     this.alertService.loading();  // Comienzo de loading
@@ -102,10 +103,10 @@ export class NuevoUsuarioComponent implements OnInit {
     this.usuariosService.nuevoUsuario(data).subscribe(() => {
       this.alertService.close();  // Finaliza el loading
       this.router.navigateByUrl('dashboard/usuarios');
-    },( ({error}) => {
+    }, (({ error }) => {
       this.alertService.close();  // Finaliza el loading
       this.alertService.errorApi(error.message);
-      return;  
+      return;
     }));
 
   }
@@ -114,16 +115,17 @@ export class NuevoUsuarioComponent implements OnInit {
   abrirPermisos(): void {
     this.showModal = true;
   }
-  
+
   // Asignar permisos por tipo de usuario seleccionado
-  asignarPermisosTipoUsuario():void {
-    
+  asignarPermisosTipoUsuario(): void {
+
     const { role } = this.usuarioForm.value;
 
-    if(role === 'USER_ROLE'){
+    if (role === 'USER_ROLE') {
       this.permisos = {
         usuarios: 'USUARIOS_NOT_ACCESS',
         ventas: 'VENTAS_ALL',
+        clientes: 'CLIENTES_ALL',
         productos: 'PRODUCTOS_READ',
         unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
         pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
@@ -132,9 +134,10 @@ export class NuevoUsuarioComponent implements OnInit {
       }
     }
 
-    if(role === 'DELIVERY_ROLE'){
+    if (role === 'DELIVERY_ROLE') {
       this.permisos = {
         usuarios: 'USUARIOS_NOT_ACCESS',
+        clientes: 'CLIENTES_NOT_ACCESS',
         ventas: 'VENTAS_NOT_ACCESS',
         productos: 'PRODUCTOS_NOT_ACCESS',
         unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
@@ -149,52 +152,58 @@ export class NuevoUsuarioComponent implements OnInit {
   // Se arma el arreglo de permisos
   adicionarPermisos(): any {
 
-    let permisos: any[] = [];    
-    
+    let permisos: any[] = [];
+
     // Seccion usuarios
-    if(this.permisos.usuarios !== 'USUARIOS_NOT_ACCESS'){
+    if (this.permisos.usuarios !== 'USUARIOS_NOT_ACCESS') {
       permisos.push('USUARIOS_NAV');
       permisos.push(this.permisos.usuarios);
     }
 
     // Seccion ventas
-    if(this.permisos.ventas !== 'VENTAS_NOT_ACCESS'){
+    if (this.permisos.ventas !== 'VENTAS_NOT_ACCESS') {
       permisos.push('VENTAS_NAV');
       permisos.push(this.permisos.ventas);
     }
 
+    // Seccion clientes
+    if (this.permisos.clientes !== 'CLIENTES_NOT_ACCESS') {
+      permisos.push('CLIENTES_NAV');
+      permisos.push(this.permisos.clientes);
+    }
+
     // Seccion productos
-    if(this.permisos.productos !== 'PRODUCTOS_NOT_ACCESS'){
+    if (this.permisos.productos !== 'PRODUCTOS_NOT_ACCESS') {
       permisos.push('PRODUCTOS_NAV');
       permisos.push(this.permisos.productos);
     }
 
     // Seccion unidades de medida
-    if(this.permisos.unidad_medida !== 'UNIDAD_MEDIDA_NOT_ACCESS'){
+    if (this.permisos.unidad_medida !== 'UNIDAD_MEDIDA_NOT_ACCESS') {
       permisos.push('UNIDAD_MEDIDA_NAV');
       permisos.push(this.permisos.unidad_medida);
     }
 
     // Seccion pedidosYa
-    if(this.permisos.pedidosYa !== 'PEDIDOSYA_NOT_ACCESS'){
+    if (this.permisos.pedidosYa !== 'PEDIDOSYA_NOT_ACCESS') {
       permisos.push('PEDIDOSYA_NAV');
       permisos.push(this.permisos.pedidosYa);
     }
 
     // Seccion mayoristas
-    if(this.permisos.mayoristas !== 'MAYORISTAS_NOT_ACCESS'){
+    if (this.permisos.mayoristas !== 'MAYORISTAS_NOT_ACCESS') {
       permisos.push('MAYORISTAS_NAV');
       permisos.push(this.permisos.mayoristas);
     }
 
     // Seccion cajas
-    if(this.permisos.cajas !== 'CAJAS_NOT_ACCESS'){
+    if (this.permisos.cajas !== 'CAJAS_NOT_ACCESS') {
       permisos.push('CAJAS_NAV');
       permisos.push(this.permisos.cajas);
     }
-    
-    return permisos;  
-  
+
+    return permisos;
+
   }
 
 }
