@@ -108,6 +108,7 @@ export class ClientesComponent implements OnInit {
       this.filtro.activo
     )
       .subscribe(({ clientes, totalItems }) => {
+        console.log(clientes);
         this.totalItems = totalItems;
         this.clientes = clientes;
         this.showModalCliente = false;

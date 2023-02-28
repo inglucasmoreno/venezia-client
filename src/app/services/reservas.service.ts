@@ -1,0 +1,66 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ReservasService {
+
+  constructor(private http: HttpClient) { }
+
+  // Reserva por ID
+  getReserva(id: string): Observable<any> {
+    return this.http.get(`${base_url}/reservas/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Nueva reserva
+  nuevaReserva(data: any): Observable<any> {
+    return this.http.post(`${base_url}/reservas`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Listar reservas
+  listarReservas(
+    direccion: number = 1,
+    columna: string = 'descripcion',
+    desde: number = 0,
+    registerpp: number = 10,
+    parametro: string = '',
+    activo: string = '',
+  ): Observable<any> {
+    return this.http.get(`${base_url}/reservas`, {
+      params: {
+        direccion: String(direccion),
+        columna,
+        desde,
+        registerpp,
+        parametro,
+        activo,
+      },
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+  // Actualizar reserva
+  actualizarReserva(id: string, data: any): Observable<any> {
+    return this.http.put(`${base_url}/reservas/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+}
