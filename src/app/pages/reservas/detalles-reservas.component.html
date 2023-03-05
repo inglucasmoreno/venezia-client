@@ -1,0 +1,312 @@
+<!-- Modal: Editando producto -->
+<app-modal-small [showModal]="showModalEditarProducto">
+  <div>
+    <div class="rounded-t">
+      <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+        <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Editar producto </h1>
+        <svg (click)="showModalEditarProducto = false" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="cursor-pointer feather feather-x text-white mr-2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </div>
+    </div>
+    <div class="p-2">
+      <p class="font-semibold"> {{ productoSeleccionadoEdicion?.descripcion }} </p>
+      <p class="text-xs text-gray-500"> ${{ productoSeleccionadoEdicion?.precio_unitario | moneda }} x {{ productoSeleccionadoEdicion?.unidad_medida_descripcion }} </p>
+      <div class="flex items-center text-sm mt-2">
+        <input (keyup.enter)="actualizarProducto()" [(ngModel)]="cantidad" type="number" class="p-2 w-40 rounded border focus:outline-none border-gray-400 shadow" placeholder="Cantidad">
+        <button (click)="actualizarProducto()" title="Actualizar producto" class="p-2 rounded focus:outline-none bg-green-700 ml-2 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>          
+        </button>
+        <button (click)="showModalEditarProducto = false" title="Cancelar" class="p-2 rounded bg-red-700 focus:outline-none text-white border border-gray-400 shadow ml-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>       
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal-small>
+
+<!-- Modal: Nuevo producto -->
+<app-modal [showModal]="showModalProductos">
+  <div class="rounded-t">
+    <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+      <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Agregando productos </h1>
+      <svg (click)="showModalProductos = false" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="cursor-pointer feather feather-x text-white mr-2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </div>
+  </div>
+  <div *ngIf="!productoSeleccionado" class="text-sm p-2">
+    <input type="text" [(ngModel)]="filtro.parametroProductos" placeholder="Buscar" class="p-2 border w-60 border-gray-400 focus:outline-none">
+    <div class="max-h-96 overflow-y-auto mt-2">
+      <div (click)="seleccionarProducto(producto)" *ngFor="let producto of productos | filtroProductos:filtro.parametroProductos:'true'" class="border hover:border-secondaryColor cursor-pointer my-2 border-gray-400 p-2">
+        <p class="font-semibold"> {{ producto.descripcion }} </p>
+        <p class="text-xs text-gray-600"> ${{ producto.precio | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="productoSeleccionado" class="text-sm p-2">
+    <p class="font-semibold"> {{ productoSeleccionado?.descripcion }} </p>
+    <p class="text-gray-500 text-xs"> ${{ productoSeleccionado?.precio | moneda }} x {{ productoSeleccionado?.unidad_medida.descripcion }} </p>
+    <div class="mt-2 flex items-center">
+      <input (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" class="border border-gray-400 p-2 rounded focus:outline-none" placeholder="Cantidad" type="number">
+      <button (click)="agregarProducto()" title="Agregar producto" class="p-2 border bg-green-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>  
+      </button>
+      <button (click)="productoSeleccionado = null" title="Cancelar" class="p-2 border bg-red-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg> 
+      </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Modal: Crear cliente -->
+<app-modal [showModal]="showModalCliente">
+  <div (keyup.enter)="estadoFormulario === 'crear' ? nuevoCliente() : actualizarCliente()">
+    <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+      <h1 class=" text-white px-2 py-1 rounded-t text-lg"> {{ estadoFormulario == 'crear' ? 'Creando cliente' :
+        'Editando cliente' }} </h1>
+      <svg (click)="showModalCliente = false" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="cursor-pointer feather feather-x text-white mr-2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </div>
+    <div class="px-4 pt-4 pb-2 max-h-96 overflow-y-auto text-sm">
+      <div class="md:flex md:items-center">
+        <div class="w-full">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Apellido y Nombre / Razon social </p>
+          <input [(ngModel)]="dataCliente.descripcion" placeholder="Ej. Equinoccio Technology" type="text"
+          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+        </div>
+      </div>
+      <div class="md:flex md:items-center mt-4">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Tipo de identificación </p>
+          <select [(ngModel)]="dataCliente.tipo_identificacion"
+            class="py-2 mt-1 cursor-pointer border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">>
+            <option value="DNI"> DNI </option>
+            <option value="CUIL"> CUIL </option>
+            <option value="CUIT"> CUIT </option>
+          </select>
+        </div>
+        <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+          <p class="font-semibold"> <span class="text-red-500"> * </span> Identificación </p>
+          <input [(ngModel)]="dataCliente.identificacion" placeholder="Ej. 34060398" type="text"
+          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+        </div>
+      </div>
+      <div class="md:flex md:items-center mt-4">
+        <div class="md:w-1/2">
+          <p class="font-semibold"> Direccion </p>
+          <input [(ngModel)]="dataCliente.direccion" placeholder="Ej. Pringles 539" type="text"
+          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+        </div>
+        <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
+          <p class="font-semibold"> Teléfono </p>
+          <input [(ngModel)]="dataCliente.telefono" placeholder="Ej. 2664869642" type="text"
+          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+        </div>
+      </div>
+      <div class="md:flex md:items-center mt-4">
+        <div class="w-full">
+          <p class="font-semibold"> Correo electronico </p>
+          <input [(ngModel)]="dataCliente.email" placeholder="Ej. equinocciotechnology@gmail.com" type="text"
+          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+        </div>
+      </div>
+    </div>
+    <div class="px-4 mb-4">
+      <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoCliente()"
+        class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4">
+        Crear cliente </button>
+      <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarCliente()"
+        class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4">
+        Actualizar cliente </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Modal: Generar reserva -->
+<app-modal-small [showModal]="showModalCompletando">
+  <div>
+    <div class="rounded-t">
+      <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+        <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Generando reserva </h1>
+        <svg (click)="showModalCompletando = false" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="cursor-pointer feather feather-x text-white mr-2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </div>
+    </div>
+    <div class="text-sm border-b border-gray-400 pb-2">
+      <div class="flex items-center border-b bg-gray-100 p-2 border-gray-400 justify-between">
+        <p> <span class="font-semibold"> Fecha reserva: </span> {{ dataReserva.fecha_reserva | fecha }}  </p>
+        <p> <span class="font-semibold"> Precio total: </span>  ${{ dataReserva.precio_total | moneda }} </p>
+      </div>
+      <div class="mt-1 p-2 text-center">
+        <div class="text-center">
+          <p class="font-semibold"> Fecha y hora de entrega </p>
+          <div class="flex items-center">
+            <input [(ngModel)]="dataReserva.fecha_entrega" type="date" class="border mt-2 w-1/2 focus:outline-none border-gray-400 p-2">
+            <input [(ngModel)]="dataReserva.hora_entrega" type="time" class="border ml-2 w-1/2 mt-2 focus:outline-none border-gray-400 p-2">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-sm mt-1 text-center p-2">
+      <div class="flex items-center">
+        <div class="w-1/2">
+          <p class="font-semibold"> Monto de adelanto </p>
+          <input (keyup)="calcularFaltaPagar()" [(ngModel)]="dataReserva.adelanto" type="number" placeholder="Adelanto" class="border text-center border-gray-400 mt-1 focus:outline-none p-2">
+        </div>
+        <div class="w-1/2 ml-1">
+          <p class="font-semibold"> Falta pagar </p>
+          <p class="border border-gray-400 p-2 ml-2 mt-1 bg-gray-100"> ${{ faltaPagar | moneda }} </p>
+        </div>
+      </div>
+    </div>
+    <div class="p-2">
+      <button (click)="completarReserva()" class="p-2 bg-secondaryColor w-full text-white rounded focus:outline-none shadow">
+        Generar reserva
+      </button>   
+    </div>
+  </div>
+</app-modal-small>
+
+<!-- Paginar principal -->
+<div class="gsap-contenido">
+  <div class="max-w-3xl mx-auto mt-4 border border-gray-400">
+    
+    <div class="bg-primary-800 p-2 text-white flex items-center justify-between">
+      <div class="flex items-center">
+        <app-boton-regresar routerLink="/dashboard/reservas"></app-boton-regresar>
+        <h1 class="text-xl ml-1"> Nueva reserva </h1>
+      </div>
+      <button *ngIf="carro.length > 0 && clienteSeleccionado" (click)="abrirCompletarReserva()" title="Generar reserva" class="p-2 bg-white mr-1 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-green-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>          
+      </button>
+    </div>
+
+
+    <div class="p-4 text-sm">
+
+      <!-- Datos de encabezado -->
+      <div class="flex items-center justify-between">
+        <div class="text-center">
+          <p class="font-semibold"> Fecha de reserva </p>
+          <input type="date" [(ngModel)]="dataReserva.fecha_reserva" class="border mt-2 focus:outline-none border-gray-400 p-2">
+        </div>
+        <div class="text-center mr-2">
+          <p class="font-semibold"> Precio total</p>
+          <p class="border border-gray-400 p-2 bg-gray-100 mt-2 w-32 font-semibold"> ${{ dataReserva.precio_total | moneda }} </p>
+        </div>
+      </div>
+
+      <!-- Datos de cliente -->
+      <div class="mt-4">
+        <div class="px-2 py-4 flex items-center justify-between bg-gray-100 border border-gray-400">
+          <h2 class="font-semibold"> Datos de cliente </h2>
+          <!-- <button title="Nuevo cliente" class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>            
+          </button> -->
+        </div>
+        <div *ngIf="!clienteSeleccionado" class="flex items-center mt-3">
+          <input (keyup.enter)="buscarCliente()" [(ngModel)]="identificacion_cliente" placeholder="DNI, CUIL o CUIT" type="text" class="p-2 border focus:outline-none border-gray-400">
+          <button (click)="buscarCliente()" title="Buscar cliente" class="border ml-2 p-2 shadow bg-gray-100 rounded border-gray-400 hover:text-secondaryColor focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </div>
+        <div *ngIf="clienteSeleccionado" class="mt-3">
+          <div class="border border-gray-400 shadow w-max">
+            <div class="border-l-8 border-secondaryColor p-2 pr-4 flex items-center">
+              <div>
+                <img src="assets/img/cliente.svg" class="w-24" alt="Imagen de cliente">
+              </div>
+              <div class="ml-2">
+                <p class="font-semibold"> {{ clienteSeleccionado.descripcion }} </p>
+                <p class="text-gray-500 text-xs"> {{ clienteSeleccionado.tipo_identificacion }} {{ clienteSeleccionado.identificacion }} </p>
+                <div class="flex items-center">
+                  <!-- <button (click)="cambiarCliente()" title="Cambiar cliente" class="text-xs flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <button (click)="abrirEditarCliente()" title="Editar cliente" class="text-xs ml-2 flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos de productos -->
+      <div class="mt-4">
+        <div class="p-2 flex items-center justify-between bg-gray-100 border border-gray-400">
+          <h2 class="font-semibold"> Datos de productos </h2>
+          <button title="Nuevo producto" (click)="abrirProductos()" class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>            
+          </button>
+        </div>
+        <div *ngIf="carro.length === 0" class="mt-3">
+          <p class="text-gray-500"> Todavia no se cargo ningun producto </p>
+          <button (click)="abrirProductos()" class="p-2 border shadow mt-2 focus:outline-none border-gray-400 bg-secondaryColor text-white rounded">
+            Agregar producto
+          </button>
+        </div>
+        <div *ngIf="carro.length !== 0" class="mt-3 text-sm">
+          <div *ngFor="let producto of carro" class="border flex items-center justify-between border-gray-400 shadow p-2 mb-2">
+            <div>
+              <p class="font-semibold"> {{ producto.descripcion }} </p>
+              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida_descripcion }} </p>
+              <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
+              <p class="font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
+            </div>
+            <div class="flex items-center">
+              <button (click)="abrirEditarProducto(producto)" title="Editar producto" class="border border-gray-400 p-2 focus:outline-none rounded hover:text-secondaryColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+              <button (click)="eliminarProducto(producto)" title="Eliminar producto" class="border border-gray-400 p-2 focus:outline-none ml-1 rounded hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

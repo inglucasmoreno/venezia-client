@@ -38,6 +38,7 @@ export class ReservasService {
     registerpp: number = 10,
     parametro: string = '',
     activo: string = '',
+    estado: string = ''
   ): Observable<any> {
     return this.http.get(`${base_url}/reservas`, {
       params: {
@@ -47,6 +48,7 @@ export class ReservasService {
         registerpp,
         parametro,
         activo,
+        estado
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -57,6 +59,15 @@ export class ReservasService {
   // Actualizar reserva
   actualizarReserva(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/reservas/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+  // Eliminar reserva
+  eliminarReserva(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/reservas/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }

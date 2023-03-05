@@ -38,6 +38,36 @@
             <app-items *appPermisos="element.permiso" [svg]="element.svg" [route]="element.route" [item]="element.item"></app-items>
         </ng-container>
 
+        <!-- Reservas -->
+        <li *ngIf="authService.usuario.permisos.includes('RESERVAS_NAV') || authService.usuario.role === 'ADMIN_ROLE'" (click)="showReservas = !showReservas" class="flex items-center justify-between outline-none cursor-pointer p-2">
+            
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                <span class="ml-1"> Reservas </span>
+            </div>
+            
+            <div *ngIf="!showReservas" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg  xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+            </div>
+
+            <div *ngIf="showReservas" class="bg-primary-600 p-1 font-semibold text-white rounded-full">
+                <svg  xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+
+        </li>
+
+        <div *ngIf="showReservas && (authService.usuario.permisos.includes('RESERVAS_NAV') || authService.usuario.role === 'ADMIN_ROLE')" class="bg-primary-600 rounded pl-2">
+            <ng-container *ngFor="let element of itemsReservas">
+                <app-items *appPermisos="element.permiso" [svg]="element.svg" [route]="element.route" [item]="element.item"></app-items>
+            </ng-container>
+        </div>
+
         <!-- Mayoristas -->
         <li *ngIf="authService.usuario.permisos.includes('MAYORISTAS_NAV') || authService.usuario.role === 'ADMIN_ROLE'" (click)="showMayoristas = !showMayoristas" class="flex items-center justify-between outline-none cursor-pointer p-2">
             

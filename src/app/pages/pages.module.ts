@@ -44,6 +44,10 @@ import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.componen
 import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.component';
 import { ReportesMayoristasGeneralesComponent } from './reportes-mayoristas/reportes-mayoristas-generales.component';
 import { ClientesComponent } from './clientes/clientes.component';
+import { ReservasComponent } from './reservas/reservas.component';
+import { ReservasConfiguracionesComponent } from './reservas/reservas-configuraciones.component';
+import { NuevaReservaComponent } from './reservas/nueva-reserva.component';
+import { DetallesReservasComponent } from './reservas/detalles-reservas.component';
 
 
 @NgModule({
@@ -85,6 +89,10 @@ import { ClientesComponent } from './clientes/clientes.component';
     PaquetesReportesComponent,
     ReportesMayoristasGeneralesComponent,
     ClientesComponent,
+    ReservasComponent,
+    ReservasConfiguracionesComponent,
+    NuevaReservaComponent,
+    DetallesReservasComponent,
   ],
   imports: [
     CommonModule,

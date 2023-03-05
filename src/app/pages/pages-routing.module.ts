@@ -42,6 +42,10 @@ import { PaquetesDetallesComponent } from './paquetes/paquetes-detalles.componen
 import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.component';
 import { ReportesMayoristasGeneralesComponent } from './reportes-mayoristas/reportes-mayoristas-generales.component';
 import { ClientesComponent } from './clientes/clientes.component';
+import { ReservasComponent } from './reservas/reservas.component';
+import { ReservasConfiguracionesComponent } from './reservas/reservas-configuraciones.component';
+import { NuevaReservaComponent } from './reservas/nueva-reserva.component';
+import { DetallesReservasComponent } from './reservas/detalles-reservas.component';
 
 const routes: Routes = [
     {
@@ -79,6 +83,15 @@ const routes: Routes = [
             // PedidosYa
             { path: 'pedidosya', data: { permisos: 'PEDIDOSYA_NAV' }, canActivate: [PermisosGuard], component: PedidosyaComponent },
             { path: 'pedidosya/historial', data: { permisos: 'PEDIDOSYA_NAV' }, canActivate: [PermisosGuard], component: PedidosyaHistorialComponent },
+
+            // Reservas
+            { path: 'reservas', data: { permisos: 'RESERVAS_NAV' }, canActivate: [PermisosGuard], component: ReservasComponent },
+
+            { path: 'reservas/detalles/:id', data: { permisos: 'RESERVAS_NAV' }, canActivate: [PermisosGuard], component: DetallesReservasComponent },
+            
+            { path: 'reservas/configuraciones', data: { permisos: 'RESERVAS_NAV' }, canActivate: [PermisosGuard], component: ReservasConfiguracionesComponent },
+            
+            { path: 'reservas/nueva', data: { permisos: 'RESERVAS_NAV' }, canActivate: [PermisosGuard], component: NuevaReservaComponent },
 
             // Mayoristas
             { path: 'repartidores', data: { permisos: 'MAYORISTAS_NAV' }, canActivate: [PermisosGuard], component: RepartidoresComponent },
