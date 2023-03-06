@@ -63,4 +63,13 @@ export class ReservasProductosService {
     });
   }
 
+  // Eliminar productos
+  eliminarProducto(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/reservas-productos/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
 }

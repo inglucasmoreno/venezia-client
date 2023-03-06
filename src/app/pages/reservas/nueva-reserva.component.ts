@@ -40,7 +40,8 @@ export class NuevaReservaComponent implements OnInit {
     cliente: '',
     fecha_reserva: format(new Date(), 'yyyy-MM-dd'),
     hora_entrega: '',
-    fecha_entrega: format(new Date(), 'yyyy-MM-dd'),
+    // fecha_entrega: format(new Date(), 'yyyy-MM-dd'),
+    fecha_entrega: '',
     precio_total: 0,
     productos: [],
     adelanto: 0,
@@ -365,12 +366,6 @@ export class NuevaReservaComponent implements OnInit {
       return;
     }
 
-    // Verificar adelanto
-    if (this.dataReserva.adelanto <= 0 || !this.dataReserva.adelanto) {
-      this.alertService.info('Debe colocar un monto de adelanto válido');
-      return;
-    }
-
     // Verificar colocar una fecha de reserva válida
     if (!this.dataReserva.fecha_reserva || this.dataReserva.fecha_reserva === '') {
       this.alertService.info('Debe colocar una fecha de reserva válida');
@@ -389,10 +384,22 @@ export class NuevaReservaComponent implements OnInit {
       return;
     }
 
+    // Verificar adelanto
+    if (this.dataReserva.adelanto <= 0 || !this.dataReserva.adelanto) {
+      this.alertService.info('Debe colocar un monto de adelanto válido');
+      return;
+    }
+
+    // Verificar monto de adelanto
+    if (this.dataReserva.adelanto > this.dataReserva.precio_total) {
+      this.alertService.info('La seña no puede ser superior al precio total');
+      return;
+    }
+
     this.alertService.question({ msg: '¿Quieres generar la reserva?', buttonText: 'Generar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
-          
+
           this.alertService.loading();
 
           // Adaptando fecha de entrega
@@ -410,14 +417,12 @@ export class NuevaReservaComponent implements OnInit {
             creatorUser: this.authService.usuario.userId,
             updatorUser: this.authService.usuario.userId,
           }
-
-          console.log(this.dataReserva);
-
+          
           this.reservasService.nuevaReserva(data).subscribe({
             next: () => {
               this.showModalCompletando = false;
               this.reiniciarReserva();
-              this.alertService.close();
+              this.alertService.success('Reserva generada correctamente');
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
         }

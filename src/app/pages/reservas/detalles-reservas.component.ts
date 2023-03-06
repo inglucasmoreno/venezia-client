@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -8,6 +8,7 @@ import { DataService } from 'src/app/services/data.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { ReservasService } from 'src/app/services/reservas.service';
 import gsap from 'gsap';
+import { ReservasProductosService } from 'src/app/services/reservas-productos.service';
 
 @Component({
   selector: 'app-detalles-reservas',
@@ -18,6 +19,7 @@ import gsap from 'gsap';
 export class DetallesReservasComponent implements OnInit {
 
   // Flags
+  public showModalAdelanto = false;
   public showModalCompletando = false;
   public showModalCliente = false;
   public showModalProductos = false;
@@ -37,7 +39,9 @@ export class DetallesReservasComponent implements OnInit {
 
   // Datos de reserva
   public idReserva = '';
+  public reserva: any = null;
   public faltaPagar = 0;
+  public adelantoTMP = 0;
   public dataReserva = {
     cliente: '',
     fecha_reserva: format(new Date(), 'yyyy-MM-dd'),
@@ -68,9 +72,11 @@ export class DetallesReservasComponent implements OnInit {
     private alertService: AlertService,
     private dataService: DataService,
     public authService: AuthService,
+    private router: Router,
     private activatedRoute: ActivatedRoute,
     private clientesService: ClientesService,
     private reservasService: ReservasService,
+    private reservasProductosService: ReservasProductosService,
     private productosService: ProductosService
   ) { }
 
@@ -83,10 +89,11 @@ export class DetallesReservasComponent implements OnInit {
 
   // Obteniendo valores iniciales
   inicializacion(): void {
-    this.activatedRoute.params.subscribe(({id}) => { 
-      this.idReserva = id; 
+    this.activatedRoute.params.subscribe(({ id }) => {
+      this.idReserva = id;
       this.reservasService.getReserva(this.idReserva).subscribe({
         next: ({ reserva, productos }) => {
+          this.reserva = reserva;
           this.clienteSeleccionado = reserva.cliente;
           this.carro = productos;
           this.dataReserva = {
@@ -97,7 +104,7 @@ export class DetallesReservasComponent implements OnInit {
             precio_total: reserva.precio_total,
             productos: productos,
             adelanto: reserva.adelanto,
-            observaciones: reserva.observaciones  
+            observaciones: reserva.observaciones
           }
           this.alertService.close();
         }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -288,7 +295,10 @@ export class DetallesReservasComponent implements OnInit {
       return;
     }
 
+    this.alertService.loading();
+
     const dataProducto = {
+      reserva: this.idReserva,
       descripcion: this.productoSeleccionado.descripcion,
       unidad_medida_descripcion: this.productoSeleccionado.unidad_medida.descripcion,
       producto: this.productoSeleccionado._id,
@@ -301,10 +311,13 @@ export class DetallesReservasComponent implements OnInit {
 
     this.carro.push(dataProducto);
 
-    this.productoSeleccionado = null;
-    this.cantidad = null;
-
-    this.calcularPrecioTotal();
+    this.reservasProductosService.nuevoProducto(dataProducto).subscribe({
+      next: () => {
+        this.productoSeleccionado = null;
+        this.cantidad = null;
+        this.calcularPrecioTotal();
+      }, error: ({error}) => this.alertService.errorApi(error.message) 
+    })
 
   }
 
@@ -320,11 +333,23 @@ export class DetallesReservasComponent implements OnInit {
     this.alertService.question({ msg: '¿Quieres actualizar el producto?', buttonText: 'Actualizar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
+
+          this.alertService.loading();
           let productoSeleccionado = this.carro.find(elemento => elemento.producto === this.productoSeleccionadoEdicion.producto);
+          let nuevoPrecio = this.dataService.redondear(this.cantidad * productoSeleccionado.precio_unitario, 2);
           productoSeleccionado.cantidad = this.cantidad;
-          productoSeleccionado.precio = this.dataService.redondear(this.cantidad * productoSeleccionado.precio_unitario, 2);
-          this.showModalEditarProducto = false;
-          this.calcularPrecioTotal();
+          productoSeleccionado.precio = nuevoPrecio;
+
+          this.reservasProductosService.actualizarProducto(this.productoSeleccionadoEdicion._id, {
+            cantidad: this.cantidad,
+            precio: nuevoPrecio
+          }).subscribe({
+            next: () => {
+              this.showModalEditarProducto = false;
+              this.calcularPrecioTotal();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+
         }
       });
   }
@@ -334,8 +359,13 @@ export class DetallesReservasComponent implements OnInit {
     this.alertService.question({ msg: '¿Quieres eliminar el producto?', buttonText: 'Eliminar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
+          this.alertService.loading();
           this.carro = this.carro.filter(elemento => elemento.producto !== producto.producto);
-          this.calcularPrecioTotal();
+          this.reservasProductosService.eliminarProducto(producto._id).subscribe({
+            next: () => {
+              this.calcularPrecioTotal();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
         }
       });
   }
@@ -374,6 +404,12 @@ export class DetallesReservasComponent implements OnInit {
     });
 
     this.dataReserva.precio_total = precioTotalTMP;
+
+    this.reservasService.actualizarReserva(this.idReserva, { precio_total: this.dataReserva.precio_total }).subscribe({
+      next: () => {
+        this.alertService.close();
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })
 
     this.ordenarProductos();
 
@@ -421,7 +457,7 @@ export class DetallesReservasComponent implements OnInit {
     this.alertService.question({ msg: '¿Quieres generar la reserva?', buttonText: 'Generar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
-          
+
           this.alertService.loading();
 
           // Adaptando fecha de entrega
@@ -481,5 +517,85 @@ export class DetallesReservasComponent implements OnInit {
       observaciones: ''
     }
   }
+
+  // -------------------
+
+  // Abrir actualizar adelanto
+  abrirActualizarAdelanto(): void {
+    this.adelantoTMP = this.dataReserva.adelanto;
+    this.showModalAdelanto = true;  
+  }
+
+  actualizarAdelanto(): void {
+
+    // Verificacion: Monto de adelanto valido
+    if(!this.adelantoTMP || this.adelantoTMP < 0){
+      this.alertService.info('Debe colocar un monto válido');
+      return;
+    }
+
+    // Verificacion: Monto de adelanto supera precio total
+    if(this.adelantoTMP > this.dataReserva.precio_total){
+      this.alertService.info('La seña no puede ser superior al precio total');
+      return;      
+    }
+
+    this.alertService.loading();
+    this.reservasService.actualizarReserva(this.idReserva, { adelanto: this.adelantoTMP }).subscribe({
+      next: () => {
+        this.dataReserva.adelanto = this.adelantoTMP;
+        this.showModalAdelanto = false;
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+
+  }
+
+  // Actualizar fecha de reserva
+  actualizarFechaReserva(): void {
+    this.alertService.loading();
+    this.reservasService.actualizarReserva(this.idReserva, { fecha_reserva: this.dataReserva.fecha_reserva }).subscribe({
+      next: () => {
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  // Actualizar fecha de entrega
+  actualizarFechaEntrega(): void {
+    this.alertService.loading();
+    this.reservasService.actualizarReserva(this.idReserva, { fecha_entrega: this.dataReserva.fecha_entrega }).subscribe({
+      next: () => {
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  // Actualizar hora de entrega
+  actualizarHoraEntrega(): void {
+    this.alertService.loading();
+    this.reservasService.actualizarReserva(this.idReserva, { hora_entrega: this.dataReserva.hora_entrega }).subscribe({
+      next: () => {
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  // Eliminar reserva
+  eliminarReserva(): void {
+    this.alertService.question({ msg: '¿Quieres eliminar la reserva?', buttonText: 'Eliminar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.reservasService.eliminarReserva(this.idReserva).subscribe({
+            next: () => {
+              this.router.navigateByUrl('/dashboard/reservas')
+              this.alertService.close();
+            }, error: ({error}) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
+  }
+
 
 }

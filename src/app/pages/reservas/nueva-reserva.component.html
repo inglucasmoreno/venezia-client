@@ -165,7 +165,7 @@
           <p class="font-semibold"> Fecha y hora de entrega </p>
           <div class="flex items-center">
             <input [(ngModel)]="dataReserva.fecha_entrega" type="date" class="border mt-2 w-1/2 focus:outline-none border-gray-400 p-2">
-            <input [(ngModel)]="dataReserva.hora_entrega" type="time" class="border ml-2 w-1/2 mt-2 focus:outline-none border-gray-400 p-2">
+            <input [(ngModel)]="dataReserva.hora_entrega" type="time" class="border ml-3 w-1/2 mt-2 focus:outline-none border-gray-400 p-2">
           </div>
         </div>
       </div>
@@ -173,10 +173,10 @@
     <div class="text-sm mt-1 text-center p-2">
       <div class="flex items-center">
         <div class="w-1/2">
-          <p class="font-semibold"> Monto de adelanto </p>
-          <input (keyup)="calcularFaltaPagar()" [(ngModel)]="dataReserva.adelanto" type="number" placeholder="Adelanto" class="border text-center border-gray-400 mt-1 focus:outline-none p-2">
+          <p class="font-semibold"> Monto de seña </p>
+          <input (keyup)="calcularFaltaPagar()" [(ngModel)]="dataReserva.adelanto" type="number" placeholder="Ej. 1500" class="border text-center border-gray-400 mt-1 focus:outline-none p-2">
         </div>
-        <div class="w-1/2 ml-1">
+        <div class="w-1/2 ml-2">
           <p class="font-semibold"> Falta pagar </p>
           <p class="border border-gray-400 p-2 ml-2 mt-1 bg-gray-100"> ${{ faltaPagar | moneda }} </p>
         </div>
