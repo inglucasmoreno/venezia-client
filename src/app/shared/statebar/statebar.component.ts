@@ -4,8 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 @Component({
   selector: 'app-statebar',
   templateUrl: './statebar.component.html',
-  styles: [
-  ]
+  styleUrls: ['./statebar.component.css']
 })
 export class StatebarComponent implements OnInit {
 
