@@ -7,6 +7,7 @@ export class DataService {
   
   public ubicacionActual: string = 'Dashboard';  // Statebar - Direccion actual
   public showMenu: Boolean = true;               // Header - Controla la visualizacion de la barra de navegacion
+  public showAlertaReserva: Boolean = true;
 
   constructor() {}
 
@@ -19,6 +20,10 @@ export class DataService {
 
     return Number((Math.round((numero * Math.pow(10, decimales)) + (signo * 0.0001)) / Math.pow(10, decimales)).toFixed(decimales));
   
+  }
+
+  alertaReservas(): void {
+    this.showAlertaReserva = this.showAlertaReserva ? false : true;
   }
 
     

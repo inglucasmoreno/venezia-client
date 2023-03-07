@@ -16,6 +16,7 @@ import { PastillaPendienteCompletadoComponent } from './pastilla-pendiente-compl
 import { ModalComponent } from './modal/modal.component';
 import { ModalMediumComponent } from './modal-medium/modal-medium.component';
 import { ModalSmallComponent } from './modal-small/modal-small.component';
+import { AlertaReservaComponent } from './alerta-reserva/alerta-reserva.component';
 
 
 
@@ -36,6 +37,7 @@ import { ModalSmallComponent } from './modal-small/modal-small.component';
     ModalComponent,
     ModalMediumComponent,
     ModalSmallComponent,
+    AlertaReservaComponent,
   ],
   imports: [
     CommonModule,
@@ -56,7 +58,8 @@ import { ModalSmallComponent } from './modal-small/modal-small.component';
     PastillaPendienteCompletadoComponent,
     ModalComponent,
     ModalMediumComponent,
-    ModalSmallComponent
+    ModalSmallComponent,
+    AlertaReservaComponent
   ]
 })
 export class ComponentsModule { }
