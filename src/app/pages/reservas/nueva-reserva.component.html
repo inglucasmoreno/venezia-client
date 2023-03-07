@@ -169,6 +169,20 @@
           </div>
         </div>
       </div>
+      <div class="p-2 text-center">
+        <div class="text-center">
+          <p class="font-semibold"> La alerta se activará </p>
+          <div class="flex items-center">
+            <select [(ngModel)]="dataReserva.horas_antes" class="border border-gray-400 p-2 rounded focus:outline-none w-full mt-2">
+              <option value="1"> 1 hora antes </option>
+              <option value="2"> 2 horas antes </option>
+              <option value="3"> 3 horas antes </option>
+              <option value="4"> 4 horas antes </option>
+              <option value="5"> 5 horas antes </option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="text-sm mt-1 text-center p-2">
       <div class="flex items-center">

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { format } from 'date-fns';
+import { add, format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ClientesService } from 'src/app/services/clientes.service';
@@ -40,8 +40,9 @@ export class NuevaReservaComponent implements OnInit {
     cliente: '',
     fecha_reserva: format(new Date(), 'yyyy-MM-dd'),
     hora_entrega: '',
-    // fecha_entrega: format(new Date(), 'yyyy-MM-dd'),
     fecha_entrega: '',
+    fecha_alerta: '',
+    horas_antes: '3',
     precio_total: 0,
     productos: [],
     adelanto: 0,
@@ -406,6 +407,9 @@ export class NuevaReservaComponent implements OnInit {
           let fechaEntregaCompleta = this.dataReserva.fecha_entrega + ':' + this.dataReserva.hora_entrega;
           this.dataReserva.fecha_entrega = fechaEntregaCompleta;
 
+          // Adaptando fecha de alerta
+          this.dataReserva.fecha_alerta = format(add(new Date(fechaEntregaCompleta), {hours: -Number(this.dataReserva.horas_antes)}),'yyyy-MM-dd:HH:mm');      
+
           // Agregando datos de cliente
           this.dataReserva.cliente = this.clienteSeleccionado._id;
 
@@ -418,6 +422,8 @@ export class NuevaReservaComponent implements OnInit {
             updatorUser: this.authService.usuario.userId,
           }
           
+          console.log(data);
+
           this.reservasService.nuevaReserva(data).subscribe({
             next: () => {
               this.showModalCompletando = false;
@@ -451,6 +457,8 @@ export class NuevaReservaComponent implements OnInit {
       fecha_reserva: format(new Date(), 'yyyy-MM-dd'),
       hora_entrega: '',
       fecha_entrega: format(new Date(), 'yyyy-MM-dd'),
+      fecha_alerta: '',
+      horas_antes: '3',
       precio_total: 0,
       productos: [],
       adelanto: 0,

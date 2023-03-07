@@ -56,6 +56,22 @@ export class ReservasService {
     });
   }
 
+  // Reservas por vencer -> Alerta 
+  reservasPorVencer(
+    direccion: number = -1,
+    columna: string = 'createdAt',
+  ): Observable<any> {
+    return this.http.get(`${base_url}/reservas/parametro/vencer`, {
+      params: {
+        direccion: String(direccion),
+        columna,
+      },
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
   // Actualizar reserva
   actualizarReserva(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/reservas/${id}`, data, {
