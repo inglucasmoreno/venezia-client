@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from '../../services/data.service';
 
 @Component({
@@ -9,7 +10,10 @@ import { DataService } from '../../services/data.service';
 })
 export class AlertaReservaComponent implements OnInit {
 
-  constructor(public dataService: DataService) { }
+  constructor(
+    public authService: AuthService,
+    public dataService: DataService
+  ) { }
 
   ngOnInit(): void {
   }

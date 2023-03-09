@@ -422,12 +422,11 @@ export class NuevaReservaComponent implements OnInit {
             updatorUser: this.authService.usuario.userId,
           }
           
-          console.log(data);
-
           this.reservasService.nuevaReserva(data).subscribe({
             next: () => {
               this.showModalCompletando = false;
               this.reiniciarReserva();
+              this.dataService.alertaReservas();
               this.alertService.success('Reserva generada correctamente');
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })

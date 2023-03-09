@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { AlertService } from './alert.service';
+import { ReservasService } from './reservas.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,9 +9,13 @@ export class DataService {
   
   public ubicacionActual: string = 'Dashboard';  // Statebar - Direccion actual
   public showMenu: Boolean = true;               // Header - Controla la visualizacion de la barra de navegacion
-  public showAlertaReserva: Boolean = true;
+  public showAlertaReserva: Boolean = false;
+  public cantidadReservasPorVencer: number = 0;
 
-  constructor() {}
+  constructor(
+    private reservasService: ReservasService,
+    private alertService: AlertService
+    ) {}
 
   // Redonde de numeros
   redondear(numero:number, decimales:number):number {
@@ -23,8 +29,16 @@ export class DataService {
   }
 
   alertaReservas(): void {
-    this.showAlertaReserva = this.showAlertaReserva ? false : true;
+    this.reservasService.reservasPorVencer().subscribe({
+      next: ({ reservas }) => {
+        if(reservas.length > 0){
+          this.cantidadReservasPorVencer = reservas.length;
+          this.showAlertaReserva = true;
+        }else{
+          this.showAlertaReserva = false;
+        }
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
   }
-
     
 }

@@ -39,7 +39,7 @@
         </ng-container>
 
         <!-- Reservas -->
-        <li *ngIf="authService.usuario.permisos.includes('RESERVAS_NAV') || authService.usuario.role === 'ADMIN_ROLE'" (click)="showReservas = !showReservas" class="flex items-center justify-between outline-none cursor-pointer p-2">
+        <!-- <li *ngIf="authService.usuario.permisos.includes('RESERVAS_NAV') || authService.usuario.role === 'ADMIN_ROLE'" (click)="showReservas = !showReservas" class="flex items-center justify-between outline-none cursor-pointer p-2">
             
             <div class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -66,16 +66,15 @@
             <ng-container *ngFor="let element of itemsReservas">
                 <app-items *appPermisos="element.permiso" [svg]="element.svg" [route]="element.route" [item]="element.item"></app-items>
             </ng-container>
-        </div>
+        </div> -->
 
         <!-- Mayoristas -->
         <li *ngIf="authService.usuario.permisos.includes('MAYORISTAS_NAV') || authService.usuario.role === 'ADMIN_ROLE'" (click)="showMayoristas = !showMayoristas" class="flex items-center justify-between outline-none cursor-pointer p-2">
             
             <div class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                  </svg>         
                 <span class="ml-1"> Mayoristas </span>
             </div>
             
@@ -101,9 +100,9 @@
 
         <!-- Finalizar sesion -->
         <li (click)="logout()" class="flex outline-none transform hover:translate-x-2 duration-500 items-center cursor-pointer p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+            </svg>
             <a class="ml-2 mt-1"> Cerrar sesion </a>
         </li>
 

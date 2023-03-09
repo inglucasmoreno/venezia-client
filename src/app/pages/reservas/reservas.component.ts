@@ -228,6 +228,7 @@ export class ReservasComponent implements OnInit {
           this.alertService.loading();
           this.reservasService.eliminarReserva(reserva._id).subscribe(() => {
             this.alertService.loading();
+            this.dataService.alertaReservas();
             this.listarReservas();
           }, ({ error }) => {
             this.alertService.close();

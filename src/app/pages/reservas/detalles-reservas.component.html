@@ -1,4 +1,32 @@
-<!-- ModalÑ Actualizar valor de seña -->
+<!-- Modal actualizar datos de alerta -->
+<app-modal-small [showModal]="showModalAlerta">
+  <div>
+    <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
+      <h1 class=" text-white px-2 py-1 rounded-t text-lg"> Datos de alerta </h1>
+      <svg (click)="showModalAlerta = false" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="cursor-pointer feather feather-x text-white mr-2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </div>
+    <div class="text-sm p-2">
+      <p class="font-semibold text-center"> La alerta se activará </p>
+      <select [(ngModel)]="dataReserva.horas_antes" class="w-full focus:outline-none border mt-2 border-gray-400 rounded p-2">
+        <option value="1"> 1 hora antes </option>
+        <option value="2"> 2 horas antes </option>
+        <option value="3"> 3 horas antes </option>
+        <option value="4"> 4 horas antes </option>
+        <option value="5"> 5 horas antes </option>
+      </select>
+      <button (click)="actualizarFechasHoras()" class="p-2 focus:outline-none shadow mt-2 rounded bg-secondaryColor text-white w-full">
+        Actualizar alerta
+      </button>
+    </div>
+  </div>
+</app-modal-small>
+
+<!-- Modal Actualizar valor de seña -->
 <app-modal-small [showModal]="showModalAdelanto">
   <div class="rounded-t">
     <div class="flex items-center justify-between bg-primary-800 rounded-t p-2">
@@ -251,9 +279,12 @@
         </div>
         <div class="text-center">
           <p class="font-semibold"> Fecha y hora de entrega </p>
-          <div>
-            <input type="date" onkeydown="return false" (change)="actualizarFechaEntrega()" [(ngModel)]="dataReserva.fecha_entrega" class="border mt-2 focus:outline-none border-gray-400 p-2">
-            <input type="time" onkeydown="return false" (change)="actualizarHoraEntrega()" [(ngModel)]="dataReserva.hora_entrega" class="border mt-2 ml-2 focus:outline-none border-gray-400 p-2">
+          <div class="flex items-center">
+            <input type="date" onkeydown="return false" (change)="actualizarFechasHoras()" [(ngModel)]="dataReserva.fecha_entrega" class="border mt-2 focus:outline-none border-gray-400 p-2">
+            <input type="time" onkeydown="return false" (change)="actualizarFechasHoras()" [(ngModel)]="dataReserva.hora_entrega" class="border mt-2 ml-2 focus:outline-none border-gray-400 p-2">
+            <button (click)="abrirActualizarAlerta()" title="Datos de alerta" class="border border-gray-400 mt-2 focus:outline-none ml-1 p-2 rounded shadow">             
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="none"><style>@keyframes notify{0%,to{transform:rotate(0deg);transform-origin:top center}10%,90%{transform:rotate(2deg)}20%,40%,60%{transform:rotate(-6deg)}30%,50%,70%{transform:rotate(6deg)}80%{transform:rotate(-2deg)}}</style><g style="animation:notify 1s cubic-bezier(.455,.03,.515,.955) both infinite" stroke-width="1.5"><path stroke="#0A0A30" d="M12.29 3.398a5 5 0 00-5 5v2c0 .758-.441 1.505-1.005 2.012a3 3 0 002.005 5.232h8a3 3 0 002.006-5.232c-.564-.507-1.005-1.254-1.005-2.012v-2a5 5 0 00-5-5z"/><path stroke="#A31D1E" stroke-linecap="round" d="M14.68 20.312l-.042.01a9.713 9.713 0 01-4.67-.01"/></g></svg>             
+            </button>
           </div> 
 
         </div>

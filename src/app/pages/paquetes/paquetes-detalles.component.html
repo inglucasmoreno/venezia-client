@@ -457,7 +457,7 @@
             </span>
             </p>
             <p class="mt-2">
-              <span class="font-semibold"> Fecha de paquete: </span> <input [disabled]="authService.usuario.role === 'DELIVERY_ROLE'" (change)="actualizarFecha()" class="border focus:outline-none border-gray-400 p-1" type="date" [(ngModel)]="fecha">
+              <span class="font-semibold"> Fecha de paquete: </span> <input onkeydown="return false" [disabled]="authService.usuario.role === 'DELIVERY_ROLE'" (change)="actualizarFecha()" class="border focus:outline-none border-gray-400 p-1" type="date" [(ngModel)]="fecha">
             </p>
             <p class="mt-2">
               <span class="font-semibold"> Repartidor: </span> {{ paquete?.repartidor.apellido }} {{ paquete?.repartidor.nombre }}

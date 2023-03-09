@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { format } from 'date-fns';
+import { add, format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { ClientesService } from 'src/app/services/clientes.service';
@@ -19,6 +19,7 @@ import { ReservasProductosService } from 'src/app/services/reservas-productos.se
 export class DetallesReservasComponent implements OnInit {
 
   // Flags
+  public showModalAlerta = false;
   public showModalAdelanto = false;
   public showModalCompletando = false;
   public showModalCliente = false;
@@ -42,11 +43,13 @@ export class DetallesReservasComponent implements OnInit {
   public reserva: any = null;
   public faltaPagar = 0;
   public adelantoTMP = 0;
+  public horasAntesFija: string = '';
   public dataReserva = {
     cliente: '',
     fecha_reserva: format(new Date(), 'yyyy-MM-dd'),
     hora_entrega: '',
     fecha_entrega: format(new Date(), 'yyyy-MM-dd'),
+    horas_antes: '',
     precio_total: 0,
     productos: [],
     adelanto: 0,
@@ -95,12 +98,14 @@ export class DetallesReservasComponent implements OnInit {
         next: ({ reserva, productos }) => {
           this.reserva = reserva;
           this.clienteSeleccionado = reserva.cliente;
+          this.horasAntesFija = reserva.horas_antes;
           this.carro = productos;
           this.dataReserva = {
             cliente: reserva.cliente._id,
             fecha_reserva: format(new Date(reserva.fecha_reserva), 'yyyy-MM-dd'),
             hora_entrega: reserva.hora_entrega,
             fecha_entrega: format(new Date(reserva.fecha_entrega), 'yyyy-MM-dd'),
+            horas_antes: reserva.horas_antes,
             precio_total: reserva.precio_total,
             productos: productos,
             adelanto: reserva.adelanto,
@@ -511,6 +516,7 @@ export class DetallesReservasComponent implements OnInit {
       fecha_reserva: format(new Date(), 'yyyy-MM-dd'),
       hora_entrega: '',
       fecha_entrega: format(new Date(), 'yyyy-MM-dd'),
+      horas_antes: '',
       precio_total: 0,
       productos: [],
       adelanto: 0,
@@ -524,6 +530,18 @@ export class DetallesReservasComponent implements OnInit {
   abrirActualizarAdelanto(): void {
     this.adelantoTMP = this.dataReserva.adelanto;
     this.showModalAdelanto = true;  
+  }
+
+  // Abrir actualizar alerta
+  abrirActualizarAlerta(): void {
+    this.dataReserva.horas_antes = this.horasAntesFija;
+    this.showModalAlerta = true;
+  }
+
+  // Cerrar actualizar alerta
+  cerrarActualizarAlerta(): void {
+    this.dataReserva.horas_antes = this.horasAntesFija;
+    this.showModalAlerta = false;
   }
 
   actualizarAdelanto(): void {
@@ -561,21 +579,25 @@ export class DetallesReservasComponent implements OnInit {
     })
   }
 
-  // Actualizar fecha de entrega
-  actualizarFechaEntrega(): void {
-    this.alertService.loading();
-    this.reservasService.actualizarReserva(this.idReserva, { fecha_entrega: this.dataReserva.fecha_entrega }).subscribe({
-      next: () => {
-        this.alertService.close();
-      }, error: ({ error }) => this.alertService.errorApi(error.message)
-    })
-  }
+  // Actualizar alerta
+  actualizarFechasHoras(): void {
 
-  // Actualizar hora de entrega
-  actualizarHoraEntrega(): void {
     this.alertService.loading();
-    this.reservasService.actualizarReserva(this.idReserva, { hora_entrega: this.dataReserva.hora_entrega }).subscribe({
+
+    let fechaEntregaCompleta = this.dataReserva.fecha_entrega + ':' + this.dataReserva.hora_entrega;
+
+    const data = {
+      fecha_entrega: fechaEntregaCompleta,
+      hora_entrega: this.dataReserva.hora_entrega,
+      horas_antes: this.dataReserva.horas_antes,
+      fecha_alerta: format(add(new Date(fechaEntregaCompleta), {hours: -Number(this.dataReserva.horas_antes)}),'yyyy-MM-dd:HH:mm'),
+    }
+    
+     this.reservasService.actualizarReserva(this.idReserva, data).subscribe({
       next: () => {
+        this.horasAntesFija = this.dataReserva.horas_antes;
+        this.showModalAlerta = false;
+        this.dataService.alertaReservas();
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
@@ -590,6 +612,7 @@ export class DetallesReservasComponent implements OnInit {
           this.reservasService.eliminarReserva(this.idReserva).subscribe({
             next: () => {
               this.router.navigateByUrl('/dashboard/reservas')
+              this.dataService.alertaReservas();
               this.alertService.close();
             }, error: ({error}) => this.alertService.errorApi(error.message)
           })

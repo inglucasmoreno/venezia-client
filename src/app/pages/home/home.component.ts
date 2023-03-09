@@ -13,19 +13,11 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private dataService: DataService,
-              private alertService: AlertService,
-              private reservasService: ReservasService,
-              private ventasService: VentasService) { }
+  constructor(private dataService: DataService) { }
 
   ngOnInit(): void { 
     gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = 'Dashboard - Home';
-    this.reservasService.reservasPorVencer().subscribe({
-      next: ({ reservas }) => {
-        console.log(reservas);
-      }, error: ({error}) => this.alertService.errorApi(error.message)
-    })
   }
   
 }
