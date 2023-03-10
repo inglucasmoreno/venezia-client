@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { add, compareAsc } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
@@ -14,6 +15,9 @@ export class ReservasComponent implements OnInit {
 
   // Permisos de usuarios login
   public permisos = { all: false };
+
+  // Fecha de hoy
+  public fechaHoy = new Date();
 
   // Modal
   public showModalReserva = false;

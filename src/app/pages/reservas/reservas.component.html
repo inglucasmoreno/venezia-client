@@ -288,7 +288,7 @@
                                 </tr>
                             </thead>
                             <tbody *ngIf="reservas">
-                                <tr class="animate__animated animate__fadeIn"
+                                <tr [ngClass]="{'bg-red-50': reserva.fecha_alerta | alertaReservas }" class="animate__animated animate__fadeIn"
                                     *ngFor="let reserva of reservas | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
                                     <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                         <p class="text-gray-900 w-max whitespace-no-wrap">

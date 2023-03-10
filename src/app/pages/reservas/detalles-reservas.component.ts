@@ -94,27 +94,32 @@ export class DetallesReservasComponent implements OnInit {
   inicializacion(): void {
     this.activatedRoute.params.subscribe(({ id }) => {
       this.idReserva = id;
-      this.reservasService.getReserva(this.idReserva).subscribe({
-        next: ({ reserva, productos }) => {
-          this.reserva = reserva;
-          this.clienteSeleccionado = reserva.cliente;
-          this.horasAntesFija = reserva.horas_antes;
-          this.carro = productos;
-          this.dataReserva = {
-            cliente: reserva.cliente._id,
-            fecha_reserva: format(new Date(reserva.fecha_reserva), 'yyyy-MM-dd'),
-            hora_entrega: reserva.hora_entrega,
-            fecha_entrega: format(new Date(reserva.fecha_entrega), 'yyyy-MM-dd'),
-            horas_antes: reserva.horas_antes,
-            precio_total: reserva.precio_total,
-            productos: productos,
-            adelanto: reserva.adelanto,
-            observaciones: reserva.observaciones
-          }
-          this.alertService.close();
-        }, error: ({ error }) => this.alertService.errorApi(error.message)
-      })
+      this.getReserva();
     });
+  }
+
+  // Obtener datos de reserva
+  getReserva(): void {
+    this.reservasService.getReserva(this.idReserva).subscribe({
+      next: ({ reserva, productos }) => {
+        this.reserva = reserva;
+        this.clienteSeleccionado = reserva.cliente;
+        this.horasAntesFija = reserva.horas_antes;
+        this.carro = productos;
+        this.dataReserva = {
+          cliente: reserva.cliente._id,
+          fecha_reserva: format(new Date(reserva.fecha_reserva), 'yyyy-MM-dd'),
+          hora_entrega: reserva.hora_entrega,
+          fecha_entrega: format(new Date(reserva.fecha_entrega), 'yyyy-MM-dd'),
+          horas_antes: reserva.horas_antes,
+          precio_total: reserva.precio_total,
+          productos: productos,
+          adelanto: reserva.adelanto,
+          observaciones: reserva.observaciones
+        }
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
   }
 
   // Buscar cliente
@@ -321,7 +326,7 @@ export class DetallesReservasComponent implements OnInit {
         this.productoSeleccionado = null;
         this.cantidad = null;
         this.calcularPrecioTotal();
-      }, error: ({error}) => this.alertService.errorApi(error.message) 
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
 
   }
@@ -352,7 +357,7 @@ export class DetallesReservasComponent implements OnInit {
             next: () => {
               this.showModalEditarProducto = false;
               this.calcularPrecioTotal();
-            }, error: ({error}) => this.alertService.errorApi(error.message)
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
 
         }
@@ -369,7 +374,7 @@ export class DetallesReservasComponent implements OnInit {
           this.reservasProductosService.eliminarProducto(producto._id).subscribe({
             next: () => {
               this.calcularPrecioTotal();
-            }, error: ({error}) => this.alertService.errorApi(error.message)
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
         }
       });
@@ -413,7 +418,7 @@ export class DetallesReservasComponent implements OnInit {
     this.reservasService.actualizarReserva(this.idReserva, { precio_total: this.dataReserva.precio_total }).subscribe({
       next: () => {
         this.alertService.close();
-      }, error: ({error}) => this.alertService.errorApi(error.message)
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
 
     this.ordenarProductos();
@@ -529,7 +534,7 @@ export class DetallesReservasComponent implements OnInit {
   // Abrir actualizar adelanto
   abrirActualizarAdelanto(): void {
     this.adelantoTMP = this.dataReserva.adelanto;
-    this.showModalAdelanto = true;  
+    this.showModalAdelanto = true;
   }
 
   // Abrir actualizar alerta
@@ -547,15 +552,15 @@ export class DetallesReservasComponent implements OnInit {
   actualizarAdelanto(): void {
 
     // Verificacion: Monto de adelanto valido
-    if(!this.adelantoTMP || this.adelantoTMP < 0){
+    if (!this.adelantoTMP || this.adelantoTMP < 0) {
       this.alertService.info('Debe colocar un monto válido');
       return;
     }
 
     // Verificacion: Monto de adelanto supera precio total
-    if(this.adelantoTMP > this.dataReserva.precio_total){
+    if (this.adelantoTMP > this.dataReserva.precio_total) {
       this.alertService.info('La seña no puede ser superior al precio total');
-      return;      
+      return;
     }
 
     this.alertService.loading();
@@ -590,15 +595,18 @@ export class DetallesReservasComponent implements OnInit {
       fecha_entrega: fechaEntregaCompleta,
       hora_entrega: this.dataReserva.hora_entrega,
       horas_antes: this.dataReserva.horas_antes,
-      fecha_alerta: format(add(new Date(fechaEntregaCompleta), {hours: -Number(this.dataReserva.horas_antes)}),'yyyy-MM-dd:HH:mm'),
+      fecha_alerta: format(add(new Date(fechaEntregaCompleta), { hours: -Number(this.dataReserva.horas_antes) }), 'yyyy-MM-dd:HH:mm'),
     }
-    
-     this.reservasService.actualizarReserva(this.idReserva, data).subscribe({
+
+    console.log(data);
+
+    this.reservasService.actualizarReserva(this.idReserva, data).subscribe({
       next: () => {
         this.horasAntesFija = this.dataReserva.horas_antes;
         this.showModalAlerta = false;
         this.dataService.alertaReservas();
         this.alertService.close();
+        this.getReserva();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
   }
@@ -614,7 +622,7 @@ export class DetallesReservasComponent implements OnInit {
               this.router.navigateByUrl('/dashboard/reservas')
               this.dataService.alertaReservas();
               this.alertService.close();
-            }, error: ({error}) => this.alertService.errorApi(error.message)
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
         }
       });
