@@ -155,6 +155,11 @@
                     <table class="min-w-full leading-normal">
                         <thead>
                             <tr class="border">
+                              <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                <div class="flex items-center focus:outline-none">
+                                    <span> Avatar </span>
+                                </div>
+                                </th>
                                 <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
                                     <div (click)="ordenarPorColumna('descripcion')" class="cursor-pointer flex items-center focus:outline-none">
                                         <span> Descripción </span>
@@ -216,7 +221,12 @@
                         </thead>
                         <tbody *ngIf="clientes">
                             <tr class="animate__animated animate__fadeIn" *ngFor="let cliente of clientes | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
-                                <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                              <td class="px-5 py-4 border-b border-gray-200 text-xs">
+                                <p class="text-gray-900 w-max whitespace-no-wrap">
+                                    <img src="assets/img/cliente.svg" class="w-11" alt="cliente.svg">
+                                </p>
+                              </td>
+                              <td class="px-5 py-4 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 w-max whitespace-no-wrap">
                                         {{ cliente.descripcion }}
                                     </p>

@@ -41,13 +41,14 @@ export class ReservasComponent implements OnInit {
   public filtro = {
     activo: 'true',
     parametro: '',
-    estado: 'Pendiente'
+    estado: 'Pendiente',
+    por_vencer: false
   }
 
   // Ordenar
   public ordenar = {
-    direccion: -1,  // Asc (1) | Desc (-1)
-    columna: 'nro'
+    direccion: 1,  // Asc (1) | Desc (-1)
+    columna: 'fecha_entrega'
   }
 
   constructor(private reservasService: ReservasService,
@@ -102,7 +103,8 @@ export class ReservasComponent implements OnInit {
       this.cantidadItems,
       this.filtro.parametro,
       this.filtro.activo,
-      this.filtro.estado
+      this.filtro.estado,
+      this.filtro.por_vencer
     )
       .subscribe(({ reservas, totalItems }) => {
         this.reservas = reservas;
@@ -200,6 +202,12 @@ export class ReservasComponent implements OnInit {
   filtrarParametro(parametro: string): void {
     this.paginaActual = 1;
     this.filtro.parametro = parametro;
+  }
+
+  // Filtrar reservas por vencer
+  filtrarPorVencer(): void {
+    this.filtro.por_vencer = !this.filtro.por_vencer;
+    this.cambiarPagina(1);    
   }
 
   // Ordenar por columna

@@ -45,7 +45,6 @@ import { PaquetesReportesComponent } from './paquetes/paquetes-reportes.componen
 import { ReportesMayoristasGeneralesComponent } from './reportes-mayoristas/reportes-mayoristas-generales.component';
 import { ClientesComponent } from './clientes/clientes.component';
 import { ReservasComponent } from './reservas/reservas.component';
-import { ReservasConfiguracionesComponent } from './reservas/reservas-configuraciones.component';
 import { NuevaReservaComponent } from './reservas/nueva-reserva.component';
 import { DetallesReservasComponent } from './reservas/detalles-reservas.component';
 
@@ -90,7 +89,6 @@ import { DetallesReservasComponent } from './reservas/detalles-reservas.componen
     ReportesMayoristasGeneralesComponent,
     ClientesComponent,
     ReservasComponent,
-    ReservasConfiguracionesComponent,
     NuevaReservaComponent,
     DetallesReservasComponent,
   ],

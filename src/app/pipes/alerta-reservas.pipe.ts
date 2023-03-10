@@ -7,7 +7,6 @@ import { compareAsc } from 'date-fns';
 export class AlertaReservasPipe implements PipeTransform {
   transform(fechaAlerta: any): any {
     let comparacion = compareAsc(new Date(), new Date(fechaAlerta));
-    console.log(comparacion === 1 ? true : false);
     return comparacion === 1 ? true : false;
   }
 }

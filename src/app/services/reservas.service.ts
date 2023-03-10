@@ -38,7 +38,8 @@ export class ReservasService {
     registerpp: number = 10,
     parametro: string = '',
     activo: string = '',
-    estado: string = ''
+    estado: string = '',
+    por_vencer: boolean = false
   ): Observable<any> {
     return this.http.get(`${base_url}/reservas`, {
       params: {
@@ -48,7 +49,8 @@ export class ReservasService {
         registerpp,
         parametro,
         activo,
-        estado
+        estado,
+        por_vencer
       },
       headers: {
         'Authorization': localStorage.getItem('token')

@@ -90,7 +90,7 @@ export class PaquetesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataService.ubicacionActual = 'Dashboard - Unidades de medida';
+    this.dataService.ubicacionActual = 'Dashboard - Listado de paquetes';
     this.permisos.all = this.permisosUsuarioLogin();
     this.alertService.loading();
     this.recuperarLocalStorage();

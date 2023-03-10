@@ -9,6 +9,10 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { ReservasService } from 'src/app/services/reservas.service';
 import gsap from 'gsap';
 import { ReservasProductosService } from 'src/app/services/reservas-productos.service';
+import { VentasService } from 'src/app/services/ventas.service';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-detalles-reservas',
@@ -17,6 +21,33 @@ import { ReservasProductosService } from 'src/app/services/reservas-productos.se
   ]
 })
 export class DetallesReservasComponent implements OnInit {
+
+  // Venta
+  public showCompletarVenta = false;
+  public precio_total: number = null;
+  public precio_total_limpio: number = 0;
+  public proximo_nro_factura: string = null;
+  public comprobante = 'Normal';
+  public imprimir: boolean = false;
+  public vuelto: number = 0;
+  public pagaCon: number = null;
+  public formaPago: string = 'Efectivo';
+  public formasPago: any[] = [];
+  public multiples_formasPago = false;
+  public formaPagoMonto: number = null;
+  public pedidosya_comprobante: string = '';
+  public diferenciaPago = 0;
+  public productoActual: any;
+
+  // Items formas de pago
+  public itemsFormasPago: string[] = [
+    'Efectivo',
+    'Crédito',
+    'Débito',
+    'Mercado pago',
+    'PedidosYa',
+    'PedidosYa - Efectivo'
+  ];
 
   // Flags
   public showModalAlerta = false;
@@ -75,6 +106,7 @@ export class DetallesReservasComponent implements OnInit {
     private alertService: AlertService,
     private dataService: DataService,
     public authService: AuthService,
+    private ventasService: VentasService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private clientesService: ClientesService,
@@ -102,6 +134,7 @@ export class DetallesReservasComponent implements OnInit {
   getReserva(): void {
     this.reservasService.getReserva(this.idReserva).subscribe({
       next: ({ reserva, productos }) => {
+        this.precio_total = reserva.precio_total;
         this.reserva = reserva;
         this.clienteSeleccionado = reserva.cliente;
         this.horasAntesFija = reserva.horas_antes;
@@ -259,13 +292,6 @@ export class DetallesReservasComponent implements OnInit {
     this.cantidad = producto.cantidad;
     this.productoSeleccionadoEdicion = producto;
     this.showModalEditarProducto = true;
-  }
-
-  // Abrir modal - Completar reserva
-  abrirCompletarReserva(): void {
-    this.dataReserva.adelanto = this.dataReserva.precio_total * 0.5;
-    this.calcularFaltaPagar();
-    this.showModalCompletando = true;
   }
 
   // Abrir modal - Productos
@@ -486,8 +512,6 @@ export class DetallesReservasComponent implements OnInit {
             updatorUser: this.authService.usuario.userId,
           }
 
-          console.log(this.dataReserva);
-
           this.reservasService.nuevaReserva(data).subscribe({
             next: () => {
               this.showModalCompletando = false;
@@ -541,6 +565,12 @@ export class DetallesReservasComponent implements OnInit {
   abrirActualizarAlerta(): void {
     this.dataReserva.horas_antes = this.horasAntesFija;
     this.showModalAlerta = true;
+  }
+
+  // Abrir modal - Completar venta
+  abrirCompletarReserva(): void {
+    this.proximo_nro_factura = null;
+    this.showCompletarVenta = true;
   }
 
   // Cerrar actualizar alerta
@@ -598,8 +628,6 @@ export class DetallesReservasComponent implements OnInit {
       fecha_alerta: format(add(new Date(fechaEntregaCompleta), { hours: -Number(this.dataReserva.horas_antes) }), 'yyyy-MM-dd:HH:mm'),
     }
 
-    console.log(data);
-
     this.reservasService.actualizarReserva(this.idReserva, data).subscribe({
       next: () => {
         this.horasAntesFija = this.dataReserva.horas_antes;
@@ -627,6 +655,250 @@ export class DetallesReservasComponent implements OnInit {
         }
       });
   }
+
+  // ---------------------- VENTAS ----------------------
+
+  // Proximo numero de factura
+  proximoNroFactura(): void {
+    this.alertService.loading();
+    this.ventasService.proximoNroFactura('B').subscribe({
+      next: ({ nro_factura }) => {
+        this.proximo_nro_factura = nro_factura;
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  cambiarImprimir(): void {
+    this.imprimir = !this.imprimir;
+  }
+
+  // Calcular vuelto
+  calcularVuelto(): void {
+    this.vuelto = this.pagaCon - this.precio_total;
+    localStorage.setItem('vuelto', JSON.stringify(this.vuelto));
+    localStorage.setItem('pagaCon', JSON.stringify(this.pagaCon));
+  }
+
+  // Seleccionando forma de pago
+  seleccionarFormaPago(): void {
+
+    if (!this.multiples_formasPago && (this.formaPago === 'Crédito' || this.formaPago === 'Débito' || this.formaPago === 'Mercado pago')) {
+      this.comprobante = 'Fiscal';
+    }
+
+    this.pedidosya_comprobante = '';
+    this.calcularPrecio();
+  }
+
+  // Calcular precio de venta
+  calcularPrecio(): void {
+
+    let precioTMP = 0;
+    this.productos.map(producto => {
+      precioTMP += producto.precio;
+    })
+
+    // Precio sin adicionales ni descuentos
+    this.precio_total_limpio = this.dataService.redondear(precioTMP, 2);
+
+    if (this.formasPago.length === 0) { // Forma de pago unica
+      // Con adicional por credito => precio total + 10% : Sin adicional por credito
+      this.formaPago === 'Crédito'
+        ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2)
+        : this.precio_total = this.dataService.redondear(precioTMP, 2);
+    } else {
+    }
+
+  }
+
+  metodoPagoMultiple(): void {
+    this.itemsFormasPago = [
+      'Efectivo',
+      'Débito',
+      'Mercado pago',
+    ];
+    this.formaPago = 'Efectivo';
+    this.multiples_formasPago = true;
+    this.calcularDiferencia();
+  }
+
+  // Calcular diferencia - Metodos de pago multiples
+  calcularDiferencia(): void {
+
+    let precioTotalTMP = this.precio_total;
+    for (const elemento of this.formasPago) {
+      precioTotalTMP = precioTotalTMP - elemento.valor;
+    }
+
+    this.formaPagoMonto = this.dataService.redondear(precioTotalTMP, 2);
+    this.diferenciaPago = this.dataService.redondear(precioTotalTMP, 2);
+
+  }
+
+  // Agregar forma de pago
+  agregarFormaPago(): void {
+
+    // Verificacion de valores ingresados
+    if (!this.formaPagoMonto || this.formaPagoMonto <= 0) {
+      this.alertService.info('Valores inválidos');
+      return;
+    }
+
+    if (this.formaPagoMonto > this.diferenciaPago) {
+      this.alertService.info('No se puede superar el monto de la venta');
+      return;
+    }
+
+    this.formasPago.push({ descripcion: this.formaPago, valor: this.formaPagoMonto });
+
+    // Se elimina el elemento
+    this.itemsFormasPago = this.itemsFormasPago.filter(elemento => elemento !== this.formaPago);
+
+    this.formaPago = this.itemsFormasPago[0];
+
+    // this.formaPagoMonto = null;
+    this.calcularDiferencia();
+
+  }
+
+  // Regresar a metodo de pago unico
+  metodoPagoUnico(): void {
+    this.itemsFormasPago = [
+      'Efectivo',
+      'Crédito',
+      'Débito',
+      'Mercado pago',
+      'PedidosYa',
+      'PedidosYa - Efectivo'
+    ];
+    this.reiniciarMetodosPago();
+    this.multiples_formasPago = false;
+  }
+
+  // Completar venta
+  completarVenta(): void {
+
+    // Verificacion - Formas de pago multiples
+    if (this.multiples_formasPago && this.formasPago.length === 0) { // Seleccionar al menos una forma de pago (Multiples formas de pago)
+      this.alertService.info('Debe seleccionar una forma de pago');
+      return;
+    }
+
+    if (this.multiples_formasPago && this.diferenciaPago !== 0) {
+      this.alertService.info('Debe cubrir el precio total de la venta');
+      return;
+    }
+
+    // Verificacion - PedidosYa
+    if ((this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') && this.pedidosya_comprobante.trim() === '') {
+      this.alertService.info('Colocar número de comprobante de PedidosYa');
+      return;
+    }
+
+    this.alertService.question({ msg: 'Completando venta', buttonText: 'Completar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+
+          let forma_pago: any[];
+
+          this.alertService.loading();
+
+          if (!this.multiples_formasPago) forma_pago = [{ descripcion: this.formaPago, valor: this.precio_total }];
+          else if (this.multiples_formasPago) forma_pago = this.formasPago;
+
+          const data = {
+            productos: this.productos,
+            precio_total: this.precio_total,
+            precio_total_limpio: this.precio_total_limpio,
+            comprobante: this.comprobante,
+            pedidosya_comprobante: (this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') ? this.pedidosya_comprobante : '',
+            forma_pago,
+            adicional_credito: this.formaPago === 'Crédito' ? this.precio_total_limpio * 0.10 : 0,
+            creatorUser: this.authService.usuario.userId,
+            updatorUser: this.authService.usuario.userId,
+          };
+          this.ventasService.nuevaVenta(data).subscribe({
+            next: ({ venta }) => {
+
+              this.productoActual = null;
+              this.precio_total = 0;
+              this.precio_total_limpio = 0;
+              this.comprobante = 'Normal',
+                this.productos = [];
+              this.pagaCon = null;
+              this.formaPago = 'Efectivo';
+              this.vuelto = 0;
+              this.pedidosya_comprobante = '';
+
+              this.metodoPagoUnico();
+
+              // Imprimir comprobante
+              if (this.imprimir) {
+                this.ventasService.getComprobante(venta._id).subscribe({
+                  next: () => {
+                    window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
+                    this.alertService.success('Venta completada');
+                  }, error: (error) => this.alertService.errorApi(error.message)
+                })
+              } else {
+                this.alertService.success('Venta completada');
+              }
+
+            },
+            error: ({ error }) => this.alertService.errorApi(error.message)
+          });
+
+        }
+      });
+  }
+
+
+  // Eliminar forma de pago
+  eliminarFormaPago(formaPago: any): void {
+
+    this.formasPago = this.formasPago.filter(elemento => elemento.descripcion !== formaPago.descripcion);
+
+    this.itemsFormasPago = [];
+
+    let efectivo = false;
+    let debito = false;
+    let mercadoPago = false;
+
+    for (const elemento of this.formasPago) {
+      const elementoTMP: any = elemento;
+      if (elementoTMP.descripcion === 'Efectivo') efectivo = true;
+      else if (elementoTMP.descripcion === 'Débito') debito = true;
+      else if (elementoTMP.descripcion === 'Mercado pago') mercadoPago = true;
+    }
+
+    this.itemsFormasPago = [];
+
+    if (!efectivo) this.itemsFormasPago.push('Efectivo');
+    if (!debito) this.itemsFormasPago.push('Débito');
+    if (!mercadoPago) this.itemsFormasPago.push('Mercado pago');
+
+    this.formaPago = this.itemsFormasPago[0];
+
+    this.calcularDiferencia();
+
+  }
+
+  // Reiniciar Metodos de pago
+  reiniciarMetodosPago(): void {
+    this.itemsFormasPago = [
+      'Efectivo',
+      'Crédito',
+      'Débito',
+      'Mercado pago',
+      'PedidosYa',
+      'PedidosYa - Efectivo'
+    ]
+    this.formaPago = 'Efectivo';
+    this.formaPagoMonto = null;
+    this.formasPago = [];
+  }
+
 
 
 }
