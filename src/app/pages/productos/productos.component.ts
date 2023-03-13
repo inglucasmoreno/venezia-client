@@ -90,7 +90,6 @@ constructor(private productosService: ProductosService,
     // Listado de productos
     this.productosService.listarProductos().subscribe({
       next: ({ productos }) => {
-        console.log(productos);
         this.productos = productos;
 
         // Listado de unidades de medida
@@ -280,8 +279,6 @@ constructor(private productosService: ProductosService,
   // Adaptacion de codigo
   adaptacionCodigo(desde: string): void {
     
-    console.log(this.productoForm.balanza);
-
     this.productoForm.unidad_medida = this.productoForm.balanza === 'true' ? '111111111111111111111111' : '000000000000000000000000';
 
     // Se guarda el codigo

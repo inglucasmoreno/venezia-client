@@ -191,7 +191,7 @@
                             <option value="50"> 50 elementos </option>
                             <option value="100"> 100 elementos </option>
                         </select>
-                        <input (change)="cambiarPagina(1)" [(ngModel)]="filtro.fecha" type="date" class="border focus:outline-none text-sm md:ml-2 rounded border-gray-400 p-2 mt-2 md:mt-0 md:p-1">
+                        <input (change)="cambiarPagina(1)" onkeydown="return false" [(ngModel)]="filtro.fecha" type="date" class="border focus:outline-none text-sm md:ml-2 rounded border-gray-400 p-2 mt-2 md:mt-0 md:p-1">
                     </div>
                 </div>
                 <div class="flex items-center md:mr-2 justify-between">

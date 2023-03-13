@@ -1,8 +1,30 @@
-<!-- Modal: Completando ventas (Reserva) -->
+<!-- Modal: Editar observacion -->
+<app-modal [showModal]="showEditarObservacion">
+  <div>
+    <div class="bg-primary-800 flex p-2 items-center rounded-t justify-between text-white">
+      <h1 class="text-lg"> Editando observación </h1>
+      <button (click)="showEditarObservacion = false" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>        
+      </button>
+    </div>  
+    <div class="px-2">
+      <textarea [(ngModel)]="observaciones" placeholder="Puedes colocar una observación aquí" class="border text-sm mt-2 border-gray-400 w-full px-2 py-4 focus:outline-none"></textarea>     
+    </div>  
+    <div class="pb-2 px-2">
+      <button (click)="actualizarObservacion()" class="p-2 border focus:outline-none text-sm border-gray-400 shadow rounded w-full text-white bg-secondaryColor">
+        Actualizar observación
+      </button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Modal: Completando ventas -->
 <app-modal class="text-xs md:text-base" [showModal]="showCompletarVenta">
   <div class="bg-gray-100 border-b border-gray-300">
     <div class="bg-primary-800 flex p-2 items-center justify-between text-white">
-      <h1 class="text-lg"> Completando reserva </h1>
+      <h1 class="text-lg"> Completando venta </h1>
       <button (click)="showCompletarVenta = false" class="focus:outline-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -112,8 +134,8 @@
       </div>
     </div>
   </div>
-  <div class="px-4 pt-2 pb-2 flex items-center">
-    <button (click)="completarVenta()" class="border flex items-center justify-center text-center text-sm bg-red-700 focus:outline-none text-white shadow w-full p-2 mt-4 rounded">
+  <div class="px-4 md:pt-2 pb-2 flex items-center">
+    <button (click)="sinRetirar()" class="border flex items-center justify-center text-center text-sm bg-red-700 focus:outline-none text-white shadow w-full p-2 mt-4 rounded">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>      
@@ -126,7 +148,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
       </svg>  
       <span>
-        Completar reserva
+        Completar venta
       </span>
     </button>
   </div>
@@ -198,7 +220,7 @@
     </div>
     <div class="p-2">
       <p class="font-semibold"> {{ productoSeleccionadoEdicion?.descripcion }} </p>
-      <p class="text-xs text-gray-500"> ${{ productoSeleccionadoEdicion?.precio_unitario | moneda }} x {{ productoSeleccionadoEdicion?.unidad_medida_descripcion }} </p>
+      <p class="text-xs text-gray-500"> ${{ productoSeleccionadoEdicion?.precio_unitario | moneda }} x {{ productoSeleccionadoEdicion?.unidad_medida }} </p>
       <div class="flex items-center text-sm mt-2">
         <input (keyup.enter)="actualizarProducto()" [(ngModel)]="cantidad" type="number" class="p-2 w-40 rounded border focus:outline-none border-gray-400 shadow" placeholder="Cantidad">
         <button (click)="actualizarProducto()" title="Actualizar producto" class="p-2 rounded focus:outline-none bg-green-700 ml-2 text-white">
@@ -270,7 +292,7 @@
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </div>
-    <div class="px-4 pt-4 pb-2 max-h-96 overflow-y-auto text-sm">
+    <div class="px-4 pt-4 md:pb-2 max-h-96 overflow-y-auto text-sm">
       <div class="md:flex md:items-center">
         <div class="w-full">
           <p class="font-semibold"> <span class="text-red-500"> * </span> Apellido y Nombre / Razon social </p>
@@ -314,12 +336,12 @@
         </div>
       </div>
     </div>
-    <div class="px-4 mb-4">
+    <div class="px-4 mb-4 md:mt-4">
       <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoCliente()"
-        class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4">
+        class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded">
         Crear cliente </button>
       <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarCliente()"
-        class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4">
+        class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded">
         Actualizar cliente </button>
     </div>
   </div>
@@ -376,7 +398,7 @@
 
 <!-- Paginar principal -->
 <div class="gsap-contenido mb-10">
-  <div class="max-w-3xl mx-auto mt-4 border border-gray-400">
+  <div class="max-w-3xl w-11/12 mx-auto mt-4 border border-gray-400">
     
     <div class="bg-primary-800 p-2 text-white flex items-center justify-between">
       <div class="flex items-center">
@@ -384,19 +406,26 @@
         <div class="ml-1">
           <h1 class="text-xl"> Detalles de reserva </h1>
           <!-- Reserva pendiente -->
-          <p *ngIf="reserva?.estado === 'Pendiente'" class="p-1 text-xs font-semibold text-yellow-700 border border-yellow-400 bg-yellow-100 w-max"> Reserva pendiente </p>
+          <p *ngIf="reserva?.estado === 'Pendiente'" class="p-1 rounded text-xs font-semibold text-yellow-700 border border-yellow-400 bg-yellow-100 w-max"> Pendiente </p>
+          <p *ngIf="reserva?.estado === 'No retirada'" class="p-1 rounded text-xs font-semibold text-red-700 border border-red-400 bg-red-100 w-max"> No retirada </p>
+          <p *ngIf="reserva?.estado === 'Completada'" class="p-1 rounded text-xs font-semibold text-green-700 border border-green-400 bg-green-100 w-max"> Completada </p>
         </div>
       </div>
       <div>
-        <button (click)="eliminarReserva()" title="Eliminar reserva" class="p-2 bg-white mr-2 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-red-700">
+        <button *ngIf="reserva?.estado === 'Pendiente'" (click)="eliminarReserva()" title="Eliminar reserva" class="p-2 bg-white mr-2 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-red-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>         
         </button>
-        <button (click)="abrirCompletarReserva()" title="Completar reserva" class="p-2 bg-white mr-1 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-green-700">
+        <button *ngIf="reserva?.estado === 'Pendiente'" (click)="abrirCompletarVenta()" title="Completar venta" class="p-2 bg-white mr-1 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-green-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
           </svg>          
+        </button>
+        <button *ngIf="reserva?.estado === 'No retirada'" (click)="recuperarReserva()" title="Recuperar reserva" class="p-2 bg-white mr-1 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-green-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>                   
         </button>
       </div> 
 
@@ -406,19 +435,19 @@
     <div class="px-4 py-2 text-sm">
 
       <!-- Datos de encabezado -->
-      <div class="flex items-center justify-between mt-2">
+      <div class="md:flex md:items-center md:justify-between md:mt-2">
         <div class="text-center">
           <p class="font-semibold"> Fecha de reserva </p>
-          <input type="date" onkeydown="return false" (change)="actualizarFechaReserva()" [(ngModel)]="dataReserva.fecha_reserva" class="border mt-2 focus:outline-none border-gray-400 p-2">
+          <input type="date" [disabled]="reserva?.estado !== 'Pendiente'" onkeydown="return false" (change)="actualizarFechaReserva()" [(ngModel)]="dataReserva.fecha_reserva" class="border mt-2 w-full focus:outline-none border-gray-400 p-2">
         </div>
-        <div class="text-center">
+        <div class="text-center mt-2 md:mt-0">
           <p class="font-semibold"> Fecha y hora de entrega </p>
           <div class="flex items-center">
-            <input type="date" onkeydown="return false" (change)="actualizarFechasHoras()" [(ngModel)]="dataReserva.fecha_entrega" class="border mt-2 focus:outline-none border-gray-400 p-2">
-            <input type="time" onkeydown="return false" (change)="actualizarFechasHoras()" [(ngModel)]="dataReserva.hora_entrega" class="border mt-2 ml-2 focus:outline-none border-gray-400 p-2">
-            <button [ngClass]="{'bg-red-100 border-red-700' : reserva?.fecha_alerta | alertaReservas}" (click)="abrirActualizarAlerta()" title="Datos de alerta" class="border border-gray-400 mt-2 focus:outline-none ml-1 p-2 rounded shadow">             
-              <svg *ngIf="!(reserva?.fecha_alerta | alertaReservas)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="none"><style>@keyframes notify{0%,to{transform:rotate(0deg);transform-origin:top center}10%,90%{transform:rotate(2deg)}20%,40%,60%{transform:rotate(-6deg)}30%,50%,70%{transform:rotate(6deg)}80%{transform:rotate(-2deg)}}</style><g style="animation:notify 1s cubic-bezier(.455,.03,.515,.955) both infinite" stroke-width="1.5"><path stroke="#0A0A30" d="M12.29 3.398a5 5 0 00-5 5v2c0 .758-.441 1.505-1.005 2.012a3 3 0 002.005 5.232h8a3 3 0 002.006-5.232c-.564-.507-1.005-1.254-1.005-2.012v-2a5 5 0 00-5-5z"/><path stroke="#A31D1E" stroke-linecap="round" d="M14.68 20.312l-.042.01a9.713 9.713 0 01-4.67-.01"/></g></svg> 
-              <svg *ngIf="reserva?.fecha_alerta | alertaReservas" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><style>@keyframes n-info-2{0%,to{transform:rotate(0deg);transform-origin:top center}10%,90%{transform:rotate(2deg)}20%,40%,60%{transform:rotate(-6deg)}30%,50%,70%{transform:rotate(6deg)}80%{transform:rotate(-2deg)}}</style><path stroke="#A31D1E" stroke-width="1.5" d="M12 3.398a5 5 0 00-5 5v2c0 .758-.442 1.505-1.005 2.012A3 3 0 008 17.642h8a3 3 0 002.005-5.232C17.442 11.903 17 11.156 17 10.398v-2a5 5 0 00-5-5z"/><g style="animation:n-info-2 1.5s cubic-bezier(.455,.03,.515,.955) both infinite"><path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5" d="M14.39 20.312l-.043.01a9.715 9.715 0 01-4.67-.01"/><path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5" d="M12 7.923v3.206"/><circle cx="12" cy="13.245" r=".832" fill="#A31D1E"/></g></svg>            
+            <input type="date" [disabled]="reserva?.estado !== 'Pendiente'" onkeydown="return false" (change)="actualizarFechasHoras()" [(ngModel)]="dataReserva.fecha_entrega" class="border mt-2 focus:outline-none border-gray-400 p-2">
+            <input type="time" [disabled]="reserva?.estado !== 'Pendiente'" onkeydown="return false" (change)="actualizarFechasHoras()" [(ngModel)]="dataReserva.hora_entrega" class="border mt-2 ml-2 focus:outline-none border-gray-400 p-2">
+            <button *ngIf="reserva?.estado === 'Pendiente'" [ngClass]="{'bg-red-100 border-red-700' : reserva?.fecha_alerta | alertaReservas:reserva?.estado}" (click)="abrirActualizarAlerta()" title="Datos de alerta" class="border border-gray-400 mt-2 focus:outline-none ml-1 p-2 rounded shadow">             
+              <svg *ngIf="!(reserva?.fecha_alerta | alertaReservas:reserva?.estado)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="none"><style>@keyframes notify{0%,to{transform:rotate(0deg);transform-origin:top center}10%,90%{transform:rotate(2deg)}20%,40%,60%{transform:rotate(-6deg)}30%,50%,70%{transform:rotate(6deg)}80%{transform:rotate(-2deg)}}</style><g style="animation:notify 1s cubic-bezier(.455,.03,.515,.955) both infinite" stroke-width="1.5"><path stroke="#0A0A30" d="M12.29 3.398a5 5 0 00-5 5v2c0 .758-.441 1.505-1.005 2.012a3 3 0 002.005 5.232h8a3 3 0 002.006-5.232c-.564-.507-1.005-1.254-1.005-2.012v-2a5 5 0 00-5-5z"/><path stroke="#A31D1E" stroke-linecap="round" d="M14.68 20.312l-.042.01a9.713 9.713 0 01-4.67-.01"/></g></svg> 
+              <svg *ngIf="reserva?.fecha_alerta | alertaReservas:reserva?.estado" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><style>@keyframes n-info-2{0%,to{transform:rotate(0deg);transform-origin:top center}10%,90%{transform:rotate(2deg)}20%,40%,60%{transform:rotate(-6deg)}30%,50%,70%{transform:rotate(6deg)}80%{transform:rotate(-2deg)}}</style><path stroke="#A31D1E" stroke-width="1.5" d="M12 3.398a5 5 0 00-5 5v2c0 .758-.442 1.505-1.005 2.012A3 3 0 008 17.642h8a3 3 0 002.005-5.232C17.442 11.903 17 11.156 17 10.398v-2a5 5 0 00-5-5z"/><g style="animation:n-info-2 1.5s cubic-bezier(.455,.03,.515,.955) both infinite"><path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5" d="M14.39 20.312l-.043.01a9.715 9.715 0 01-4.67-.01"/><path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5" d="M12 7.923v3.206"/><circle cx="12" cy="13.245" r=".832" fill="#A31D1E"/></g></svg>            
             </button>
           </div> 
 
@@ -478,40 +507,56 @@
         <div class="px-2 py-4 flex items-center justify-between bg-gray-100 border border-gray-400">
           <h2 class="font-semibold"> Datos de cobro </h2>
         </div>
-        <div class="mt-4 mb-4 flex items-center justify-between">
+        <div class="mt-4 mb-4 md:flex md:items-center md:justify-between">
           <div class="text-center">
             <p class="font-semibold"> Precio total </p>
-            <p class="p-2 border mt-2 w-40 border-gray-700 bg-gray-50 font-semibold">
+            <p class="p-2 border mt-2 md:w-40 border-gray-700 bg-gray-50 font-semibold">
               ${{ dataReserva.precio_total | moneda }}
             </p>
           </div>
-          <div class="ml-4 text-center">
+          <div class="md:ml-4 text-center md:mt-0 mt-4">
             <p class="font-semibold mr-10"> Monto de seña  </p>
             <div class="flex items-center">
-              <p class="p-2 border mt-2 w-40 border-green-700 bg-green-50">
+              <p class="p-2 border mt-2 w-full md:w-40 border-green-700 bg-green-50">
                 ${{ dataReserva.adelanto | moneda }}
               </p>
-              <button (click)="abrirActualizarAdelanto()" title="Actualizar seña" class="p-2 mt-2 border border-gray-400 bg-gray-50 rounded ml-2 focus:outline-none hover:text-secondaryColor">
+              <button *ngIf="reserva?.estado === 'Pendiente'" (click)="abrirActualizarAdelanto()" title="Actualizar seña" class="p-2 mt-2 border border-gray-400 bg-gray-50 rounded ml-2 focus:outline-none hover:text-secondaryColor">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>                
               </button>
             </div>
           </div>
-          <div class="ml-4 text-center">
+          <div class="md:ml-4 mt-4 md:mt-0 text-center">
             <p class="font-semibold"> Falta pagar  </p>
-            <p class="p-2 border mt-2 w-40 border-red-700 bg-red-50">
-              ${{ dataReserva.precio_total -  dataReserva.adelanto | moneda }}
+            <p class="p-2 border mt-2 md:w-40 border-red-700 bg-red-50">
+              ${{ dataReserva.precio_total - dataReserva.adelanto | moneda }}
             </p>
           </div>
         </div>
       </div> 
 
+      <!-- Observaciones -->
+      <div class="mt-5">
+        <div class="p-2 flex items-center justify-between bg-gray-100 border border-gray-400">
+          <h2 class="font-semibold"> Observaciones </h2>
+          <button (click)="abrirEditarObservacion()" title="Editar observación" class="border border-gray-400 rounded bg-white p-2 focus:outline-none hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>              
+          </button>
+        </div>   
+        <textarea *ngIf="dataReserva.observaciones !== ''" [disabled]="true" [(ngModel)]="dataReserva.observaciones" placeholder="Puedes colocar una observación aquí" class="border text-sm mt-2 border-gray-400 w-full px-2 py-4 focus:outline-none">
+          asdasd
+        </textarea>     
+        <p class="mt-3 text-gray-700 p-2 bg-gray-50 border rounded border-gray-400" *ngIf="dataReserva.observaciones === ''"> Reserva sin observaciones </p>
+      </div>
+
       <!-- Datos de productos -->
       <div class="mt-4">
         <div class="p-2 flex items-center justify-between bg-gray-100 border border-gray-400">
           <h2 class="font-semibold"> Datos de productos </h2>
-          <button title="Nuevo producto" (click)="abrirProductos()" class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
+          <button *ngIf="reserva?.estado === 'Pendiente'" title="Nuevo producto" (click)="abrirProductos()" class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>            
@@ -527,17 +572,17 @@
           <div *ngFor="let producto of carro" class="border flex items-center justify-between border-gray-400 shadow p-2 mb-2">
             <div>
               <p class="font-semibold"> {{ producto.descripcion }} </p>
-              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida_descripcion }} </p>
+              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida }} </p>
               <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
               <p class="font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
             </div>
             <div class="flex items-center">
-              <button (click)="abrirEditarProducto(producto)" title="Editar producto" class="border border-gray-400 p-2 focus:outline-none rounded hover:text-secondaryColor">
+              <button *ngIf="reserva?.estado === 'Pendiente'" (click)="abrirEditarProducto(producto)" title="Editar producto" class="border border-gray-400 p-2 focus:outline-none rounded hover:text-secondaryColor">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               </button>
-              <button (click)="eliminarProducto(producto)" title="Eliminar producto" class="border border-gray-400 p-2 focus:outline-none ml-1 rounded hover:text-red-700">
+              <button *ngIf="reserva?.estado === 'Pendiente'" (click)="eliminarProducto(producto)" title="Eliminar producto" class="border border-gray-400 p-2 focus:outline-none ml-1 rounded hover:text-red-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>

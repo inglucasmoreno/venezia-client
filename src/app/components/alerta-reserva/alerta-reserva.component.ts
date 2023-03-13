@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from '../../services/data.service';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-alerta-reserva',
@@ -16,6 +17,7 @@ export class AlertaReservaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    gsap.from('.gsap-alerta', { y:100, opacity: 0, duration: .2 });
   }
 
 }

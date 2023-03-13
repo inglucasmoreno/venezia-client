@@ -76,6 +76,19 @@ export class VentasHistorialComponent implements OnInit {
   
     // Listar ventas
     listarVentas(): void {
+
+      // Verificacion de fechas
+      
+      if(!this.filtro.fechaDesde || this.filtro.fechaDesde === ''){
+        this.alertService.info('Debe colocar una fecha de incio de busqueda');
+        return;
+      }
+
+      if(!this.filtro.fechaHasta || this.filtro.fechaHasta === ''){
+        this.alertService.info('Debe colocar una fecha de finalización de busqueda');
+        return;
+      }
+
       this.alertService.loading();
       this.ventasService.listarVentas( 
         this.ordenar.direccion,
@@ -217,7 +230,6 @@ export class VentasHistorialComponent implements OnInit {
     cambiarPagina(nroPagina): void {
       this.paginaActual = nroPagina;
       this.desde = (this.paginaActual - 1) * this.cantidadItems;
-      this.alertService.loading();
       this.listarVentas();
     }
   

@@ -42,7 +42,8 @@ export class ReservasComponent implements OnInit {
     activo: 'true',
     parametro: '',
     estado: 'Pendiente',
-    por_vencer: false
+    por_vencer: false,
+    fecha: ''
   }
 
   // Ordenar
@@ -104,7 +105,8 @@ export class ReservasComponent implements OnInit {
       this.filtro.parametro,
       this.filtro.activo,
       this.filtro.estado,
-      this.filtro.por_vencer
+      this.filtro.por_vencer,
+      this.filtro.fecha
     )
       .subscribe(({ reservas, totalItems }) => {
         this.reservas = reservas;

@@ -10,6 +10,7 @@ export class DataService {
   public ubicacionActual: string = 'Dashboard';  // Statebar - Direccion actual
   public showMenu: Boolean = true;               // Header - Controla la visualizacion de la barra de navegacion
   public showAlertaReserva: Boolean = false;
+  public showAlertaReservaBarra: Boolean = false;
   public cantidadReservasPorVencer: number = 0;
 
   constructor(
@@ -34,11 +35,17 @@ export class DataService {
         if(reservas.length > 0){
           this.cantidadReservasPorVencer = reservas.length;
           this.showAlertaReserva = true;
+          this.showAlertaReservaBarra = true;
         }else{
           this.showAlertaReserva = false;
+          this.showAlertaReservaBarra = false;
         }
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
+  }
+
+  cerrarAlertaReservas(): void {
+    this.showAlertaReserva = false;
   }
     
 }

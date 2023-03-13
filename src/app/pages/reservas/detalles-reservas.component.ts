@@ -56,6 +56,7 @@ export class DetallesReservasComponent implements OnInit {
   public showModalCliente = false;
   public showModalProductos = false;
   public showModalEditarProducto = false;
+  public showEditarObservacion = false;
   public estadoFormulario = 'crear';
 
   // Productos
@@ -71,6 +72,7 @@ export class DetallesReservasComponent implements OnInit {
 
   // Datos de reserva
   public idReserva = '';
+  public observaciones = '';
   public reserva: any = null;
   public faltaPagar = 0;
   public adelantoTMP = 0;
@@ -135,6 +137,7 @@ export class DetallesReservasComponent implements OnInit {
     this.reservasService.getReserva(this.idReserva).subscribe({
       next: ({ reserva, productos }) => {
         this.precio_total = reserva.precio_total;
+        this.precio_total_limpio = reserva.precio_total;
         this.reserva = reserva;
         this.clienteSeleccionado = reserva.cliente;
         this.horasAntesFija = reserva.horas_antes;
@@ -333,10 +336,13 @@ export class DetallesReservasComponent implements OnInit {
 
     this.alertService.loading();
 
+    // balanza - unidad_medida
+
     const dataProducto = {
       reserva: this.idReserva,
+      balanza: this.productoSeleccionado.balanza,
       descripcion: this.productoSeleccionado.descripcion,
-      unidad_medida_descripcion: this.productoSeleccionado.unidad_medida.descripcion,
+      unidad_medida: this.productoSeleccionado.unidad_medida.descripcion,
       producto: this.productoSeleccionado._id,
       precio: this.dataService.redondear(this.productoSeleccionado.precio * this.cantidad, 2),
       precio_unitario: this.productoSeleccionado.precio,
@@ -568,9 +574,16 @@ export class DetallesReservasComponent implements OnInit {
   }
 
   // Abrir modal - Completar venta
-  abrirCompletarReserva(): void {
+  abrirCompletarVenta(): void {
     this.proximo_nro_factura = null;
     this.showCompletarVenta = true;
+  }
+
+  // Abrir editar observaciones
+  abrirEditarObservacion(): void {
+    this.observaciones = this.dataReserva.observaciones;
+    console.log(this.dataReserva.observaciones);
+    this.showEditarObservacion = true;
   }
 
   // Cerrar actualizar alerta
@@ -695,7 +708,7 @@ export class DetallesReservasComponent implements OnInit {
   calcularPrecio(): void {
 
     let precioTMP = 0;
-    this.productos.map(producto => {
+    this.carro.map(producto => {
       precioTMP += producto.precio;
     })
 
@@ -738,6 +751,9 @@ export class DetallesReservasComponent implements OnInit {
 
   // Agregar forma de pago
   agregarFormaPago(): void {
+
+    console.log(this.diferenciaPago);
+
 
     // Verificacion de valores ingresados
     if (!this.formaPagoMonto || this.formaPagoMonto <= 0) {
@@ -808,7 +824,7 @@ export class DetallesReservasComponent implements OnInit {
           else if (this.multiples_formasPago) forma_pago = this.formasPago;
 
           const data = {
-            productos: this.productos,
+            productos: this.carro,
             precio_total: this.precio_total,
             precio_total_limpio: this.precio_total_limpio,
             comprobante: this.comprobante,
@@ -818,14 +834,15 @@ export class DetallesReservasComponent implements OnInit {
             creatorUser: this.authService.usuario.userId,
             updatorUser: this.authService.usuario.userId,
           };
+
           this.ventasService.nuevaVenta(data).subscribe({
             next: ({ venta }) => {
 
-              this.productoActual = null;
+              this.productoSeleccionado = null;
               this.precio_total = 0;
               this.precio_total_limpio = 0;
               this.comprobante = 'Normal',
-                this.productos = [];
+              this.productos = [];
               this.pagaCon = null;
               this.formaPago = 'Efectivo';
               this.vuelto = 0;
@@ -833,18 +850,28 @@ export class DetallesReservasComponent implements OnInit {
 
               this.metodoPagoUnico();
 
-              // Imprimir comprobante
-              if (this.imprimir) {
-                this.ventasService.getComprobante(venta._id).subscribe({
-                  next: () => {
-                    window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
-                    this.alertService.success('Venta completada');
-                  }, error: (error) => this.alertService.errorApi(error.message)
-                })
-              } else {
-                this.alertService.success('Venta completada');
-              }
+              // Completando reserva
+              this.reservasService.actualizarReserva(this.idReserva, { estado: 'Completada' }).subscribe({
+                next: () => {
 
+                  this.reserva.estado = 'Completada';
+
+                  // Imprimir comprobante
+                  if (this.imprimir) {
+                    this.ventasService.getComprobante(venta._id).subscribe({
+                      next: () => {
+                        window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
+                        this.alertService.success('Venta completada');
+                      }, error: (error) => this.alertService.errorApi(error.message)
+                    })
+                  } else {
+                    this.alertService.success('Venta completada');
+                  }
+
+                  this.showCompletarVenta = false;
+
+                }, error: ({ error }) => this.alertService.errorApi(error.message)
+              })
             },
             error: ({ error }) => this.alertService.errorApi(error.message)
           });
@@ -899,6 +926,50 @@ export class DetallesReservasComponent implements OnInit {
     this.formasPago = [];
   }
 
+  // No se retiro la reserva
+  sinRetirar(): void {
+    this.alertService.question({ msg: '¿Quieres marcar la reserva como no recibida?', buttonText: 'Aceptar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.reservasService.actualizarReserva(this.idReserva, { estado: 'No retirada' }).subscribe({
+            next: () => {
+              this.reserva.estado = 'No retirada';
+              this.showCompletarVenta = false;
+              this.alertService.close();
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
+  }
 
+  // Recuperar la reserva
+  recuperarReserva(): void {
+    this.alertService.question({ msg: '¿Quieres recuperar la reserva?', buttonText: 'Recuperar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.reservasService.actualizarReserva(this.idReserva, { estado: 'Pendiente' }).subscribe({
+            next: () => {
+              this.reserva.estado = 'Pendiente';
+              this.showCompletarVenta = false;
+              this.alertService.close();
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
+  }
+
+  // Actualizar observacion
+  actualizarObservacion(): void {
+    this.alertService.loading();
+    this.reservasService.actualizarReserva(this.idReserva, { observaciones: this.observaciones }).subscribe({
+      next: () => {
+        this.dataReserva.observaciones = this.observaciones.toUpperCase().trim();
+        this.showEditarObservacion = false;
+        this.alertService.close();
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })
+  }
 
 }

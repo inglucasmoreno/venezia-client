@@ -14,7 +14,7 @@
     </div>
     <div class="p-2">
       <p class="font-semibold"> {{ productoSeleccionadoEdicion?.descripcion }} </p>
-      <p class="text-xs text-gray-500"> ${{ productoSeleccionadoEdicion?.precio_unitario | moneda }} x {{ productoSeleccionadoEdicion?.unidad_medida_descripcion }} </p>
+      <p class="text-xs text-gray-500"> ${{ productoSeleccionadoEdicion?.precio_unitario | moneda }} x {{ productoSeleccionadoEdicion?.unidad_medida }} </p>
       <div class="flex items-center text-sm mt-2">
         <input (keyup.enter)="actualizarProducto()" [(ngModel)]="cantidad" type="number" class="p-2 w-40 rounded border focus:outline-none border-gray-400 shadow" placeholder="Cantidad">
         <button (click)="actualizarProducto()" title="Actualizar producto" class="p-2 rounded focus:outline-none bg-green-700 ml-2 text-white">
@@ -206,7 +206,7 @@
 
 <!-- Paginar principal -->
 <div class="gsap-contenido">
-  <div class="max-w-3xl mx-auto mt-4 mb-4 border border-gray-400">
+  <div class="max-w-3xl w-11/12 mx-auto mt-4 mb-4 border border-gray-400">
     
     <div class="bg-primary-800 p-2 text-white flex items-center justify-between">
       <div class="flex items-center">
@@ -257,10 +257,10 @@
           <div class="border border-gray-400 shadow w-max">
             <div class="border-l-8 border-secondaryColor p-2 pr-4 flex items-center">
               <div>
-                <img src="assets/img/cliente.svg" class="w-24" alt="Imagen de cliente">
+                <img src="assets/img/cliente.svg" class="w-20 md:w-24" alt="Imagen de cliente">
               </div>
               <div class="ml-2">
-                <p class="font-semibold"> {{ clienteSeleccionado.descripcion }} </p>
+                <p class="font-semibold text-xs md:text-sm"> {{ clienteSeleccionado.descripcion }} </p>
                 <p class="text-gray-500 text-xs"> {{ clienteSeleccionado.tipo_identificacion }} {{ clienteSeleccionado.identificacion }} </p>
                 <div class="flex items-center">
                   <button (click)="cambiarCliente()" title="Cambiar cliente" class="text-xs flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor"> 
@@ -280,8 +280,16 @@
         </div>
       </div>
 
-      <!-- Datos de productos -->
+      <!-- Observaciones -->
       <div class="mt-4">
+        <div class="px-2 py-4 bg-gray-100 border border-gray-400">
+          <h2 class="font-semibold"> Observaciones </h2>
+        </div>   
+        <textarea [(ngModel)]="dataReserva.observaciones" placeholder="Puedes colocar una observación aquí" class="border mt-2 border-gray-400 w-full p-2 focus:outline-none"></textarea>     
+      </div> 
+
+      <!-- Datos de productos -->
+      <div class="mt-2">
         <div class="p-2 flex items-center justify-between bg-gray-100 border border-gray-400">
           <h2 class="font-semibold"> Datos de productos </h2>
           <button title="Nuevo producto" (click)="abrirProductos()" class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
@@ -300,7 +308,7 @@
           <div *ngFor="let producto of carro" class="border flex items-center justify-between border-gray-400 shadow p-2 mb-2">
             <div>
               <p class="font-semibold"> {{ producto.descripcion }} </p>
-              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida_descripcion }} </p>
+              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida }} </p>
               <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
               <p class="font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
             </div>

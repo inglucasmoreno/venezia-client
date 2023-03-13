@@ -48,15 +48,13 @@ export class HeaderComponent implements OnInit {
     this.consultarReservas = interval(this.TIEMPO_CONSULTA);
 
     this.consultarReservasSubscription = this.consultarReservas.subscribe( () => {
-      this.consultarReservas;
+      this.dataService.alertaReservas();
     })
   
   }
   
   // Habilitacion de navegacion
   habilitacionNavegacion(): void {}
-
-  
 
   // Metodo: Cerrar sesion
   logout(): void{ 

@@ -219,6 +219,9 @@ export class NuevaReservaComponent implements OnInit {
 
   // Abrir modal - Completar reserva
   abrirCompletarReserva(): void {
+    this.dataReserva.horas_antes = '3';
+    this.dataReserva.fecha_entrega = '';
+    this.dataReserva.hora_entrega = '';
     this.dataReserva.adelanto = this.dataReserva.precio_total * 0.5;
     this.calcularFaltaPagar();
     this.showModalCompletando = true;
@@ -263,7 +266,8 @@ export class NuevaReservaComponent implements OnInit {
 
     const dataProducto = {
       descripcion: this.productoSeleccionado.descripcion,
-      unidad_medida_descripcion: this.productoSeleccionado.unidad_medida.descripcion,
+      balanza: this.productoSeleccionado.balanza,
+      unidad_medida: this.productoSeleccionado.unidad_medida.descripcion,
       producto: this.productoSeleccionado._id,
       precio: this.dataService.redondear(this.productoSeleccionado.precio * this.cantidad, 2),
       precio_unitario: this.productoSeleccionado.precio,
