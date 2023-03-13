@@ -1,5 +1,5 @@
 
-    <div *ngIf="dataService.showAlertaReserva && authService.usuario.role !== 'DELIVERY_ROLE'">
+    <div *ngIf="dataService.showAlertaReserva && authService.usuario.role !== 'DELIVERY_ROLE' && permisos.all">
         <div name="custom" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut" class="z-10 bg-white md:flex hidden rounded shadow-lg items-center right-10 bottom-10 border-2 border-red-700 text-center fixed w-45 h-25">
             <div class="border-l-8 border-red-700">
                 <div class="text-center flex items-center text-sm px-4 py-2">

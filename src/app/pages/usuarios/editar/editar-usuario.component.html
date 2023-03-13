@@ -78,6 +78,17 @@
                 </select>  
             </div>   
         </div>
+        <div class="flex items-center text-sm p-2">
+            <div class="w-1/2">
+                <p class="font-semibold"> Reservas </p>
+                <select [(ngModel)]="permisos.reservas" class="border rounded border-gray-300 focus:outline-none mt-2 shadow p-2 w-full">
+                    <option value="RESERVAS_NOT_ACCESS"> Sin acceso </option>
+                    <option value="RESERVAS_ALL"> Permiso total </option>
+                    <option value="RESERVAS_READ"> Solo lectura </option>
+                </select>  
+            </div>
+            <div class="w-1/2 ml-4"></div>   
+        </div>
     </div>
     <div class="p-2">
         <button (click)="showModal = false" class="p-2 bg-secondaryColor focus:outline-none text-white w-full rounded shadow"> Regresar </button>

@@ -30,6 +30,15 @@ export class ReservasService {
     });
   };
 
+  // Generar comprobante
+  generarComprobante(data: any): Observable<any> {
+    return this.http.post(`${base_url}/reservas/comprobante`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
   // Listar reservas
   listarReservas(
     direccion: number = 1,

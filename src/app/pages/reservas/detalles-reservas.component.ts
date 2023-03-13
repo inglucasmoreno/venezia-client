@@ -22,6 +22,9 @@ const base_url = environment.base_url;
 })
 export class DetallesReservasComponent implements OnInit {
 
+  // Permisos de usuarios login
+  public permisos = { all: false };
+
   // Venta
   public showCompletarVenta = false;
   public precio_total: number = null;
@@ -119,9 +122,15 @@ export class DetallesReservasComponent implements OnInit {
 
   ngOnInit(): void {
     this.alertService.loading();
+    this.permisos.all = this.permisosUsuarioLogin();
     gsap.from('.gsap-contenido', { y: 100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = 'Dashboard - Nueva reserva';
     this.inicializacion();
+  }
+
+  // Asignar permisos de usuario login
+  permisosUsuarioLogin(): boolean {
+    return this.authService.usuario.permisos.includes('RESERVAS_ALL') || this.authService.usuario.role === 'ADMIN_ROLE';
   }
 
   // Obteniendo valores iniciales
@@ -970,6 +979,36 @@ export class DetallesReservasComponent implements OnInit {
         this.alertService.close();
       }, error: ({error}) => this.alertService.errorApi(error.message)
     })
+  }
+
+  // Imprimir comprobante
+  imprimirComprobante(): void {
+    this.alertService.question({ msg: '¿Quieres generar el comprobante?', buttonText: 'Generar' })
+    .then(({ isConfirmed }) => {
+      if (isConfirmed) {
+        this.alertService.loading();
+
+        const data = {
+          nro_reserva: this.reserva.nro,
+          fecha_reserva: this.dataReserva.fecha_reserva,
+          fecha_entrega: this.dataReserva.fecha_entrega,
+          hora_entrega: this.dataReserva.hora_entrega,
+          cliente: this.clienteSeleccionado.descripcion,
+          precio_total: this.dataReserva.precio_total,
+          adelanto: this.dataReserva.adelanto,
+          productos: this.carro
+        }
+
+        console.log(data);
+
+        this.reservasService.generarComprobante(data).subscribe({
+          next: () => {
+            window.open(`${base_url}/pdf/comprobante_reserva.pdf`, '_blank');
+            this.alertService.close();
+          }, error: ({error}) => this.alertService.errorApi(error.message)
+        })
+      }
+    });
   }
 
 }

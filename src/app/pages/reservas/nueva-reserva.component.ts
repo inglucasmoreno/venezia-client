@@ -7,6 +7,9 @@ import { DataService } from 'src/app/services/data.service';
 import { ReservasService } from 'src/app/services/reservas.service';
 import gsap from 'gsap';
 import { ProductosService } from 'src/app/services/productos.service';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Component({
   selector: 'app-nueva-reserva',
@@ -15,6 +18,7 @@ import { ProductosService } from 'src/app/services/productos.service';
   ]
 })
 export class NuevaReservaComponent implements OnInit {
+
 
   // Flags
   public showModalCompletando = false;
@@ -36,6 +40,7 @@ export class NuevaReservaComponent implements OnInit {
 
   // Datos de reserva
   public faltaPagar = 0;
+  public fechaMuestra = '';
   public dataReserva = {
     cliente: '',
     fecha_reserva: format(new Date(), 'yyyy-MM-dd'),
@@ -75,7 +80,7 @@ export class NuevaReservaComponent implements OnInit {
 
   ngOnInit(): void {
     gsap.from('.gsap-contenido', { y: 100, opacity: 0, duration: .2 });
-    this.dataService.ubicacionActual = 'Dashboard - Nueva reserva'
+    this.dataService.ubicacionActual = 'Dashboard - Nueva reserva';
   }
 
   // Buscar cliente
@@ -219,6 +224,7 @@ export class NuevaReservaComponent implements OnInit {
 
   // Abrir modal - Completar reserva
   abrirCompletarReserva(): void {
+    this.fechaMuestra = format(add(new Date(this.dataReserva.fecha_reserva),{hours: 3}),'dd/MM/yyyy');
     this.dataReserva.horas_antes = '3';
     this.dataReserva.fecha_entrega = '';
     this.dataReserva.hora_entrega = '';
@@ -422,15 +428,17 @@ export class NuevaReservaComponent implements OnInit {
 
           let data = {
             ...this.dataReserva,
+            cliente_descripcion: this.clienteSeleccionado.descripcion,
             creatorUser: this.authService.usuario.userId,
             updatorUser: this.authService.usuario.userId,
           }
           
           this.reservasService.nuevaReserva(data).subscribe({
             next: () => {
-              this.showModalCompletando = false;
+              window.open(`${base_url}/pdf/comprobante_reserva.pdf`, '_blank');
               this.reiniciarReserva();
               this.dataService.alertaReservas();
+              this.showModalCompletando = false;
               this.alertService.success('Reserva generada correctamente');
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })

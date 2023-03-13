@@ -26,6 +26,7 @@ export class NuevoUsuarioComponent implements OnInit {
     pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
     mayoristas: 'MAYORISTAS_NOT_ACCESS',
     cajas: 'CAJAS_NOT_ACCESS',
+    reservas: 'RESERVAS_NOT_ACCESS',
   };
 
   // Modals
@@ -131,6 +132,7 @@ export class NuevoUsuarioComponent implements OnInit {
         pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
         mayoristas: 'MAYORISTAS_NOT_ACCESS',
         cajas: 'CAJAS_ALL',
+        reservas: 'RESERVAS_ALL',
       }
     }
 
@@ -144,6 +146,7 @@ export class NuevoUsuarioComponent implements OnInit {
         pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
         mayoristas: 'MAYORISTAS_ALL',
         cajas: 'CAJAS_NOT_ACCESS',
+        reservas: 'RESERVAS_NOT_ACCESS'
       }
     }
 
@@ -200,6 +203,12 @@ export class NuevoUsuarioComponent implements OnInit {
     if (this.permisos.cajas !== 'CAJAS_NOT_ACCESS') {
       permisos.push('CAJAS_NAV');
       permisos.push(this.permisos.cajas);
+    }
+
+    // Seccion reservas
+    if (this.permisos.reservas !== 'RESERVAS_NOT_ACCESS') {
+      permisos.push('RESERVAS_NAV');
+      permisos.push(this.permisos.reservas);
     }
 
     return permisos;
