@@ -17,6 +17,7 @@ import { MayoristasTiposIngresosService } from 'src/app/services/mayoristas-tipo
 import { CobrosMayoristasService } from 'src/app/services/cobros-mayoristas.service';
 import { CobrosPedidosService } from 'src/app/services/cobros-pedidos.service';
 import { environment } from 'src/environments/environment';
+import { UsuariosService } from 'src/app/services/usuarios.service';
 
 const base_url = environment.base_url;
 
@@ -38,9 +39,13 @@ export class PaquetesDetallesComponent implements OnInit {
   public mostrarCobros: boolean = false;
   public mostrarCobrosExternos: boolean = false;
 
+  // Repartidores
+  public repartidores: any[] = [];
+  public repartidor: string = '';
+  
   // Fecha de paquete
   public fecha = format(new Date(), 'yyyy-MM-dd');
-
+  
   // Modal
   public showModalNuevoProducto: boolean = false;
   public showModalNuevoPedido: boolean = false;
@@ -50,6 +55,7 @@ export class PaquetesDetallesComponent implements OnInit {
   public showModalNuevoIngreso: boolean = false;
   public showModalNuevoCobro: boolean = false;
   public showModalDetallesCobro: boolean = false;
+  public showModalActualizarRepartidor: boolean = false;
 
   // Gastos
   public gastos: any[] = [];
@@ -129,6 +135,7 @@ export class PaquetesDetallesComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
+    private usuarioService: UsuariosService,
     private mayoristasService: MayoristasService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -187,6 +194,7 @@ export class PaquetesDetallesComponent implements OnInit {
         this.gastos = gastos;
         this.cobros_externos = cobros_externos;
         this.fecha = format(new Date(paquete.fecha_paquete), 'yyyy-MM-dd');
+        this.repartidor = paquete.repartidor._id;
 
         // Listado de pedidos
         this.pedidosService.listarVentas(
@@ -229,6 +237,7 @@ export class PaquetesDetallesComponent implements OnInit {
             }
 
             this.showModalNuevoPedido = false;
+            this.showModalActualizarRepartidor = false;
 
             if (this.inicio) {
               this.mayoristasService.listarMayoristas().subscribe({
@@ -1215,6 +1224,28 @@ export class PaquetesDetallesComponent implements OnInit {
           })
         }
       }); 
+  }
+
+  // Abrir actualizar repartidor
+  abrirActualizarRepartidor(): void {
+    this.alertService.loading();
+    this.usuarioService.listarUsuarios().subscribe({
+      next: ({usuarios}) => {
+        this.repartidores = usuarios.filter( usuario => usuario.role === 'DELIVERY_ROLE' );
+        this.showModalActualizarRepartidor = true;
+        this.alertService.close();
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })
+  }
+
+  // Actualizar repartidor
+  actualizarRepartidor(): void {
+    this.alertService.loading();
+    this.paquetesService.actualizarRepartidor(this.idPaquete, { repartidor: this.repartidor }).subscribe({
+      next: () => {
+        this.getPaquete();
+      }, error: ({error}) => this.alertService.errorApi(error.message)
+    })
   }
 
   ordenarProductos(): void {

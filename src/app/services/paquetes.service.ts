@@ -123,6 +123,15 @@ export class PaquetesService {
     });
   }
 
+  // Actualizar repartidor
+  actualizarRepartidor(id: string, data: any): Observable<any> {
+    return this.http.put(`${base_url}/paquetes/actualizar/repartidor/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
   // Eliminar paquete
   eliminarPaquete(id: string): Observable<any> {
     return this.http.delete(`${base_url}/paquetes/${id}`, {
@@ -148,7 +157,7 @@ export class PaquetesService {
         'Authorization': localStorage.getItem('token')
       }
     });
-  } 
+  }
 
 
 

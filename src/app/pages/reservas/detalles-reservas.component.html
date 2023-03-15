@@ -33,8 +33,8 @@
     </div>
     <div class="px-4">
       <div class="flex items-center justify-between p-1">
-        <p class=""> <span class="font-semibold"> Fecha: </span> {{ reserva?.fecha_reserva | fecha }} </p>
-        <p class="w-max p-2"> <span class="font-semibold"> Precio total: </span> ${{ reserva?.precio_total | moneda }} </p>
+        <p class=""> <span class="font-semibold"> Fecha: </span> {{ fechaVenta }} </p>
+        <p class="w-max p-2"> <span class="font-semibold"> Precio total: </span> ${{ dataReserva.precio_total | moneda }} </p>
       </div>
     </div>
   </div>
@@ -262,7 +262,10 @@
   </div>
   <div *ngIf="productoSeleccionado" class="text-sm p-2">
     <p class="font-semibold"> {{ productoSeleccionado?.descripcion }} </p>
-    <p class="text-gray-500 text-xs"> ${{ productoSeleccionado?.precio | moneda }} x {{ productoSeleccionado?.unidad_medida.descripcion }} </p>
+    <div class="text-gray-500 mt-1 text-sm"> 
+      <input type="number" placeholder="Precio" [(ngModel)]="precio" class="border w-28 border-gray-400 p-2 rounded focus:outline-none"> x {{ productoSeleccionado?.unidad_medida.descripcion }} 
+    </div>
+    <!-- <p class="text-gray-500 text-xs"> ${{ productoSeleccionado?.precio | moneda }} x {{ productoSeleccionado?.unidad_medida.descripcion }} </p> -->
     <div class="mt-2 flex items-center">
       <input (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" class="border border-gray-400 p-2 rounded focus:outline-none" placeholder="Cantidad" type="number">
       <button (click)="agregarProducto()" title="Agregar producto" class="p-2 border bg-green-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
@@ -404,7 +407,7 @@
       <div class="flex items-center">
         <app-boton-regresar routerLink="/dashboard/reservas"></app-boton-regresar>
         <div class="ml-1">
-          <h1 class="text-xl"> Detalles de reserva </h1>
+          <h1 class="md:text-xl"> Detalles de reserva <span class="text-lg"> - Nro {{ reserva?.nro }} </span> </h1>
           <!-- Reserva pendiente -->
           <p *ngIf="reserva?.estado === 'Pendiente'" class="p-1 rounded text-xs font-semibold text-yellow-700 border border-yellow-400 bg-yellow-100 w-max"> Pendiente </p>
           <p *ngIf="reserva?.estado === 'No retirada'" class="p-1 rounded text-xs font-semibold text-red-700 border border-red-400 bg-red-100 w-max"> No retirada </p>

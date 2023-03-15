@@ -26,6 +26,7 @@ export class DetallesReservasComponent implements OnInit {
   public permisos = { all: false };
 
   // Venta
+  public fechaVenta = format(new Date(),'dd/MM/yyyy');
   public showCompletarVenta = false;
   public precio_total: number = null;
   public precio_total_limpio: number = 0;
@@ -63,6 +64,7 @@ export class DetallesReservasComponent implements OnInit {
   public estadoFormulario = 'crear';
 
   // Productos
+  public precio: number = 0;
   public productos: any = [];
   public productoSeleccionado: any = null;
   public productoSeleccionadoEdicion: any = null;
@@ -322,6 +324,7 @@ export class DetallesReservasComponent implements OnInit {
 
   // Seleccionar producto
   seleccionarProducto(producto: any): void {
+    this.precio = producto.precio;
     this.cantidad = null;
     this.productoSeleccionado = producto;
   }
@@ -331,6 +334,11 @@ export class DetallesReservasComponent implements OnInit {
 
     // Se verifica si el producto esta cargado en el carro
     let repetido = this.carro.find(producto => producto.producto === this.productoSeleccionado._id)
+
+    if (!this.precio || this.precio < 0) {
+      this.alertService.info('Debe colocar un precio válido');
+      return;
+    }
 
     if (repetido) {
       this.alertService.info('El producto ya se encuentra cargado');
@@ -353,17 +361,20 @@ export class DetallesReservasComponent implements OnInit {
       descripcion: this.productoSeleccionado.descripcion,
       unidad_medida: this.productoSeleccionado.unidad_medida.descripcion,
       producto: this.productoSeleccionado._id,
-      precio: this.dataService.redondear(this.productoSeleccionado.precio * this.cantidad, 2),
-      precio_unitario: this.productoSeleccionado.precio,
+      // precio: this.dataService.redondear(this.productoSeleccionado.precio * this.cantidad, 2),
+      precio: this.dataService.redondear(this.precio * this.cantidad, 2),
+      // precio_unitario: this.productoSeleccionado.precio,
+      precio_unitario: this.precio,
       cantidad: this.cantidad,
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
     }
 
-    this.carro.push(dataProducto);
+    // this.carro.push(dataProducto);
 
     this.reservasProductosService.nuevoProducto(dataProducto).subscribe({
-      next: () => {
+      next: ({producto}) => {
+        this.carro.push(producto);
         this.productoSeleccionado = null;
         this.cantidad = null;
         this.calcularPrecioTotal();
@@ -455,6 +466,7 @@ export class DetallesReservasComponent implements OnInit {
     });
 
     this.dataReserva.precio_total = precioTotalTMP;
+    this.precio_total = precioTotalTMP; // Para la venta
 
     this.reservasService.actualizarReserva(this.idReserva, { precio_total: this.dataReserva.precio_total }).subscribe({
       next: () => {
@@ -584,6 +596,8 @@ export class DetallesReservasComponent implements OnInit {
 
   // Abrir modal - Completar venta
   abrirCompletarVenta(): void {
+    this.pagaCon = null;
+    this.vuelto = null;
     this.proximo_nro_factura = null;
     this.showCompletarVenta = true;
   }

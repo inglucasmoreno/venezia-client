@@ -56,7 +56,11 @@
   </div>
   <div *ngIf="productoSeleccionado" class="text-sm p-2">
     <p class="font-semibold"> {{ productoSeleccionado?.descripcion }} </p>
-    <p class="text-gray-500 text-xs"> ${{ productoSeleccionado?.precio | moneda }} x {{ productoSeleccionado?.unidad_medida.descripcion }} </p>
+    <div class="text-gray-500 mt-1 text-sm"> 
+      <input type="number" placeholder="Precio" [(ngModel)]="precio" class="border w-28 border-gray-400 p-2 rounded focus:outline-none"> x {{ productoSeleccionado?.unidad_medida.descripcion }} 
+    </div>
+
+    <!-- <p class="text-gray-500 text-xs"> ${{ productoSeleccionado?.precio | moneda }} x {{ productoSeleccionado?.unidad_medida.descripcion }} </p> -->
     <div class="mt-2 flex items-center">
       <input (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" class="border border-gray-400 p-2 rounded focus:outline-none" placeholder="Cantidad" type="number">
       <button (click)="agregarProducto()" title="Agregar producto" class="p-2 border bg-green-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
@@ -164,7 +168,7 @@
         <div class="text-center">
           <p class="font-semibold"> Fecha y hora de entrega </p>
           <div class="flex items-center">
-            <input [(ngModel)]="dataReserva.fecha_entrega" onkeydown="return false" [min]="dataReserva.fecha_reserva" type="date" class="border mt-2 w-1/2 focus:outline-none border-gray-400 p-2">
+            <input [(ngModel)]="dataReserva.fecha_entrega" type="date" [min]="dataReserva.fecha_reserva" class="border mt-2 w-1/2 focus:outline-none border-gray-400 p-2">
             <input [(ngModel)]="dataReserva.hora_entrega" type="time" class="border ml-3 w-1/2 mt-2 focus:outline-none border-gray-400 p-2">
           </div>
         </div>

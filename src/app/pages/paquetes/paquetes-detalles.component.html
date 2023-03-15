@@ -1,3 +1,23 @@
+<!-- Modal: Actualizar repartidor -->
+<app-modal-small [showModal]="showModalActualizarRepartidor">
+  <div class="text-white bg-primary-800 flex items-center justify-between p-2 rounded-t">
+    <h1> Actualizando repartidor </h1>
+    <button (click)="showModalActualizarRepartidor = false" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>               
+    </button> 
+  </div>
+  <div class="p-2">
+    <select [(ngModel)]="repartidor" class="w-full p-2 text-sm border border-gray-400 focus:outline-none rounded">
+      <option *ngFor="let repartidor of repartidores" [value]="repartidor._id"> {{ repartidor.apellido }} {{ repartidor.nombre }} </option>
+    </select>
+    <button (click)="actualizarRepartidor()" class="mt-2 p-2 bg-secondaryColor shadow text-white w-full text-center rounded focus:outline-none">
+      Actualizar
+    </button>
+  </div>
+</app-modal-small>
+
 <!-- Modal: Detalles de cobro -->
 <app-modal [showModal]="showModalDetallesCobro">
   
@@ -459,9 +479,19 @@
             <p class="mt-2">
               <span class="font-semibold"> Fecha de paquete: </span> <input onkeydown="return false" [disabled]="authService.usuario.role === 'DELIVERY_ROLE'" (change)="actualizarFecha()" class="border focus:outline-none border-gray-400 p-1" type="date" [(ngModel)]="fecha">
             </p>
-            <p class="mt-2">
-              <span class="font-semibold"> Repartidor: </span> {{ paquete?.repartidor.apellido }} {{ paquete?.repartidor.nombre }}
-            </p>
+            <div class="mt-2 flex items-center">
+              <span class="font-semibold"> 
+                Repartidor: 
+              </span> 
+              <div class="flex ml-1 items-center">
+                {{ paquete?.repartidor.apellido }} {{ paquete?.repartidor.nombre }} 
+                <button *ngIf="authService.usuario.role !== 'DELIVERY_ROLE' && (paquete?.estado === 'Pendiente' || paquete?.estado === 'Enviado')" title="Actualizar repartidor" (click)="abrirActualizarRepartidor()" class="hover:text-secondaryColor ml-2 focus:outline-none border border-gray-400 p-1 rounded">  
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>               
+                </button>
+              </div>
+            </div>
             <p class="mt-3">
               <span class="font-semibold"> Precio total: </span> ${{ paquete?.precio_total | moneda }}
             </p>

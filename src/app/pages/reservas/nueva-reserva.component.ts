@@ -28,6 +28,7 @@ export class NuevaReservaComponent implements OnInit {
   public estadoFormulario = 'crear';
 
   // Productos
+  public precio: number = 0;
   public productos: any = [];
   public productoSeleccionado: any = null;
   public productoSeleccionadoEdicion: any = null;
@@ -249,6 +250,7 @@ export class NuevaReservaComponent implements OnInit {
 
   // Seleccionar producto
   seleccionarProducto(producto: any): void {
+    this.precio = producto.precio;
     this.cantidad = null;
     this.productoSeleccionado = producto;
   }
@@ -258,6 +260,11 @@ export class NuevaReservaComponent implements OnInit {
 
     // Se verifica si el producto esta cargado en el carro
     let repetido = this.carro.find(producto => producto.producto === this.productoSeleccionado._id)
+
+    if (!this.precio || this.precio < 0) {
+      this.alertService.info('Debe colocar un precio válido');
+      return;
+    }
 
     if (repetido) {
       this.alertService.info('El producto ya se encuentra cargado');
@@ -275,8 +282,10 @@ export class NuevaReservaComponent implements OnInit {
       balanza: this.productoSeleccionado.balanza,
       unidad_medida: this.productoSeleccionado.unidad_medida.descripcion,
       producto: this.productoSeleccionado._id,
-      precio: this.dataService.redondear(this.productoSeleccionado.precio * this.cantidad, 2),
-      precio_unitario: this.productoSeleccionado.precio,
+      // precio: this.dataService.redondear(this.productoSeleccionado.precio * this.cantidad, 2),
+      precio: this.dataService.redondear(this.precio * this.cantidad, 2),
+      // precio_unitario: this.productoSeleccionado.precio,
+      precio_unitario: this.precio,
       cantidad: this.cantidad,
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
@@ -415,10 +424,11 @@ export class NuevaReservaComponent implements OnInit {
 
           // Adaptando fecha de entrega
           let fechaEntregaCompleta = this.dataReserva.fecha_entrega + ':' + this.dataReserva.hora_entrega;
-          this.dataReserva.fecha_entrega = fechaEntregaCompleta;
+          // this.dataReserva.fecha_entrega = fechaEntregaCompleta;
 
           // Adaptando fecha de alerta
-          this.dataReserva.fecha_alerta = format(add(new Date(fechaEntregaCompleta), {hours: -Number(this.dataReserva.horas_antes)}),'yyyy-MM-dd:HH:mm');      
+          this.dataReserva.fecha_alerta = format(add(new Date(fechaEntregaCompleta), {hours: -Number(this.dataReserva.horas_antes)}),'yyyy-MM-dd:HH:mm'); 
+          console.log(this.dataReserva.fecha_alerta);     
 
           // Agregando datos de cliente
           this.dataReserva.cliente = this.clienteSeleccionado._id;
