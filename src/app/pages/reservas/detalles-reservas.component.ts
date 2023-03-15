@@ -91,7 +91,8 @@ export class DetallesReservasComponent implements OnInit {
     precio_total: 0,
     productos: [],
     adelanto: 0,
-    observaciones: ''
+    observaciones: '',
+    falta_pagar: 0
   }
 
   // Datos de cliente
@@ -162,7 +163,8 @@ export class DetallesReservasComponent implements OnInit {
           precio_total: reserva.precio_total,
           productos: productos,
           adelanto: reserva.adelanto,
-          observaciones: reserva.observaciones
+          observaciones: reserva.observaciones,
+          falta_pagar: this.dataService.redondear(reserva.precio_total - reserva.adelanto, 2)
         }
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -468,6 +470,8 @@ export class DetallesReservasComponent implements OnInit {
     this.dataReserva.precio_total = precioTotalTMP;
     this.precio_total = precioTotalTMP; // Para la venta
 
+    this.dataReserva.falta_pagar = this.precio_total - this.dataReserva.adelanto;
+
     this.reservasService.actualizarReserva(this.idReserva, { precio_total: this.dataReserva.precio_total }).subscribe({
       next: () => {
         this.alertService.close();
@@ -576,7 +580,8 @@ export class DetallesReservasComponent implements OnInit {
       precio_total: 0,
       productos: [],
       adelanto: 0,
-      observaciones: ''
+      observaciones: '',
+      falta_pagar: 0
     }
   }
 
@@ -596,16 +601,20 @@ export class DetallesReservasComponent implements OnInit {
 
   // Abrir modal - Completar venta
   abrirCompletarVenta(): void {
-    this.pagaCon = null;
     this.vuelto = null;
+    this.pagaCon = null;
+    this.comprobante = 'Normal';
+    this.precio_total = this.dataReserva.falta_pagar;
+    this.precio_total_limpio = this.dataReserva.falta_pagar;
+    this.metodoPagoUnico()
     this.proximo_nro_factura = null;
     this.showCompletarVenta = true;
+    this.showModalCompletando = false;
   }
 
   // Abrir editar observaciones
   abrirEditarObservacion(): void {
     this.observaciones = this.dataReserva.observaciones;
-    console.log(this.dataReserva.observaciones);
     this.showEditarObservacion = true;
   }
 
@@ -712,8 +721,6 @@ export class DetallesReservasComponent implements OnInit {
   // Calcular vuelto
   calcularVuelto(): void {
     this.vuelto = this.pagaCon - this.precio_total;
-    localStorage.setItem('vuelto', JSON.stringify(this.vuelto));
-    localStorage.setItem('pagaCon', JSON.stringify(this.pagaCon));
   }
 
   // Seleccionando forma de pago
@@ -730,21 +737,22 @@ export class DetallesReservasComponent implements OnInit {
   // Calcular precio de venta
   calcularPrecio(): void {
 
-    let precioTMP = 0;
-    this.carro.map(producto => {
-      precioTMP += producto.precio;
-    })
+    // let precioTMP = 0;
+    // this.carro.map(producto => {
+    //   precioTMP += producto.precio;
+    // })
 
     // Precio sin adicionales ni descuentos
-    this.precio_total_limpio = this.dataService.redondear(precioTMP, 2);
+    // this.precio_total_limpio = this.dataService.redondear(precioTMP, 2);
 
     if (this.formasPago.length === 0) { // Forma de pago unica
       // Con adicional por credito => precio total + 10% : Sin adicional por credito
       this.formaPago === 'Crédito'
-        ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2)
-        : this.precio_total = this.dataService.redondear(precioTMP, 2);
-    } else {
-    }
+        ? this.precio_total = this.dataService.redondear(this.precio_total * 1.10, 2)
+        : this.precio_total = this.dataService.redondear(this.precio_total_limpio, 2);
+    } else {}
+
+    this.calcularVuelto();
 
   }
 
@@ -774,9 +782,6 @@ export class DetallesReservasComponent implements OnInit {
 
   // Agregar forma de pago
   agregarFormaPago(): void {
-
-    console.log(this.diferenciaPago);
-
 
     // Verificacion de valores ingresados
     if (!this.formaPagoMonto || this.formaPagoMonto <= 0) {
@@ -1012,8 +1017,6 @@ export class DetallesReservasComponent implements OnInit {
           adelanto: this.dataReserva.adelanto,
           productos: this.carro
         }
-
-        console.log(data);
 
         this.reservasService.generarComprobante(data).subscribe({
           next: () => {

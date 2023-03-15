@@ -242,6 +242,7 @@ export class VentasComponent implements OnInit {
 
     this.pedidosya_comprobante = '';
     this.calcularPrecio();
+
   }
 
   // Cambiar tipo de comprobante - Almacenar
@@ -265,8 +266,10 @@ export class VentasComponent implements OnInit {
       this.formaPago === 'Crédito' 
       ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2) 
       : this.precio_total = this.dataService.redondear(precioTMP, 2);
-    }else{
-    }
+    }else{}
+
+    // Se actualiza el vuelto
+    this.calcularVuelto();
 
     // Se almacenan los valores en el localstorage
     this.almacenamientoLocalStorage();
