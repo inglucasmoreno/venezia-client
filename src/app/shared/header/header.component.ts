@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit {
   public showReservas = false;
 
   // Observable - Consultar reservas
-  public TIEMPO_CONSULTA = 60000 * 5; // 5 Minutos
+  public TIEMPO_CONSULTA = 60000 * 5;
   public consultarReservasSubscription: Subscription;
   public consultarReservas: any;
 
@@ -38,9 +38,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
    
     this.items = items;
-   
     this.itemsMayoristas = itemsMayoristas;
-   
     this.itemsReservas = itemsReservas;
   
     // Observable -> Monitoreo de reservas por vencer

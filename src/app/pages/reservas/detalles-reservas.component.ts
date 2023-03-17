@@ -92,7 +92,15 @@ export class DetallesReservasComponent implements OnInit {
     productos: [],
     adelanto: 0,
     observaciones: '',
-    falta_pagar: 0
+    falta_pagar: 0,
+    tipo_observaciones: 'General',
+    torta_relleno1: '',
+    torta_relleno2: '',
+    torta_relleno3: '',
+    torta_forma: '',
+    torta_peso: null,
+    torta_cobertura: '',
+    torta_detalles: ''
   }
 
   // Datos de cliente
@@ -164,7 +172,15 @@ export class DetallesReservasComponent implements OnInit {
           productos: productos,
           adelanto: reserva.adelanto,
           observaciones: reserva.observaciones,
-          falta_pagar: this.dataService.redondear(reserva.precio_total - reserva.adelanto, 2)
+          falta_pagar: this.dataService.redondear(reserva.precio_total - reserva.adelanto, 2),
+          tipo_observaciones: reserva.tipo_observaciones,
+          torta_relleno1: reserva.torta_relleno1,
+          torta_relleno2: reserva.torta_relleno2,
+          torta_relleno3: reserva.torta_relleno3,
+          torta_forma: reserva.torta_forma,
+          torta_peso: reserva.torta_peso,
+          torta_cobertura: reserva.torta_cobertura,
+          torta_detalles: reserva.torta_detalles
         }
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
@@ -581,7 +597,15 @@ export class DetallesReservasComponent implements OnInit {
       productos: [],
       adelanto: 0,
       observaciones: '',
-      falta_pagar: 0
+      falta_pagar: 0,
+      tipo_observaciones: 'General',
+      torta_relleno1: '',
+      torta_relleno2: '',
+      torta_relleno3: '',
+      torta_forma: '',
+      torta_peso: null,
+      torta_cobertura: '',
+      torta_detalles: ''
     }
   }
 
@@ -888,6 +912,7 @@ export class DetallesReservasComponent implements OnInit {
                   if (this.imprimir) {
                     this.ventasService.getComprobante(venta._id).subscribe({
                       next: () => {
+                        this.dataService.alertaReservas();
                         window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
                         this.alertService.success('Venta completada');
                       }, error: (error) => this.alertService.errorApi(error.message)

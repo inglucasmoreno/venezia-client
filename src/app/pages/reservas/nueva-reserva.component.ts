@@ -71,6 +71,7 @@ export class NuevaReservaComponent implements OnInit {
   public clienteSeleccionado = null;
 
   // Datos de reserva
+  public limite_adelanto = 0;
   public faltaPagar = 0;
   public fechaMuestra = '';
   public dataReserva = {
@@ -83,7 +84,15 @@ export class NuevaReservaComponent implements OnInit {
     precio_total: 0,
     productos: [],
     adelanto: 0,
-    observaciones: ''
+    observaciones: '',
+    tipo_observaciones: 'General',
+    torta_relleno1: '',
+    torta_relleno2: '',
+    torta_relleno3: '',
+    torta_forma: '',
+    torta_peso: null,
+    torta_cobertura: '',
+    torta_detalles: ''
   }
 
   // Datos de cliente
@@ -261,7 +270,8 @@ export class NuevaReservaComponent implements OnInit {
     this.dataReserva.horas_antes = '3';
     this.dataReserva.fecha_entrega = '';
     this.dataReserva.hora_entrega = '';
-    this.dataReserva.adelanto = this.dataReserva.precio_total * 0.5;
+    this.limite_adelanto = this.dataService.redondear(this.dataReserva.precio_total * 0.5, 2);
+    this.dataReserva.adelanto = this.limite_adelanto;
     this.calcularFaltaPagar();
     this.showModalCompletando = true;
   }
@@ -469,7 +479,6 @@ export class NuevaReservaComponent implements OnInit {
       return;
     }
 
-
     this.alertService.question({ msg: '¿Quieres generar la reserva?', buttonText: 'Generar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
@@ -489,12 +498,23 @@ export class NuevaReservaComponent implements OnInit {
 
           // Agregando productos
           this.dataReserva.productos = this.carro;
-
+          
           let data = {
             ...this.dataReserva,
             cliente_descripcion: this.clienteSeleccionado.descripcion,
             creatorUser: this.authService.usuario.userId,
             updatorUser: this.authService.usuario.userId,
+          }
+
+          // Si no es una torta se anulan las observaciones
+          if(this.dataReserva.tipo_observaciones !== 'Torta'){
+            data.torta_relleno1 = '';
+            data.torta_relleno2 = '';
+            data.torta_relleno3 = '';
+            data.torta_forma = '';
+            data.torta_peso = 0;
+            data.torta_cobertura = '';
+            data.torta_detalles = '';
           }
 
           this.reservasService.nuevaReserva(data).subscribe({
@@ -534,7 +554,15 @@ export class NuevaReservaComponent implements OnInit {
       precio_total: 0,
       productos: [],
       adelanto: 0,
-      observaciones: ''
+      observaciones: '',
+      tipo_observaciones: 'General',
+      torta_relleno1: '',
+      torta_relleno2: '',
+      torta_relleno3: '',
+      torta_forma: '',
+      torta_peso: null,
+      torta_cobertura: '',
+      torta_detalles: ''
     }
   }
 
@@ -582,6 +610,11 @@ export class NuevaReservaComponent implements OnInit {
     // Verificar monto de adelanto
     if (this.dataReserva.adelanto > this.dataReserva.precio_total) {
       this.alertService.info('La seña no puede ser superior al precio total');
+      return;
+    }
+
+    if (this.dataReserva.adelanto < this.limite_adelanto) {
+      this.alertService.info(`La seña no puede ser inferior a $${this.limite_adelanto}`);
       return;
     }
 
@@ -775,7 +808,7 @@ export class NuevaReservaComponent implements OnInit {
         this.precio_total = 0;
         this.precio_total_limpio = 0;
         this.comprobante = 'Normal',
-        this.productos = [];
+          this.productos = [];
         this.pagaCon = null;
         this.formaPago = 'Efectivo';
         this.vuelto = 0;
