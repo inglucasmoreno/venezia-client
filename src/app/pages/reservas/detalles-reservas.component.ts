@@ -11,6 +11,7 @@ import gsap from 'gsap';
 import { ReservasProductosService } from 'src/app/services/reservas-productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import { environment } from 'src/environments/environment';
+import { VentasReservasService } from 'src/app/services/ventas-reservas.service';
 
 const base_url = environment.base_url;
 
@@ -26,7 +27,7 @@ export class DetallesReservasComponent implements OnInit {
   public permisos = { all: false };
 
   // Venta
-  public fechaVenta = format(new Date(),'dd/MM/yyyy');
+  public fechaVenta = format(new Date(), 'dd/MM/yyyy');
   public showCompletarVenta = false;
   public precio_total: number = null;
   public precio_total_limpio: number = 0;
@@ -75,6 +76,19 @@ export class DetallesReservasComponent implements OnInit {
   public identificacion_cliente = '';
   public clienteSeleccionado = null;
 
+  // Datos actualizacion de reserva
+  public dataReservaActualizacion = {
+    observaciones: '',
+    tipo_observaciones: 'General',
+    torta_relleno1: '',
+    torta_relleno2: '',
+    torta_relleno3: '',
+    torta_forma: '',
+    torta_peso: null,
+    torta_cobertura: '',
+    torta_detalles: ''
+  }
+
   // Datos de reserva
   public idReserva = '';
   public observaciones = '';
@@ -120,6 +134,7 @@ export class DetallesReservasComponent implements OnInit {
 
   constructor(
     private alertService: AlertService,
+    private ventasReservasService: VentasReservasService,
     private dataService: DataService,
     public authService: AuthService,
     private ventasService: VentasService,
@@ -391,7 +406,7 @@ export class DetallesReservasComponent implements OnInit {
     // this.carro.push(dataProducto);
 
     this.reservasProductosService.nuevoProducto(dataProducto).subscribe({
-      next: ({producto}) => {
+      next: ({ producto }) => {
         this.carro.push(producto);
         this.productoSeleccionado = null;
         this.cantidad = null;
@@ -638,8 +653,23 @@ export class DetallesReservasComponent implements OnInit {
 
   // Abrir editar observaciones
   abrirEditarObservacion(): void {
+
+    // Datos actualizacion de reserva
+    this.dataReservaActualizacion = {
+      observaciones: this.dataReserva.observaciones,
+      tipo_observaciones: this.dataReserva.tipo_observaciones,
+      torta_relleno1: this.dataReserva.torta_relleno1,
+      torta_relleno2: this.dataReserva.torta_relleno2,
+      torta_relleno3: this.dataReserva.torta_relleno3,
+      torta_forma: this.dataReserva.torta_forma,
+      torta_peso: this.dataReserva.torta_peso,
+      torta_cobertura: this.dataReserva.torta_cobertura,
+      torta_detalles: this.dataReserva.torta_detalles
+    }
+
     this.observaciones = this.dataReserva.observaciones;
     this.showEditarObservacion = true;
+
   }
 
   // Cerrar actualizar alerta
@@ -774,7 +804,7 @@ export class DetallesReservasComponent implements OnInit {
       this.formaPago === 'Crédito'
         ? this.precio_total = this.dataService.redondear(this.precio_total * 1.10, 2)
         : this.precio_total = this.dataService.redondear(this.precio_total_limpio, 2);
-    } else {}
+    } else { }
 
     this.calcularVuelto();
 
@@ -894,7 +924,7 @@ export class DetallesReservasComponent implements OnInit {
               this.precio_total = 0;
               this.precio_total_limpio = 0;
               this.comprobante = 'Normal',
-              this.productos = [];
+                this.productos = [];
               this.pagaCon = null;
               this.formaPago = 'Efectivo';
               this.vuelto = 0;
@@ -906,22 +936,35 @@ export class DetallesReservasComponent implements OnInit {
               this.reservasService.actualizarReserva(this.idReserva, { estado: 'Completada' }).subscribe({
                 next: () => {
 
-                  this.reserva.estado = 'Completada';
+                // Generando Relacion Venta -> Reserva
+                this.ventasReservasService.nuevaRelacion({
+                  venta: venta._id,
+                  reserva: this.idReserva,
+                  instancia: 'Completada',
+                  creatorUser: this.authService.usuario.userId,
+                  updatorUser: this.authService.usuario.userId,
+                }).subscribe({
+                  next: () => {
 
-                  // Imprimir comprobante
-                  if (this.imprimir) {
-                    this.ventasService.getComprobante(venta._id).subscribe({
-                      next: () => {
-                        this.dataService.alertaReservas();
-                        window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
-                        this.alertService.success('Venta completada');
-                      }, error: (error) => this.alertService.errorApi(error.message)
-                    })
-                  } else {
-                    this.alertService.success('Venta completada');
-                  }
+                    this.reserva.estado = 'Completada';
 
-                  this.showCompletarVenta = false;
+                    // Imprimir comprobante
+                    if (this.imprimir) {
+                      this.ventasService.getComprobante(venta._id).subscribe({
+                        next: () => {
+                          this.dataService.alertaReservas();
+                          window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
+                          this.alertService.success('Venta completada');
+                        }, error: (error) => this.alertService.errorApi(error.message)
+                      })
+                    } else {
+                      this.alertService.success('Venta completada');
+                    }
+  
+                    this.showCompletarVenta = false;
+
+                  }, error: ({ error }) => this.alertService.errorApi(error.message)
+                })
 
                 }, error: ({ error }) => this.alertService.errorApi(error.message)
               })
@@ -1015,42 +1058,95 @@ export class DetallesReservasComponent implements OnInit {
 
   // Actualizar observacion
   actualizarObservacion(): void {
+
+    // Verificar rellenos
+    if (this.dataReservaActualizacion.tipo_observaciones === 'Torta' && this.dataReservaActualizacion.torta_relleno1.trim() === '') {
+      this.alertService.info('Debe colocar el primer relleno de la torta');
+      return;
+    }
+
+    // Verificar forma
+    if (this.dataReservaActualizacion.tipo_observaciones === 'Torta' && this.dataReservaActualizacion.torta_forma.trim() === '') {
+      this.alertService.info('Debe colocar la forma de la torta');
+      return;
+    }
+
+    // Verificar peso
+    if (this.dataReservaActualizacion.tipo_observaciones === 'Torta' && this.dataReservaActualizacion.torta_peso <= 0) {
+      this.alertService.info('Debe colocar el peso de la torta');
+      return;
+    }
+
+    // Verificar cobertura
+    if (this.dataReservaActualizacion.tipo_observaciones === 'Torta' && this.dataReservaActualizacion.torta_cobertura.trim() === '') {
+      this.alertService.info('Debe colocar la cobertura de la torta');
+      return;
+    }
+
     this.alertService.loading();
-    this.reservasService.actualizarReserva(this.idReserva, { observaciones: this.observaciones }).subscribe({
+
+    if (this.dataReservaActualizacion.tipo_observaciones !== 'Torta') { // Se reinicia el formulario de torta en caso de ser necesario
+      this.dataReservaActualizacion.tipo_observaciones = 'General';
+      this.dataReservaActualizacion.torta_relleno1 = '';
+      this.dataReservaActualizacion.torta_relleno2 = '';
+      this.dataReservaActualizacion.torta_relleno3 = '';
+      this.dataReservaActualizacion.torta_forma = '';
+      this.dataReservaActualizacion.torta_peso = '';
+      this.dataReservaActualizacion.torta_cobertura = '';
+      this.dataReservaActualizacion.torta_detalles = '';
+    }
+
+    this.reservasService.actualizarReserva(this.idReserva, this.dataReservaActualizacion).subscribe({
       next: () => {
+        this.dataReserva.tipo_observaciones = this.dataReservaActualizacion.tipo_observaciones;
+        this.dataReserva.torta_peso = this.dataReservaActualizacion.torta_peso;
         this.dataReserva.observaciones = this.observaciones.toUpperCase().trim();
+        this.dataReserva.torta_relleno1 = this.dataReservaActualizacion.torta_relleno1.toUpperCase().trim();
+        this.dataReserva.torta_relleno2 = this.dataReservaActualizacion.torta_relleno2.toUpperCase().trim();
+        this.dataReserva.torta_relleno3 = this.dataReservaActualizacion.torta_relleno3.toUpperCase().trim();
+        this.dataReserva.torta_forma = this.dataReservaActualizacion.torta_forma.toUpperCase().trim();
+        this.dataReserva.torta_cobertura = this.dataReservaActualizacion.torta_cobertura.toUpperCase().trim();
+        this.dataReserva.torta_detalles = this.dataReservaActualizacion.torta_detalles.toUpperCase().trim();
         this.showEditarObservacion = false;
         this.alertService.close();
-      }, error: ({error}) => this.alertService.errorApi(error.message)
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
   }
 
   // Imprimir comprobante
   imprimirComprobante(): void {
     this.alertService.question({ msg: '¿Quieres generar el comprobante?', buttonText: 'Generar' })
-    .then(({ isConfirmed }) => {
-      if (isConfirmed) {
-        this.alertService.loading();
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
 
-        const data = {
-          nro_reserva: this.reserva.nro,
-          fecha_reserva: this.dataReserva.fecha_reserva,
-          fecha_entrega: this.dataReserva.fecha_entrega,
-          hora_entrega: this.dataReserva.hora_entrega,
-          cliente: this.clienteSeleccionado.descripcion,
-          precio_total: this.dataReserva.precio_total,
-          adelanto: this.dataReserva.adelanto,
-          productos: this.carro
+          const data = {
+            nro_reserva: this.reserva.nro,
+            fecha_reserva: this.dataReserva.fecha_reserva,
+            fecha_entrega: this.dataReserva.fecha_entrega,
+            hora_entrega: this.dataReserva.hora_entrega,
+            cliente: this.clienteSeleccionado.descripcion,
+            precio_total: this.dataReserva.precio_total,
+            adelanto: this.dataReserva.adelanto,
+            productos: this.carro,
+            tipo_observaciones: this.dataReserva.tipo_observaciones,
+            torta_relleno1: this.dataReserva.torta_relleno1,
+            torta_relleno2: this.dataReserva.torta_relleno2,
+            torta_relleno3: this.dataReserva.torta_relleno3,
+            torta_forma: this.dataReserva.torta_forma,
+            torta_peso: this.dataReserva.torta_peso,
+            torta_cobertura: this.dataReserva.torta_cobertura,
+            torta_detalles: this.dataReserva.torta_detalles
+          }
+
+          this.reservasService.generarComprobante(data).subscribe({
+            next: () => {
+              window.open(`${base_url}/pdf/comprobante_reserva.pdf`, '_blank');
+              this.alertService.close();
+            }, error: ({ error }) => this.alertService.errorApi(error.message)
+          })
         }
-
-        this.reservasService.generarComprobante(data).subscribe({
-          next: () => {
-            window.open(`${base_url}/pdf/comprobante_reserva.pdf`, '_blank');
-            this.alertService.close();
-          }, error: ({error}) => this.alertService.errorApi(error.message)
-        })
-      }
-    });
+      });
   }
 
 }

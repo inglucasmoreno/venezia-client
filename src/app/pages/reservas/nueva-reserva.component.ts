@@ -9,6 +9,7 @@ import gsap from 'gsap';
 import { ProductosService } from 'src/app/services/productos.service';
 import { environment } from 'src/environments/environment';
 import { VentasService } from 'src/app/services/ventas.service';
+import { VentasReservasService } from 'src/app/services/ventas-reservas.service';
 
 const base_url = environment.base_url;
 
@@ -113,6 +114,7 @@ export class NuevaReservaComponent implements OnInit {
   constructor(
     private alertService: AlertService,
     private ventasService: VentasService,
+    private ventasReservasService: VentasReservasService,
     private dataService: DataService,
     public authService: AuthService,
     private clientesService: ClientesService,
@@ -266,6 +268,31 @@ export class NuevaReservaComponent implements OnInit {
 
   // Abrir modal - Completar reserva
   abrirCompletarReserva(): void {
+
+    // Verificar rellenos
+    if (this.dataReserva.tipo_observaciones === 'Torta' && this.dataReserva.torta_relleno1.trim() === '') {
+      this.alertService.info('Debe colocar el primer relleno de la torta');
+      return;
+    }
+
+    // Verificar forma
+    if (this.dataReserva.tipo_observaciones === 'Torta' && this.dataReserva.torta_forma.trim() === '') {
+      this.alertService.info('Debe colocar la forma de la torta');
+      return;
+    }
+
+    // Verificar peso
+    if (this.dataReserva.tipo_observaciones === 'Torta' && this.dataReserva.torta_peso <= 0) {
+      this.alertService.info('Debe colocar el peso de la torta');
+      return;
+    }
+
+    // Verificar cobertura
+    if (this.dataReserva.tipo_observaciones === 'Torta' && this.dataReserva.torta_cobertura.trim() === '') {
+      this.alertService.info('Debe colocar la cobertura de la torta');
+      return;
+    }
+
     this.fechaMuestra = format(add(new Date(this.dataReserva.fecha_reserva), { hours: 3 }), 'dd/MM/yyyy');
     this.dataReserva.horas_antes = '3';
     this.dataReserva.fecha_entrega = '';
@@ -498,7 +525,7 @@ export class NuevaReservaComponent implements OnInit {
 
           // Agregando productos
           this.dataReserva.productos = this.carro;
-          
+
           let data = {
             ...this.dataReserva,
             cliente_descripcion: this.clienteSeleccionado.descripcion,
@@ -507,7 +534,7 @@ export class NuevaReservaComponent implements OnInit {
           }
 
           // Si no es una torta se anulan las observaciones
-          if(this.dataReserva.tipo_observaciones !== 'Torta'){
+          if (this.dataReserva.tipo_observaciones !== 'Torta') {
             data.torta_relleno1 = '';
             data.torta_relleno2 = '';
             data.torta_relleno3 = '';
@@ -802,23 +829,37 @@ export class NuevaReservaComponent implements OnInit {
       updatorUser: this.authService.usuario.userId,
     };
 
+    // Generando venta
     this.ventasService.nuevaVenta(data).subscribe({
-      next: () => {
-        this.productoSeleccionado = null;
-        this.precio_total = 0;
-        this.precio_total_limpio = 0;
-        this.comprobante = 'Normal',
-          this.productos = [];
-        this.pagaCon = null;
-        this.formaPago = 'Efectivo';
-        this.vuelto = 0;
-        this.pedidosya_comprobante = '';
-        this.reiniciarReserva();
-        this.dataService.alertaReservas();
-        this.showCompletarVenta = false;
-        this.metodoPagoUnico();
-        window.open(`${base_url}/pdf/comprobante_reserva.pdf`, '_blank');
-        this.alertService.success('Reserva generada correctamente');
+      next: ({ venta }) => {
+            
+        // Generando Relacion Venta -> Reserva
+        this.ventasReservasService.nuevaRelacion({
+          venta: venta._id,
+          reserva: this.idReserva,
+          instancia: 'Adelanto',
+          creatorUser: this.authService.usuario.userId,
+          updatorUser: this.authService.usuario.userId,
+        }).subscribe({
+          next: () => {
+            this.productoSeleccionado = null;
+            this.precio_total = 0;
+            this.precio_total_limpio = 0;
+            this.comprobante = 'Normal',
+              this.productos = [];
+            this.pagaCon = null;
+            this.formaPago = 'Efectivo';
+            this.vuelto = 0;
+            this.pedidosya_comprobante = '';
+            this.reiniciarReserva();
+            this.dataService.alertaReservas();
+            this.showCompletarVenta = false;
+            this.metodoPagoUnico();
+            window.open(`${base_url}/pdf/comprobante_reserva.pdf`, '_blank');
+            this.alertService.success('Reserva generada correctamente');
+          }, error: ({ error }) => this.alertService.errorApi(error.message)
+        })
+      
       },
       error: ({ error }) => {
         this.reservasService.eliminarReserva(this.idReserva).subscribe({

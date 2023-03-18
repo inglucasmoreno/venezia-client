@@ -51,11 +51,13 @@
           </button>
       </div>
       <div class="p-4 max-h-96 overflow-y-auto text-sm">
-          <div class="md:flex md:justify-between border-gray-300">
+          <div class="md:flex px-2 md:justify-between border-gray-300">
               <p class="text-left"> <span class="font-semibold"> Fecha: </span>  {{ ventaSeleccionada?.createdAt | fecha }} </p>  
               <p class="md:text-right capitalize mt-2 md:mt-0"> <span class="font-semibold"> Creador: </span> {{ ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{ ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>  
           </div>
-          <div class="text-left flex items-center mt-4 text-sm"> 
+          
+          <!-- Tipo de comprobante -->
+          <div class="text-left px-2 flex items-center mt-4 text-sm"> 
               <div class="font-semibold mr-2"> Tipo de comprobante: </div> 
               <div clas="flex items-center">
                   <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> 
@@ -64,6 +66,38 @@
                   <button (click)="facturacionElectronica()" *ngIf="ventaSeleccionada?.comprobante === 'Normal' && authService.usuario.role === 'ADMIN_ROLE'" class="bg-primary-800 hover:bg-secondaryColor transform duration-300 px-2 focus:outline-none text-white text-xs py-1 rounded ml-2 font-semibold"> Facturar </button>
               </div>
           </div>  
+          
+          <!-- Interaccion con reserva -->
+          <div *ngIf="this.ventaReserva">
+            
+            <div class="mt-2 text-sm w-max" *ngIf="this.ventaReserva.instancia === 'Adelanto'"> 
+                <div class="flex items-center p-1">
+                    <div [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="rounded-full cursor-pointer border border-yellow-600 p-2 bg-yellow-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-yellow-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                          </svg>  
+                    </div>
+                    <span [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="ml-2 cursor-pointer hover:text-yellow-700 font-semibold">
+                        Cobro de seña - Reserva N°{{ this.ventaReserva.reserva.nro }} 
+                    </span>  
+                </div>
+            </div>
+
+            <div class="mt-2 text-sm w-max" *ngIf="this.ventaReserva.instancia === 'Completada'"> 
+                <div class="flex items-center p-1">     
+                    <div [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="rounded-full cursor-pointer border border-green-600 p-2 bg-green-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                          </svg>  
+                    </div>
+                    <span [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="ml-2 cursor-pointer hover:text-green-600 font-semibold">
+                        Reserva completada - Reserva N°{{ this.ventaReserva.reserva.nro }} 
+                    </span>  
+                </div>
+            </div>
+          
+          </div>
+          
           <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa'" class="mt-4 w-max"> 
               <span class="bg-yellow-100 text-yellow-700 border border-yellow-300 p-1 font-semibold rounded"> PedidosYa - Online - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
           </p>
@@ -71,13 +105,15 @@
             <span class="bg-orange-100 text-orange-700 border border-orange-300 p-1 font-semibold rounded"> PedidosYa - Efectivo - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
           </p>
           <div class="mt-4">
-                <div class="flex items-center justify-between bg-gray-100 text-sm p-2 w-full border border-gray-300">
+                
+                <div class="flex items-center justify-between bg-gray-100 text-sm p-2 w-full border border-gray-400">
                     <h2 class="font-semibold"> Montos y formas de pago </h2>
                 </div>
-                <div class="text-sm border-b border-gray-200 flex items-center justify-between" *ngFor="let formaPago of ventaSeleccionada?.forma_pago"> 
+            
+                <div class="text-sm border-b border-gray-300 flex items-center justify-between" *ngFor="let formaPago of ventaSeleccionada?.forma_pago"> 
                     <span class="font-semibold p-2 flex items-center">
                         {{ formaPago.descripcion }}
-                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirEditarFormasPago(formaPago)" title="Editar forma de pago" class="hover:text-secondaryColor bg-gray-100 ml-2 border rounded border-gray-300 p-1 focus:outline-none">
+                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirEditarFormasPago(formaPago)" title="Editar forma de pago" class="hover:text-secondaryColor bg-gray-100 ml-2 border rounded border-gray-400 p-1 focus:outline-none">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>                    
@@ -95,11 +131,12 @@
                         ${{ ventaSeleccionada?.precio_total | moneda }} 
                     </span> 
                 </div>
-          </div>
+          
+            </div>
           <div *ngIf="productos.length !== 0" class="mt-3 text-sm">
-              <h2 class="font-semibold bg-gray-100 p-2 w-full border border-gray-300"> Listado de productos </h2>
+              <h2 class="font-semibold bg-gray-100 p-2 w-full border border-gray-400"> Listado de productos </h2>
               <div class="max-h-60 mt-2 overflow-y-auto">
-                  <div class="border border-gray-300 p-2 mt-2 rounded" *ngFor="let producto of productos">
+                  <div class="border border-gray-400 p-2 mt-2 rounded" *ngFor="let producto of productos">
                       <p class="font-semibold"> {{ producto.descripcion }} </p>
                       <p class="text-xs"> Cantidad: {{ producto.cantidad }} ({{ producto.unidad_medida }}) </p>
                       <p class="text-sm font-semibold"> ${{ producto.precio | moneda }} </p>   

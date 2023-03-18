@@ -5,6 +5,7 @@ import { DataService } from 'src/app/services/data.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import gsap from 'gsap';
 import { environment } from 'src/environments/environment';
+import { VentasReservasService } from 'src/app/services/ventas-reservas.service';
 
 const base_url = environment.base_url;
 
@@ -36,6 +37,9 @@ export class VentasHistorialComponent implements OnInit {
   public montoTotalPedidosYaEfectivo:number = 0;
   public montoTotalPedidosYaApp:number = 0;
   public productos: any[] = [];
+
+  // Relacion venta -> reserva
+  public ventaReserva: any = null;
   
 	// Paginacion
   public totalItems: number;
@@ -59,6 +63,7 @@ export class VentasHistorialComponent implements OnInit {
   }
   
   constructor(private ventasService: VentasService,
+              private ventasReservasService: VentasReservasService,
               private authService: AuthService,
               private alertService: AlertService,
               private dataService: DataService) { }
@@ -191,10 +196,17 @@ export class VentasHistorialComponent implements OnInit {
     abrirModalDetalles(venta: any): void {
       this.alertService.loading();
       this.ventasService.getVenta(venta._id).subscribe(({venta, productos}) => {
-        this.ventaSeleccionada = venta;
-        this.productos = productos;
-        this.showModalDetalle = true;
-        this.alertService.close();
+
+        this.ventasReservasService.getRelacionPorVenta(venta._id).subscribe({
+          next: ({ relacion }) => {
+            this.ventaReserva = relacion;
+            this.ventaSeleccionada = venta;
+            this.productos = productos;
+            this.showModalDetalle = true;
+            this.alertService.close();
+          }, error: ({ error }) => this.alertService.errorApi(error.message)
+        })
+
       },({error})=>{
         this.alertService.errorApi(error);
       });

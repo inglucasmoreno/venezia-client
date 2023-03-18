@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
+import { VentasReservasService } from 'src/app/services/ventas-reservas.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import { environment } from 'src/environments/environment';
 
@@ -56,6 +57,9 @@ export class VentasActivasComponent implements OnInit {
   public montoTotalPedidosYaApp: number = 0;
   public productos: any[] = [];
 
+  // Relacion venta -> reserva
+  public ventaReserva: any = null;
+
   // Formas de pago - Edicion
   public formaPagoSeleccionada: any = {};
 
@@ -78,10 +82,13 @@ export class VentasActivasComponent implements OnInit {
     columna: 'createdAt'
   }
 
-  constructor(private ventasService: VentasService,
+  constructor(
+    private ventasService: VentasService,
+    private ventasReservasService: VentasReservasService,
     public authService: AuthService,
     private alertService: AlertService,
-    private dataService: DataService) { }
+    private dataService: DataService
+  ) { }
 
   ngOnInit(): void {
     this.dataService.ubicacionActual = 'Dashboard - Ventas activas';
@@ -256,12 +263,21 @@ export class VentasActivasComponent implements OnInit {
 
   // Abrir modal - Detalles de venta
   abrirModalDetalles(venta: any): void {
+    this.ventaReserva = null;
     this.alertService.loading();
     this.ventasService.getVenta(venta._id).subscribe(({ venta, productos }) => {
-      this.ventaSeleccionada = venta;
-      this.productos = productos;
-      this.showModalDetalle = true;
-      this.alertService.close();
+
+      this.ventasReservasService.getRelacionPorVenta(venta._id).subscribe({
+        next: ({ relacion }) => {
+          this.ventaReserva = relacion;
+          console.log(this.ventaReserva);
+          this.ventaSeleccionada = venta;
+          this.productos = productos;
+          this.showModalDetalle = true;
+          this.alertService.close();
+        }, error: ({ error }) => this.alertService.errorApi(error.message)
+      })
+
     }, ({ error }) => {
       this.alertService.errorApi(error);
     });
