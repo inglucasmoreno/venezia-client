@@ -1,0 +1,34 @@
+/* The animation code */
+.fondo {
+    background-color: white;
+    -webkit-animation-name: example; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
+    animation-name: example;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes example {
+    from {
+        background-color: #FDD8D8;
+        border-color: red;
+    }
+    to {
+        background-color: #FDFFCC;
+        border-color: yellow;
+    }
+}
+
+/* Standard syntax */
+@keyframes example {
+    from {
+        background-color: #FDD8D8;
+        border-color: red;
+    }
+    to {
+        background-color: #FDFFCC;
+        border-color: yellow;
+    }
+}

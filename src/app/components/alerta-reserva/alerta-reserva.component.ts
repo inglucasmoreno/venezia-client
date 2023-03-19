@@ -6,8 +6,7 @@ import gsap from 'gsap';
 @Component({
   selector: 'app-alerta-reserva',
   templateUrl: './alerta-reserva.component.html',
-  styles: [
-  ]
+  styleUrls: ['./alerta-reserva.component.css']
 })
 export class AlertaReservaComponent implements OnInit {
 

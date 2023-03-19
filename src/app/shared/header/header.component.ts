@@ -14,6 +14,9 @@ import { itemsReservas } from './items-reservas';
 })
 export class HeaderComponent implements OnInit {
 
+  // Permisos de usuarios login
+  public permisos = { all: false };
+
   // Items
   public items: any[];
   public itemsMayoristas: any[];
@@ -40,15 +43,25 @@ export class HeaderComponent implements OnInit {
     this.items = items;
     this.itemsMayoristas = itemsMayoristas;
     this.itemsReservas = itemsReservas;
-  
-    // Observable -> Monitoreo de reservas por vencer
-    this.dataService.alertaReservas();
-    this.consultarReservas = interval(this.TIEMPO_CONSULTA);
+    this.permisos.all = this.permisosUsuarioLogin();
 
-    this.consultarReservasSubscription = this.consultarReservas.subscribe( () => {
+    // Observable -> Monitoreo de reservas por vencer
+    if(this.authService.usuario.role !== 'DELIVERY_ROLE' && this.permisos.all){
+      
       this.dataService.alertaReservas();
-    })
+
+      this.consultarReservas = interval(this.TIEMPO_CONSULTA);
   
+      this.consultarReservasSubscription = this.consultarReservas.subscribe( () => {
+        this.dataService.alertaReservas();
+      })
+    }
+  
+  }
+
+  // Asignar permisos de usuario login
+  permisosUsuarioLogin(): boolean {
+    return this.authService.usuario.permisos.includes('RESERVAS_ALL') || this.authService.usuario.permisos.includes('RESERVAS_READ') || this.authService.usuario.role === 'ADMIN_ROLE';
   }
   
   // Habilitacion de navegacion
@@ -56,7 +69,7 @@ export class HeaderComponent implements OnInit {
 
   // Metodo: Cerrar sesion
   logout(): void{ 
-    this.consultarReservasSubscription.unsubscribe();
+    if(this.authService.usuario.role !== 'DELIVERY_ROLE' && this.permisos.all) this.consultarReservasSubscription.unsubscribe();
     this.authService.logout(); 
   }
 

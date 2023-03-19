@@ -29,6 +29,7 @@ export class DataService {
   
   }
 
+  // Consultar reservas por vencer
   alertaReservas(): void {
     this.reservasService.reservasPorVencer().subscribe({
       next: ({ reservas }) => {
@@ -36,12 +37,21 @@ export class DataService {
           this.cantidadReservasPorVencer = reservas.length;
           this.showAlertaReserva = true;
           this.showAlertaReservaBarra = true;
+          this.sonidoReserva();
         }else{
           this.showAlertaReserva = false;
           this.showAlertaReservaBarra = false;
         }
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
+  }
+
+  // Sonido - Alerta -> Reserva por vencer
+  sonidoReserva(): void {
+    let audioReserva = new Audio();
+    audioReserva.src = "assets/sounds/Alert-Reserva.wav";
+    audioReserva.load();
+    audioReserva.play();    
   }
 
   cerrarAlertaReservas(): void {
