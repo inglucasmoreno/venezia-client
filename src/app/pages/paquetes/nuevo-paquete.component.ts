@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { format } from 'date-fns';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -18,6 +18,34 @@ import gsap from 'gsap';
   ]
 })
 export class NuevoPaqueteComponent implements OnInit {
+
+  // private focusCantidad: ElementRef;
+  // private focusCantidadEditar: ElementRef;
+  // private focusCantidadNueva: ElementRef;
+
+  // // Focus cantidad
+  // @ViewChild('idCantidad') set content(content: ElementRef) {
+  //   if (content) { // initially setter gets called with undefined
+  //     this.focusCantidad = content;
+  //     this.focusCantidad.nativeElement.focus();
+  //   }
+  // }
+
+  // // Focus cantidad -> Actualizando
+  // @ViewChild('idCantidadEditar') set contentEditar(content: ElementRef) {
+  //   if (content) { // initially setter gets called with undefined
+  //     this.focusCantidadEditar = content;
+  //     this.focusCantidadEditar.nativeElement.focus();
+  //   }
+  // }
+
+  // // Focus cantidad -> Actualizando -> Nuevo producto
+  // @ViewChild('idCantidadNueva') set contentNuevo(content: ElementRef) {
+  //   if (content) { // initially setter gets called with undefined
+  //     this.focusCantidadNueva = content;
+  //     this.focusCantidadNueva.nativeElement.focus();
+  //   }
+  // }
 
   // Modal
   public showModalProductos = false;
@@ -98,9 +126,9 @@ export class NuevoPaqueteComponent implements OnInit {
   calculosIniciales(): void {
 
     // Se verifica si el paquete existe
-    if(this.paquete){
+    if (this.paquete) {
       this.paquetesService.getPaquete(this.paquete._id).subscribe({
-        next: () => {}, error: () => {
+        next: () => { }, error: () => {
           this.mayorista = '';
           this.repartidor = '';
           this.etapa = "creacion";

@@ -12,6 +12,9 @@ export class DataService {
   public showAlertaReserva: Boolean = false;
   public showAlertaReservaBarra: Boolean = false;
   public cantidadReservasPorVencer: number = 0;
+  public audioReserva = new Audio();
+    
+
 
   constructor(
     private reservasService: ReservasService,
@@ -48,10 +51,9 @@ export class DataService {
 
   // Sonido - Alerta -> Reserva por vencer
   sonidoReserva(): void {
-    let audioReserva = new Audio();
-    audioReserva.src = "assets/sounds/Alert-Reserva.wav";
-    audioReserva.load();
-    audioReserva.play();    
+    this.audioReserva.src = "assets/sounds/Alert-Reserva.wav";
+    this.audioReserva.load();
+    this.audioReserva.play();    
   }
 
   cerrarAlertaReservas(): void {

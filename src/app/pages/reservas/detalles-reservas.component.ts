@@ -1032,6 +1032,7 @@ export class DetallesReservasComponent implements OnInit {
             next: () => {
               this.reserva.estado = 'No retirada';
               this.showCompletarVenta = false;
+              this.dataService.alertaReservas();
               this.alertService.close();
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
@@ -1049,6 +1050,7 @@ export class DetallesReservasComponent implements OnInit {
             next: () => {
               this.reserva.estado = 'Pendiente';
               this.showCompletarVenta = false;
+              this.dataService.alertaReservas();
               this.alertService.close();
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })

@@ -315,7 +315,7 @@
               <p class="font-semibold"> {{ nuevoProductoSeleccionado.descripcion }} </p>
               <p class="text-xs"> ${{ nuevoProductoSeleccionado.precio_mayorista | moneda }} x {{ nuevoProductoSeleccionado.unidad_medida.descripcion }} </p>    
               <div class="flex items-center">
-                  <input (keyup.enter)="agregarNuevoProducto()" [(ngModel)]="nuevoProductoCantidad" min="0" type="number" placeholder="Cantidad" class="border text-sm mt-2 focus:outline-none border-gray-300 p-2 rounded">
+                  <input appAutoFocus (keyup.enter)="agregarNuevoProducto()" [(ngModel)]="nuevoProductoCantidad" min="0" type="number" placeholder="Cantidad" class="border text-sm mt-2 focus:outline-none border-gray-400 p-2 rounded">
                   <button (click)="agregarNuevoProducto()" class="p-2 focus:outline-none shadow bg-green-700 mt-2 ml-2 rounded text-white">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -426,7 +426,7 @@
               <p class="text-xs"> ${{ productoSeleccionado.precio_mayorista | moneda }} x {{
                   productoSeleccionado.unidad_medida.descripcion }} </p>
               <div class="flex items-center">
-                  <input (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" min="0" type="number"
+                  <input appAutoFocus (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" min="0" type="number"
                       placeholder="Cantidad"
                       class="border text-sm mt-2 focus:outline-none border-gray-400 p-2 rounded">
                   <button (click)="agregarProducto()"
