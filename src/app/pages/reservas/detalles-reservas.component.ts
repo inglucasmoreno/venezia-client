@@ -924,7 +924,7 @@ export class DetallesReservasComponent implements OnInit {
               this.precio_total = 0;
               this.precio_total_limpio = 0;
               this.comprobante = 'Normal',
-                this.productos = [];
+              this.productos = [];
               this.pagaCon = null;
               this.formaPago = 'Efectivo';
               this.vuelto = 0;

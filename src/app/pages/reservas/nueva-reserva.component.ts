@@ -544,6 +544,8 @@ export class NuevaReservaComponent implements OnInit {
             data.torta_detalles = '';
           }
 
+          console.log(data);
+
           this.reservasService.nuevaReserva(data).subscribe({
             next: ({ reserva }) => {
               this.idReserva = reserva._id;
