@@ -954,6 +954,7 @@ export class DetallesReservasComponent implements OnInit {
                         next: () => {
                           this.dataService.alertaReservas();
                           window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
+                          this.dataService.alertaReservas();
                           this.alertService.success('Venta completada');
                         }, error: (error) => this.alertService.errorApi(error.message)
                       })

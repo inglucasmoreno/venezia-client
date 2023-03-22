@@ -853,8 +853,29 @@ export class PaquetesDetallesComponent implements OnInit {
     this.alertService.question({ msg: 'Completando paquete', buttonText: 'Completar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {
-
+          
           this.alertService.loading();
+
+          // Ajustando datos de pedido
+          
+          let dataPedido = [];
+          
+          this.pedidos.map( pedido => {
+            dataPedido.push(
+              {
+                _id: pedido._id,
+                deuda: pedido.deuda,
+                estado: pedido.estado,
+                deuda_monto: pedido.deuda_monto,
+                monto_recibido: pedido.monto_recibido,
+                monto_anticipo: pedido.monto_anticipo,
+                monto_cuenta_corriente: pedido.monto_cuenta_corriente,
+                mayorista: pedido.mayorista._id
+              }
+            )
+          });
+
+          // Datos - Cerrar paquete
 
           const data = {
             dataPaquete: {
@@ -869,8 +890,10 @@ export class PaquetesDetallesComponent implements OnInit {
               total_recibir: this.total_recibir,
               estado: this.total_deuda > 0 ? 'Deuda' : 'Completado'
             },
-            pedidos: this.pedidos
+            pedidos: dataPedido
           }
+
+          this.alertService.close();
 
           this.paquetesService.cerrarPaquete(this.idPaquete, data).subscribe({
             next: () => {
