@@ -893,8 +893,6 @@ export class PaquetesDetallesComponent implements OnInit {
             pedidos: dataPedido
           }
 
-          this.alertService.close();
-
           this.paquetesService.cerrarPaquete(this.idPaquete, data).subscribe({
             next: () => {
               this.alertService.close();
