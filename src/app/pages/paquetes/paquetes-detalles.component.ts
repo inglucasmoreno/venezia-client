@@ -342,8 +342,9 @@ export class PaquetesDetallesComponent implements OnInit {
           this.pedidosService.eliminarVenta(pedido._id).subscribe({
             next: () => {
               this.pedidos = this.pedidos.filter(elemento => elemento._id !== pedido._id);
-              this.calcularTotalPaquete();
-              this.alertService.close();
+              // this.calcularTotalPaquete();
+              // this.alertService.close();
+              this.getPaquete();
             }, error: ({ error }) => this.alertService.errorApi(error.message)
           })
         };
@@ -543,7 +544,8 @@ export class PaquetesDetallesComponent implements OnInit {
 
           this.pedidosService.nuevaVenta(data).subscribe({
             next: () => {
-              this.alertService.loading();
+              this.mayorista = '';
+              this.carrito = [];
               this.getPaquete();
             },
             error: ({ error }) => {
