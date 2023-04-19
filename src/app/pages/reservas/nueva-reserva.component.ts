@@ -518,7 +518,6 @@ export class NuevaReservaComponent implements OnInit {
 
           // Adaptando fecha de alerta
           this.dataReserva.fecha_alerta = format(add(new Date(fechaEntregaCompleta), { hours: -Number(this.dataReserva.horas_antes) }), 'yyyy-MM-dd:HH:mm');
-          console.log(this.dataReserva.fecha_alerta);
 
           // Agregando datos de cliente
           this.dataReserva.cliente = this.clienteSeleccionado._id;
@@ -543,8 +542,6 @@ export class NuevaReservaComponent implements OnInit {
             data.torta_cobertura = '';
             data.torta_detalles = '';
           }
-
-          console.log(data);
 
           this.reservasService.nuevaReserva(data).subscribe({
             next: ({ reserva }) => {
@@ -820,6 +817,7 @@ export class NuevaReservaComponent implements OnInit {
     else if (this.multiples_formasPago) forma_pago = this.formasPago;
 
     const data = {
+      sena: true,
       productos: [],
       precio_total: this.precio_total,
       precio_total_limpio: this.precio_total_limpio,
@@ -848,7 +846,7 @@ export class NuevaReservaComponent implements OnInit {
             this.precio_total = 0;
             this.precio_total_limpio = 0;
             this.comprobante = 'Normal',
-              this.productos = [];
+            this.productos = [];
             this.pagaCon = null;
             this.formaPago = 'Efectivo';
             this.vuelto = 0;

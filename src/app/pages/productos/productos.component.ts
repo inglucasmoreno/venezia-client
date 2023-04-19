@@ -49,7 +49,8 @@ public productoForm: any = {
   balanza: 'false',
   codigo: '',
   precio: null,
-  precio_mayorista: null
+  precio_mayorista: null,
+  alicuota: 21
 }
 
 // Paginacion
@@ -132,14 +133,15 @@ constructor(private productosService: ProductosService,
     this.productoSeleccionado = producto;
     this.productosService.getProducto(producto._id).subscribe({
       next: ({producto}) => {
-        const { descripcion, unidad_medida, balanza, codigo, precio, precio_mayorista } = producto;
+        const { descripcion, unidad_medida, balanza, codigo, precio, precio_mayorista, alicuota } = producto;
         this.productoForm = {
           descripcion,
           unidad_medida: unidad_medida._id,
           balanza: balanza ? 'true' : 'false',
           codigo,
           precio,
-          precio_mayorista       
+          precio_mayorista,
+          alicuota: alicuota ? alicuota : 21 // Si no tiene alicuota mostrar -> 21       
         }
         this.alertService.close();
         this.showModalProducto = true;
@@ -184,7 +186,7 @@ constructor(private productosService: ProductosService,
   // Nuevo producto
   nuevoProducto(): void {
 
-    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista } = this.productoForm;
+    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
 
     // Verificacion
     if(this.verificacion()){
@@ -201,6 +203,7 @@ constructor(private productosService: ProductosService,
       codigo,
       precio,
       precio_mayorista,
+      alicuota,
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
     }
@@ -219,7 +222,7 @@ constructor(private productosService: ProductosService,
   // Actualizar producto
   actualizarProducto(): void {
 
-    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista } = this.productoForm;
+    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
 
     // Verificacion
     if(this.verificacion()){
@@ -236,6 +239,7 @@ constructor(private productosService: ProductosService,
       codigo,
       precio,
       precio_mayorista,
+      alicuota,
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
     }
@@ -306,7 +310,8 @@ constructor(private productosService: ProductosService,
       balanza: 'false',
       codigo: '',
       precio: null,
-      precio_mayorista: null
+      precio_mayorista: null,
+      alicuota: 21
     }
   }
 

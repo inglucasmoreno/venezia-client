@@ -906,6 +906,7 @@ export class DetallesReservasComponent implements OnInit {
           else if (this.multiples_formasPago) forma_pago = this.formasPago;
 
           const data = {
+            sena: true,
             productos: this.carro,
             precio_total: this.precio_total,
             precio_total_limpio: this.precio_total_limpio,

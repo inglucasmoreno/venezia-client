@@ -132,8 +132,8 @@ export class VentasActivasComponent implements OnInit {
         this.montoTotal = totalVentas;
         this.montoTotalPedidosYaApp = totalPedidosYaOnline;
         this.montoTotalPedidosYaEfectivo = totalPedidosYaEfectivo;
+        this.showModalDetalle = false;
         // this.calculoMontoTotal();
-        // this.showModalDetalle = false;
         this.alertService.close();
       }, (({ error }) => {
         this.alertService.errorApi(error.msg);
@@ -172,7 +172,9 @@ export class VentasActivasComponent implements OnInit {
           const { _id, precio_total } = this.ventaSeleccionada;
           this.alertService.loading();
           this.ventasService.actualizarFacturacion(_id, { precio_total, updatorUser: this.authService.usuario.userId }).subscribe({
-            next: () => this.listarVentas(),
+            next: () => {
+              this.listarVentas();
+            },
             error: ({ error }) => this.alertService.errorApi(error.message)
           })
         }

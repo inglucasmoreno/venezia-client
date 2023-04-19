@@ -169,7 +169,8 @@ export class VentasComponent implements OnInit {
         creatorUser: this.authService.usuario.userId,
         updatorUser: this.authService.usuario.userId,
         precio: producto.precio * cantidadProducto,
-        precio_unitario: producto.precio
+        precio_unitario: producto.precio,
+        alicuota: producto.alicuota ? producto.alicuota : 21
       }
       this.productos.unshift(nuevoProducto);
     }
@@ -216,7 +217,8 @@ export class VentasComponent implements OnInit {
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
       precio: this.precio,
-      precio_unitario: producto.precio
+      precio_unitario: producto.precio,
+      alicuota: producto.alicuota ? producto.alicuota : 21
     }
     
     this.productos.unshift(nuevoProducto);
@@ -254,8 +256,11 @@ export class VentasComponent implements OnInit {
   calcularPrecio(): void {
     
     let precioTMP = 0;
+    
     this.productos.map(producto => {
+      
       precioTMP += producto.precio;
+
     })
   
     // Precio sin adicionales ni descuentos

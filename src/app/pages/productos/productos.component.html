@@ -59,10 +59,21 @@
             <p class="font-semibold"> <span class="text-red-500"> * </span> Precio </p>
             <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" [(ngModel)]="productoForm.precio" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 1800" type="number">
           </div>
-          <div class="md:w-1/2 md:ml-4">
+          <div class="md:w-1/2 md:ml-4 mt-4 md:mt-0">
             <p class="font-semibold"> Precio mayorista </p>
             <input (keyup.enter)="estadoFormulario === 'crear' ? nuevoProducto() : actualizarProducto()" [(ngModel)]="productoForm.precio_mayorista" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" placeholder="Ej. 1500" type="number">
           </div>
+        </div>
+        <!-- Alicuota -->
+        <div class="md:flex md:items-center mt-4">
+          <div class="md:w-1/2">
+            <p class="font-semibold"> <span class="text-red-500"> * </span> Alicuota </p>
+            <select [(ngModel)]="productoForm.alicuota" class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor outline-none w-full text-gray-800">
+                <option id="21"> 21 </option>
+                <option id="10.5"> 10.5 </option>
+            </select>
+          </div>
+          <div class="md:w-1/2 md:ml-4"></div>
         </div>
         <div *ngIf="productoSeleccionado && estadoFormulario === 'editar'" class="xl:flex items-center mt-4">
           <div class="xl:w-1/2">
@@ -93,8 +104,9 @@
             </div>
         </div>   
     </div>
-    <div class="px-4 py-2 text-sm">
-        <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoProducto()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Crear producto </button>
+
+    <div class="px-4 pb-2 text-sm">
+        <button *ngIf="estadoFormulario == 'crear'" (click)="nuevoProducto()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4 md:mt-0"> Crear producto </button>
         <button *ngIf="estadoFormulario == 'editar'" (click)="actualizarProducto()" class="bg-gray-100 focus:outline-none hover:text-secondaryColor shadow text-gray-800 w-full border border-gray-300 font-semibold p-2 rounded mt-4"> Actualizar producto </button>
     </div>
   </div>
@@ -206,6 +218,16 @@
                                     </div>
                                   </th>
                                   <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                                    <div (click)="ordenarPorColumna('alicuota')" class="cursor-pointer w-max flex items-center focus:outline-none">
+                                        <span> Alicuota (%) </span>
+                                        <span class="ml-2 text-gray-600">    
+                                            <svg *ngIf="ordenar.columna == 'alicuota' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
+                                            <svg *ngIf="ordenar.columna == 'alicuota' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                            <svg *ngIf="ordenar.columna != 'alicuota'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        </span>
+                                    </div>
+                                  </th>
+                                  <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
                                     <div (click)="ordenarPorColumna('precio')" class="cursor-pointer flex items-center focus:outline-none">
                                         <span> Precio </span>
                                         <span class="ml-2 text-gray-600">    
@@ -245,13 +267,18 @@
                                     </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                      <p class="text-gray-900 whitespace-no-wrap w-max">
+                                      <p class="text-gray-900 whitespace-no-wrap">
                                           {{ producto.descripcion }}
                                       </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                                     <p class="text-gray-900 whitespace-no-wrap w-max">
                                         {{ producto.unidad_medida.descripcion }}
+                                    </p>
+                                  </td>
+                                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                                    <p class="text-gray-900 whitespace-no-wrap w-max">
+                                        {{ producto.alicuota ? producto.alicuota : 21 }}
                                     </p>
                                   </td>
                                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
