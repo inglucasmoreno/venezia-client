@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 
 import { AlertService } from '../../services/alert.service';
 import gsap from 'gsap';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,8 @@ import gsap from 'gsap';
 })
 export class LoginComponent implements OnInit {
   
+  public SUCURSAL = environment.sucursal;
+
   public loginForm = this.fb.group({
     username: ['', Validators.required],
     password: ['', Validators.required]
