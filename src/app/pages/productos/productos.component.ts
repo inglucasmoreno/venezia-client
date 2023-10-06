@@ -48,6 +48,7 @@ public productoForm: any = {
   unidad_medida: '000000000000000000000000',
   balanza: 'false',
   codigo: '',
+  cantidad: 0,
   precio: null,
   precio_mayorista: null,
   alicuota: 21
@@ -133,12 +134,13 @@ constructor(private productosService: ProductosService,
     this.productoSeleccionado = producto;
     this.productosService.getProducto(producto._id).subscribe({
       next: ({producto}) => {
-        const { descripcion, unidad_medida, balanza, codigo, precio, precio_mayorista, alicuota } = producto;
+        const { descripcion, unidad_medida, balanza, codigo, cantidad, precio, precio_mayorista, alicuota } = producto;
         this.productoForm = {
           descripcion,
           unidad_medida: unidad_medida._id,
           balanza: balanza ? 'true' : 'false',
           codigo,
+          cantidad: cantidad ? cantidad : 0,
           precio,
           precio_mayorista,
           alicuota: alicuota ? alicuota : 21 // Si no tiene alicuota mostrar -> 21       
@@ -172,11 +174,13 @@ constructor(private productosService: ProductosService,
 
   verificacion(): boolean {
     
-    const { descripcion, unidad_medida, balanza, precio } = this.productoForm;
+    const { descripcion, cantidad, unidad_medida, balanza, precio } = this.productoForm;
 
     const condicion = descripcion.trim() === '' ||
                       (unidad_medida.trim() === '' && balanza === 'false') ||
-                      precio === 0 || precio === null
+                      precio === 0 || 
+                      precio === null ||
+                      cantidad === null
     
     if(condicion) return true
     else return false
@@ -186,7 +190,7 @@ constructor(private productosService: ProductosService,
   // Nuevo producto
   nuevoProducto(): void {
 
-    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
+    const { descripcion, cantidad, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
 
     // Verificacion
     if(this.verificacion()){
@@ -201,6 +205,7 @@ constructor(private productosService: ProductosService,
       unidad_medida: balanza === 'true' ? '111111111111111111111111' : unidad_medida,
       balanza: balanza === 'true' ? true : false,
       codigo,
+      cantidad,
       precio,
       precio_mayorista,
       alicuota,
@@ -222,7 +227,7 @@ constructor(private productosService: ProductosService,
   // Actualizar producto
   actualizarProducto(): void {
 
-    const { descripcion, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
+    const { descripcion, cantidad, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
 
     // Verificacion
     if(this.verificacion()){
@@ -237,6 +242,7 @@ constructor(private productosService: ProductosService,
       unidad_medida: balanza === 'true' ? '111111111111111111111111' : unidad_medida,
       balanza: balanza === 'true' ? true : false,
       codigo,
+      cantidad,
       precio,
       precio_mayorista,
       alicuota,
@@ -309,6 +315,7 @@ constructor(private productosService: ProductosService,
       unidad_medida: '000000000000000000000000',
       balanza: 'false',
       codigo: '',
+      cantidad: 0,
       precio: null,
       precio_mayorista: null,
       alicuota: 21

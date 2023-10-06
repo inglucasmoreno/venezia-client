@@ -85,6 +85,7 @@ export class NuevaReservaComponent implements OnInit {
     precio_total: 0,
     productos: [],
     adelanto: 0,
+    usuario_generador: '',
     observaciones: '',
     tipo_observaciones: 'General',
     torta_relleno1: '',
@@ -294,6 +295,7 @@ export class NuevaReservaComponent implements OnInit {
     }
 
     this.fechaMuestra = format(add(new Date(this.dataReserva.fecha_reserva), { hours: 3 }), 'dd/MM/yyyy');
+    this.dataReserva.usuario_generador = '';
     this.dataReserva.horas_antes = '3';
     this.dataReserva.fecha_entrega = '';
     this.dataReserva.hora_entrega = '';
@@ -580,6 +582,7 @@ export class NuevaReservaComponent implements OnInit {
       precio_total: 0,
       productos: [],
       adelanto: 0,
+      usuario_generador: '',
       observaciones: '',
       tipo_observaciones: 'General',
       torta_relleno1: '',
@@ -624,6 +627,12 @@ export class NuevaReservaComponent implements OnInit {
     // Verificar colocar una hora de entrega válida
     if (!this.dataReserva.hora_entrega || this.dataReserva.hora_entrega === '') {
       this.alertService.info('Debe colocar una hora de entrega válida');
+      return;
+    }
+
+    // Quien eres -> Usuario generador
+    if (this.dataReserva.usuario_generador.trim() === '') {
+      this.alertService.info('Debes indicar quien eres');
       return;
     }
 

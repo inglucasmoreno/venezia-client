@@ -529,6 +529,11 @@
         </div> -->
       </div>
 
+      <div class="mt-4">
+        <p class="font-semibold"> Usuario generador </p>
+        <p class="mt-2 p-2 bg-gray-100 w-max border border-gray-400"> {{ reserva?.usuario_generador ? reserva?.usuario_generador : 'Sin generador' }} </p>
+      </div>
+
       <!-- Datos de cliente -->
       <div class="mt-4">
         <div class="px-2 py-4 flex items-center justify-between bg-gray-100 border border-gray-400">
@@ -555,7 +560,8 @@
               </div>
               <div class="ml-2">
                 <p class="font-semibold"> {{ clienteSeleccionado.descripcion }} </p>
-                <p class="text-gray-500 text-xs"> {{ clienteSeleccionado.tipo_identificacion }} {{ clienteSeleccionado.identificacion }} </p>
+                <p class="text-gray-700 text-xs mt-1"> {{ clienteSeleccionado.tipo_identificacion }} {{ clienteSeleccionado.identificacion }} </p>
+                <p class="text-xs text-gray-700"> Tel. {{ clienteSeleccionado.telefono }} </p>
                 <div class="flex items-center">
                   <!-- <button (click)="cambiarCliente()" title="Cambiar cliente" class="text-xs flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

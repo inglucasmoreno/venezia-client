@@ -317,6 +317,10 @@
             </select>
           </div>
         </div>
+        <div class="text-center mt-3">
+          <p class="font-semibold"> ¿Quien eres? </p>
+          <input placeholder="Ej. Moreno Lucas Omar" [(ngModel)]="dataReserva.usuario_generador" type="text" class="border rounded w-full mt-2 focus:outline-none border-gray-400 p-2">
+        </div>
       </div>
     </div>
     <div class="text-sm mt-1 text-center p-2">
@@ -396,7 +400,8 @@
               </div>
               <div class="ml-2">
                 <p class="font-semibold text-xs md:text-sm"> {{ clienteSeleccionado.descripcion }} </p>
-                <p class="text-gray-500 text-xs"> {{ clienteSeleccionado.tipo_identificacion }} {{ clienteSeleccionado.identificacion }} </p>
+                <p class="text-gray-700 text-xs"> {{ clienteSeleccionado.tipo_identificacion }} {{ clienteSeleccionado.identificacion }} </p>
+                <p class="text-xs text-gray-700"> Tel. {{ clienteSeleccionado.telefono }} </p>
                 <div class="flex items-center">
                   <button (click)="cambiarCliente()" title="Cambiar cliente" class="text-xs flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor"> 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
