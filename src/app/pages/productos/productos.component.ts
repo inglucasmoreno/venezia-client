@@ -14,75 +14,75 @@ import { UnidadMedidaService } from 'src/app/services/unidad-medida.service';
 })
 export class ProductosComponent implements OnInit {
 
-// Flag y mensaje de estado
-public flag_productos_importados = false;
-public mensaje = '';
+  // Flag y mensaje de estado
+  public flag_productos_importados = false;
+  public mensaje = '';
 
-// Archivos para importacion
-public file: any;
-public archivoSubir: any;
+  // Archivos para importacion
+  public file: any;
+  public archivoSubir: any;
 
-// Permisos de usuarios login
-public permisos = { all: false };
+  // Permisos de usuarios login
+  public permisos = { all: false };
 
-// Modal
-public showModalProducto = false;
-public showModalImportarProductos = false;
+  // Modal
+  public showModalProducto = false;
+  public showModalImportarProductos = false;
 
-// Estado formulario
-public estadoFormulario = 'crear';
+  // Estado formulario
+  public estadoFormulario = 'crear';
 
-// Producto
-public idProducto: string = '';
-public productos: any = [];
-public productoSeleccionado: any;
-public descripcion: string = '';
-public codigoTMP: string = '';
+  // Producto
+  public idProducto: string = '';
+  public productos: any = [];
+  public productoSeleccionado: any;
+  public descripcion: string = '';
+  public codigoTMP: string = '';
 
-// Unidades de medida
-public unidades: any[] = [];
+  // Unidades de medida
+  public unidades: any[] = [];
 
-// Formulario producto
-public productoForm: any = {
-  descripcion: '',
-  unidad_medida: '000000000000000000000000',
-  balanza: 'false',
-  codigo: '',
-  cantidad: 0,
-  precio: null,
-  precio_mayorista: null,
-  alicuota: 21
-}
+  // Formulario producto
+  public productoForm: any = {
+    descripcion: '',
+    unidad_medida: '000000000000000000000000',
+    balanza: 'false',
+    codigo: '',
+    cantidad: 0,
+    precio: null,
+    precio_mayorista: null,
+    alicuota: 21
+  }
 
-// Paginacion
-public paginaActual: number = 1;
-public cantidadItems: number = 10;
+  // Paginacion
+  public paginaActual: number = 1;
+  public cantidadItems: number = 10;
 
-public texto = '';
+  public texto = '';
 
-// Filtrado
-public filtro = {
-  activo: 'true',
-  parametro: ''
-}
+  // Filtrado
+  public filtro = {
+    activo: 'true',
+    parametro: ''
+  }
 
-// Ordenar
-public ordenar = {
-  direccion: 1,  // Asc (1) | Desc (-1)
-  columna: 'descripcion'
-}
+  // Ordenar
+  public ordenar = {
+    direccion: 1,  // Asc (1) | Desc (-1)
+    columna: 'descripcion'
+  }
 
-constructor(private productosService: ProductosService,
-            private inicializacionService: InicializacionService,
-            private unidadMedidaService: UnidadMedidaService,
-            public authService: AuthService,
-            private alertService: AlertService,
-            private dataService: DataService) { }
+  constructor(private productosService: ProductosService,
+    private inicializacionService: InicializacionService,
+    private unidadMedidaService: UnidadMedidaService,
+    public authService: AuthService,
+    private alertService: AlertService,
+    private dataService: DataService) { }
 
   ngOnInit(): void {
-    this.dataService.ubicacionActual = 'Dashboard - Productos'; 
+    this.dataService.ubicacionActual = 'Dashboard - Productos';
     this.permisos.all = this.permisosUsuarioLogin();
-    this.cargaInicial(); 
+    this.cargaInicial();
   }
 
   // Carga inicial
@@ -96,16 +96,16 @@ constructor(private productosService: ProductosService,
 
         // Listado de unidades de medida
         this.unidadMedidaService.listarUnidades().subscribe({
-          next:({unidades}) => {
+          next: ({ unidades }) => {
             this.unidades = unidades.filter(unidad => (unidad.activo));
             this.alertService.close();
           },
-          error: ({error}) => {
+          error: ({ error }) => {
             this.alertService.errorApi(error.message);
           }
         })
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     })
@@ -120,11 +120,11 @@ constructor(private productosService: ProductosService,
   // Abrir modal
   abrirModal(estado: string, producto: any = null): void {
     this.reiniciarFormulario();
-    
-    if(estado === 'editar') this.getProducto(producto);
+
+    if (estado === 'editar') this.getProducto(producto);
     else this.showModalProducto = true;
 
-    this.estadoFormulario = estado;  
+    this.estadoFormulario = estado;
   }
 
   // Traer datos de producto
@@ -133,7 +133,7 @@ constructor(private productosService: ProductosService,
     this.idProducto = producto._id;
     this.productoSeleccionado = producto;
     this.productosService.getProducto(producto._id).subscribe({
-      next: ({producto}) => {
+      next: ({ producto }) => {
         const { descripcion, unidad_medida, balanza, codigo, cantidad, precio, precio_mayorista, alicuota } = producto;
         this.productoForm = {
           descripcion,
@@ -148,7 +148,7 @@ constructor(private productosService: ProductosService,
         this.alertService.close();
         this.showModalProducto = true;
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     })
@@ -157,32 +157,32 @@ constructor(private productosService: ProductosService,
   // Listar productos
   listarProductos(): void {
     this.alertService.loading();
-    this.productosService.listarProductos( 
+    this.productosService.listarProductos(
       this.ordenar.direccion,
       this.ordenar.columna
     ).subscribe({
-      next: ({productos}) => {
+      next: ({ productos }) => {
         this.productos = productos;
         this.showModalProducto = false;
         this.alertService.close();
       },
-      error: ({error}) => {
-          this.alertService.errorApi(error.message);
+      error: ({ error }) => {
+        this.alertService.errorApi(error.message);
       }
     })
   }
 
   verificacion(): boolean {
-    
+
     const { descripcion, cantidad, unidad_medida, balanza, precio } = this.productoForm;
 
     const condicion = descripcion.trim() === '' ||
-                      (unidad_medida.trim() === '' && balanza === 'false') ||
-                      precio === 0 || 
-                      precio === null ||
-                      cantidad === null
-    
-    if(condicion) return true
+      (unidad_medida.trim() === '' && balanza === 'false') ||
+      precio === 0 ||
+      precio === null ||
+      cantidad === null
+
+    if (condicion) return true
     else return false
 
   }
@@ -193,7 +193,7 @@ constructor(private productosService: ProductosService,
     const { descripcion, cantidad, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
 
     // Verificacion
-    if(this.verificacion()){
+    if (this.verificacion()) {
       this.alertService.info('Formulario inválido');
       return;
     }
@@ -217,11 +217,11 @@ constructor(private productosService: ProductosService,
       next: () => {
         this.listarProductos();
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     })
-    
+
   }
 
   // Actualizar producto
@@ -230,7 +230,7 @@ constructor(private productosService: ProductosService,
     const { descripcion, cantidad, codigo, unidad_medida, balanza, precio, precio_mayorista, alicuota } = this.productoForm;
 
     // Verificacion
-    if(this.verificacion()){
+    if (this.verificacion()) {
       this.alertService.info('Formulario inválido');
       return;
     }
@@ -254,7 +254,7 @@ constructor(private productosService: ProductosService,
       next: () => {
         this.listarProductos();
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     })
@@ -263,47 +263,46 @@ constructor(private productosService: ProductosService,
 
   // Actualizar estado Activo/Inactivo
   actualizarEstado(producto: any): void {
-    
+
     const { _id, activo } = producto;
-    
-    if(!this.permisos.all) return this.alertService.info('Usted no tiene permiso para realizar esta acción');
 
-    this.alertService.question({ msg: activo ? '¿Quieres dar de baja el producto?': '¿Quieres dar de alta el producto?', buttonText: activo ? 'Dar de baja' : 'Dar de alta' })
-        .then(({isConfirmed}) => {  
-          if (isConfirmed) {
-            this.alertService.loading();
-            this.productosService.actualizarProducto(_id, {activo: !activo}).subscribe({
-              next: () => {
-                this.alertService.loading();
-                this.listarProductos();
-              },
-              error: ({error}) => {
-                this.alertService.errorApi(error.message);
-              }
-            })
-          }
-        });
+    if (!this.permisos.all) return this.alertService.info('Usted no tiene permiso para realizar esta acción');
 
+    this.alertService.question({ msg: activo ? '¿Quieres dar de baja el producto?' : '¿Quieres dar de alta el producto?', buttonText: activo ? 'Dar de baja' : 'Dar de alta' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.productosService.actualizarProducto(_id, { activo: !activo }).subscribe({
+            next: () => {
+              this.alertService.loading();
+              this.listarProductos();
+            },
+            error: ({ error }) => {
+              this.alertService.errorApi(error.message);
+            }
+          })
+        }
+      });
   }
 
   // Adaptacion de codigo
   adaptacionCodigo(desde: string): void {
-    
+
     this.productoForm.unidad_medida = this.productoForm.balanza === 'true' ? '111111111111111111111111' : '000000000000000000000000';
 
     // Se guarda el codigo
-    if(desde === 'codigo'){
+    if (desde === 'codigo') {
       this.codigoTMP = this.productoForm.codigo;
     }
 
-    if((desde === 'balanza' || desde === 'codigo') && this.productoForm.balanza === 'true'){
-      this.productoForm.codigo = this.codigoTMP.slice(2,7);
+    if ((desde === 'balanza' || desde === 'codigo') && this.productoForm.balanza === 'true') {
+      this.productoForm.codigo = this.codigoTMP.slice(2, 7);
     }
 
-    if((desde === 'balanza' || desde === 'codigo') && this.productoForm.balanza === 'false'){
+    if ((desde === 'balanza' || desde === 'codigo') && this.productoForm.balanza === 'false') {
       this.productoForm.codigo = this.codigoTMP;
     }
-    
+
   }
 
   // Reiniciando formulario
@@ -324,18 +323,18 @@ constructor(private productosService: ProductosService,
 
   // Capturando archivo de importacion
   capturarArchivo(event: any): void {
-    if(event.target.files[0]){
+    if (event.target.files[0]) {
       // Se capatura el archivo
       this.archivoSubir = event.target.files[0];
-  
+
       // Se verifica el formato - Debe ser un excel
       const formato = this.archivoSubir.type.split('/')[1];
       const condicion = formato !== 'vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-  
-      if(condicion){
+
+      if (condicion) {
         this.file = null;
         this.archivoSubir = null;
-        return this.alertService.info('Debes seleccionar un archivo de excel');      
+        return this.alertService.info('Debes seleccionar un archivo de excel');
       }
     }
   }
@@ -344,46 +343,77 @@ constructor(private productosService: ProductosService,
   abrirImportarProductos(): void {
     this.file = null;
     this.showModalImportarProductos = true;
-  }  
+  }
 
   // Importar productos
   importarProductos(): void {
 
-    if(!this.file) return this.alertService.info('Debe seleccionar un archivo de excel');
+    if (!this.file) return this.alertService.info('Debe seleccionar un archivo de excel');
 
     this.alertService.loading();
-    const formData =  new FormData();
+    const formData = new FormData();
     formData.append('file', this.archivoSubir); // FormData -> key = 'file' y value = Archivo
 
     this.inicializacionService.importarProductos(formData, this.authService.usuario.userId).subscribe({
-      next: ({msg}) => {
+      next: ({ msg }) => {
         this.mensaje = msg;
         this.flag_productos_importados = true;
-        this.listarProductos();        
+        this.listarProductos();
       },
-      error: ({error}) => {
+      error: ({ error }) => {
         this.alertService.errorApi(error.message);
       }
     })
 
   }
 
+  // Sincronizar productos
+  sincronizarProductos(): void {
+    this.alertService.question({ msg: 'Estas por sincronizar los productos', buttonText: 'Sincronizar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.productosService.sincronizarProductos().subscribe({
+            next: () => this.listarProductos(),
+            error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
+  }
+
+  // Copiar productos
+  copiarProductos(): void {
+    console.log(this.authService.usuario);
+    this.alertService.question({ msg: 'Estas por inicializar los productos', buttonText: 'Inicializar' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.alertService.loading();
+          this.productosService.copiaProductos({
+            creatorUser: this.authService.usuario.userId,
+          }).subscribe({
+            next: () => this.listarProductos(),
+            error: ({ error }) => this.alertService.errorApi(error.message)
+          })
+        }
+      });
+  }
+
   // Filtrar Activo/Inactivo
-  filtrarActivos(activo: any): void{
+  filtrarActivos(activo: any): void {
     this.paginaActual = 1;
     this.filtro.activo = activo;
   }
 
   // Filtrar por Parametro
-  filtrarParametro(parametro: string): void{
+  filtrarParametro(parametro: string): void {
     this.paginaActual = 1;
     this.filtro.parametro = parametro;
   }
 
   // Ordenar por columna
-  ordenarPorColumna(columna: string){
+  ordenarPorColumna(columna: string) {
     this.ordenar.columna = columna;
-    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1; 
+    this.ordenar.direccion = this.ordenar.direccion == 1 ? -1 : 1;
     this.alertService.loading();
     this.listarProductos();
   }
