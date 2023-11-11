@@ -47,6 +47,8 @@ import { ClientesComponent } from './clientes/clientes.component';
 import { ReservasComponent } from './reservas/reservas.component';
 import { NuevaReservaComponent } from './reservas/nueva-reserva.component';
 import { DetallesReservasComponent } from './reservas/detalles-reservas.component';
+import { ComprasComponent } from './compras/compras.component';
+import { ComprasDetallesComponent } from './compras-detalles/compras-detalles.component';
 
 
 @NgModule({
@@ -91,6 +93,8 @@ import { DetallesReservasComponent } from './reservas/detalles-reservas.componen
     ReservasComponent,
     NuevaReservaComponent,
     DetallesReservasComponent,
+    ComprasComponent,
+    ComprasDetallesComponent,
   ],
   imports: [
     CommonModule,

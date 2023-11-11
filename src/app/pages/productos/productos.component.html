@@ -178,7 +178,7 @@
                                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
                         </button>
-                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" title="Sincronizar productos"
+                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE' && SUCURSAL !== 'SUCURSAL ARISTOBULO'" title="Sincronizar productos"
                             (click)="sincronizarProductos()"
                             class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

@@ -21,6 +21,7 @@ export class EditarUsuarioComponent implements OnInit {
   public permisos = {
     usuarios: 'USUARIOS_NOT_ACCESS',
     ventas: 'VENTAS_NOT_ACCESS',
+    compras: 'COMPRAS_NOT_ACCESS',
     clientes: 'CLIENTES_NOT_ACCESS',
     productos: 'PRODUCTOS_NOT_ACCESS',
     unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
@@ -107,6 +108,9 @@ export class EditarUsuarioComponent implements OnInit {
       // Ventas
       (permiso === 'VENTAS_ALL' || permiso === 'VENTAS_READ') ? this.permisos.ventas = permiso : null;
 
+      // Compras
+      (permiso === 'COMPRAS_ALL' || permiso === 'COMPRAS_READ') ? this.permisos.compras = permiso : null;
+
       // Clientes
       (permiso === 'CLIENTES_ALL' || permiso === 'CLIENTES_READ') ? this.permisos.clientes = permiso : null;
 
@@ -182,6 +186,7 @@ export class EditarUsuarioComponent implements OnInit {
       this.permisos = {
         usuarios: 'USUARIOS_NOT_ACCESS',
         ventas: 'VENTAS_ALL',
+        compras: 'COMPRAS_ALL',
         clientes: 'CLIENTES_ALL',
         productos: 'PRODUCTOS_READ',
         unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
@@ -196,6 +201,7 @@ export class EditarUsuarioComponent implements OnInit {
       this.permisos = {
         usuarios: 'USUARIOS_NOT_ACCESS',
         ventas: 'VENTAS_NOT_ACCESS',
+        compras: 'COMPRAS_NOT_ACCESS',
         clientes: 'CLIENTES_NOT_ACCESS',
         productos: 'PRODUCTOS_NOT_ACCESS',
         unidad_medida: 'UNIDAD_MEDIDA_NOT_ACCESS',
@@ -223,6 +229,12 @@ export class EditarUsuarioComponent implements OnInit {
     if (this.permisos.ventas !== 'VENTAS_NOT_ACCESS') {
       permisos.push('VENTAS_NAV');
       permisos.push(this.permisos.ventas);
+    }
+
+    // Seccion compras
+    if (this.permisos.compras !== 'COMPRAS_NOT_ACCESS') {
+      permisos.push('COMPRAS_NAV');
+      permisos.push(this.permisos.compras);
     }
 
     // Seccion clientes

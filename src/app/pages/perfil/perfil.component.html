@@ -43,18 +43,32 @@
 
         </div>
     </div>
-    <div class="w-full mt-2 md:mt-0 md:w-1/2 md:ml-2 border shadow rounded h-full">
-        <h1 class="bg-primary-800 text-white text-center text-xl rounded-t p-2"> Actualizar contraseña </h1>
-        <form [formGroup]="passwordForm" (submit)="actualizarPassword()" class="p-2">
-            <div>
-                <p class="font-semibold ml-2"> Nueva contraseña </p>
-                <input formControlName="password" type="password" placeholder="Ingresar contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
+    <div class="w-full mt-2 md:mt-0 md:w-1/2 md:ml-2">
+        <div class="border shadow rounded h-max">
+            <h1 class="bg-primary-800 text-white text-center text-xl rounded-t p-2"> Actualizar contraseña </h1>
+            <form [formGroup]="passwordForm" (submit)="actualizarPassword()" class="p-2">
+                <div>
+                    <p class="font-semibold ml-2"> Nueva contraseña </p>
+                    <input formControlName="password" type="password" placeholder="Ingresar contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
+                </div>
+                <div class="mt-2 mb-2">
+                    <p class="font-semibold ml-2"> Repetir contraseña </p>
+                    <input formControlName="repetir" type="password" placeholder="Repite la contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
+                </div>
+                <app-boton-formulario [deshabilitado]="!passwordForm.valid || (passwordForm.value.password.trim() !== passwordForm.value.repetir.trim())" texto="Actualizar contraseña"></app-boton-formulario>
+            </form>
+        </div>
+        <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="mt-4 border shadow rounded h-max">
+            <h1 class="bg-primary-800 text-white text-center text-xl rounded-t p-2"> Configuraciones generales </h1>
+            <div class="border border-gray-400 p-2">
+                <div [ngClass]="{'bg-green-100' : configuraciones.stock === 'true', 'bg-red-100' : configuraciones.stock === 'false'}" class="p-2 flex items-center justify-between border border-gray-400">
+                    <p class="text-sm font-semibold"> Habilitar / Deshabilitar - STOCK </p> 
+                    <select (change)="actualizarConfiguracion()" [(ngModel)]="configuraciones.stock" class="border border-gray-400 focus:outline-none bg-white p-2 rounded">
+                        <option value="false"> Deshabilitado </option>
+                        <option value="true"> Habilitado </option>
+                    </select>    
+                </div>
             </div>
-            <div class="mt-2 mb-2">
-                <p class="font-semibold ml-2"> Repetir contraseña </p>
-                <input formControlName="repetir" type="password" placeholder="Repite la contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
-            </div>
-            <app-boton-formulario [deshabilitado]="!passwordForm.valid || (passwordForm.value.password.trim() !== passwordForm.value.repetir.trim())" texto="Actualizar contraseña"></app-boton-formulario>
-        </form>
+        </div>
     </div>
 </div>

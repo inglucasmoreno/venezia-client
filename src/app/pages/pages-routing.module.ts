@@ -45,6 +45,8 @@ import { ClientesComponent } from './clientes/clientes.component';
 import { ReservasComponent } from './reservas/reservas.component';
 import { NuevaReservaComponent } from './reservas/nueva-reserva.component';
 import { DetallesReservasComponent } from './reservas/detalles-reservas.component';
+import { ComprasComponent } from './compras/compras.component';
+import { ComprasDetallesComponent } from './compras-detalles/compras-detalles.component';
 
 const routes: Routes = [
     {
@@ -63,6 +65,10 @@ const routes: Routes = [
             { path: 'ventas', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasComponent },
             { path: 'ventas/historial', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasHistorialComponent },
             { path: 'ventas/activas', data: { permisos: 'VENTAS_NAV' }, canActivate: [PermisosGuard], component: VentasActivasComponent },
+
+            // Compras
+            { path: 'compras', data: { permisos: 'COMPRAS_NAV' }, canActivate: [PermisosGuard], component: ComprasComponent },
+            { path: 'compras/detalles/:id', data: { permisos: 'COMPRAS_NAV' }, canActivate: [PermisosGuard], component: ComprasDetallesComponent },
 
             // Usuarios
             { path: 'usuarios', data: { permisos: 'USUARIOS_NAV' }, canActivate: [PermisosGuard], component: UsuariosComponent },

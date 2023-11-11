@@ -16,6 +16,8 @@ import { FiltroMayoristasGastosTiposPipe } from './filtro-mayoristas-gastos-tipo
 import { FiltroMayoristasIngresosTiposPipe } from './filtro-mayoristas-ingresos-tipos.pipe';
 import { FiltroCuentasCorrientesMayoristasPipe } from './filtro-cuentas-corrientes-mayoristas.pipe';
 import { AlertaReservasPipe } from './alerta-reservas.pipe';
+import { FiltroComprasPipe } from './filtro-compras.pipe';
+import { FiltroProductosCompraPipe } from './filtro-productos-compra.pipe';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { AlertaReservasPipe } from './alerta-reservas.pipe';
     FiltroMayoristasIngresosTiposPipe,
     FiltroCuentasCorrientesMayoristasPipe,
     AlertaReservasPipe,
+    FiltroComprasPipe,
+    FiltroProductosCompraPipe,
   ],
   imports: [
     CommonModule
@@ -46,7 +50,9 @@ import { AlertaReservasPipe } from './alerta-reservas.pipe';
     FiltroUsuariosPipe,
     FiltroUnidadMedidaPipe,
     FiltroProductosPipe,
+    FiltroProductosCompraPipe,
     FiltroVentasPipe,
+    FiltroComprasPipe,
     FiltroCajasPipe,
     FiltroPedidosyaPipe,
     FiltroPedidoPipe,

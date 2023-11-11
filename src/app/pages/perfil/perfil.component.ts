@@ -6,6 +6,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { DataService } from 'src/app/services/data.service';
 import gsap from 'gsap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ConfiguracionesGeneralesService } from 'src/app/services/configuraciones-generales.service';
 
 @Component({
   selector: 'app-perfil',
@@ -15,8 +16,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class PerfilComponent implements OnInit {
 
-  constructor(private authService: AuthService,
+  // Configuraciones generales
+  public configuraciones = {
+    stock: 'true'
+  }
+
+  constructor(public authService: AuthService,
               private dataService: DataService,
+              private configuracionesGeneralesService: ConfiguracionesGeneralesService,
               private fb: FormBuilder,
               private usuariosService: UsuariosService,
               private alertService: AlertService) { }
@@ -40,10 +47,28 @@ export class PerfilComponent implements OnInit {
   getUsuario(): void {
     this.alertService.loading();
     this.usuariosService.getUsuario(this.authService.usuario.userId).subscribe( (usuario: Usuario) => {
-      this.alertService.close();
       this.usuarioLogin = usuario;
+      this.configuracionesGeneralesService.getConfiguracion().subscribe({
+        next: ({ configuraciones }) => {
+          this.configuraciones.stock = configuraciones.stock ? 'true' : 'false';
+          this.alertService.close();
+        }, error: ({ error }) => this.alertService.errorApi(error.message)
+      })
     },({error}) => {
       this.alertService.errorApi(error.msg);
+    })
+  }
+
+  // Actualizar configuracion
+  actualizarConfiguracion(): void {
+    this.alertService.loading();
+    this.configuracionesGeneralesService.actualizarConfiguracion({
+      stock: this.configuraciones.stock === 'true' ? true : false
+    }).subscribe({
+      next: ({ configuraciones }) => {
+        this.configuraciones.stock = configuraciones.stock ? 'true' : 'false';
+        this.alertService.success('Configuraciones actualizadas');
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
   }
 

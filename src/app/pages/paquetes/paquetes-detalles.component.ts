@@ -852,6 +852,7 @@ export class PaquetesDetallesComponent implements OnInit {
 
   // Completar paquete
   completarPaquete(): void {
+   
     this.alertService.question({ msg: 'Completando paquete', buttonText: 'Completar' })
       .then(({ isConfirmed }) => {
         if (isConfirmed) {

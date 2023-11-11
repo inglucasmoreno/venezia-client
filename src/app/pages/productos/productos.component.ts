@@ -5,6 +5,7 @@ import { DataService } from 'src/app/services/data.service';
 import { InicializacionService } from 'src/app/services/inicializacion.service';
 import { ProductosService } from 'src/app/services/productos.service';
 import { UnidadMedidaService } from 'src/app/services/unidad-medida.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-productos',
@@ -13,6 +14,9 @@ import { UnidadMedidaService } from 'src/app/services/unidad-medida.service';
   ]
 })
 export class ProductosComponent implements OnInit {
+
+  // Sucursal
+  public SUCURSAL = environment.sucursal;
 
   // Flag y mensaje de estado
   public flag_productos_importados = false;
