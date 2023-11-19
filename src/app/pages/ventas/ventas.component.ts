@@ -6,6 +6,7 @@ import { ProductosService } from 'src/app/services/productos.service';
 import { VentasService } from 'src/app/services/ventas.service';
 import gsap from 'gsap';
 import { environment } from 'src/environments/environment';
+import { ConfiguracionesGeneralesService } from 'src/app/services/configuraciones-generales.service';
 
 const base_url = environment.base_url;
 
@@ -79,17 +80,38 @@ export class VentasComponent implements OnInit {
     parametro: ''
   }
 
+  // Configuraciones generales
+  public configuraciones = {
+    venta_cantidad: false,
+    venta_precio: false,
+  }
+
   constructor(private dataService: DataService,
+              private configuracionesGeneralesService: ConfiguracionesGeneralesService,
               private alertService: AlertService,
               public authService: AuthService,
               private ventasService: VentasService,
               private productosService: ProductosService) { }
 
   ngOnInit(): void {
+    
     // Se recuperan los valores del localstorage
     this.recuperarLocalStorage();
     gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = 'Dashboard - Ventas';
+    
+    // Carga de configuraciones generales
+    this.alertService.loading();
+    this.configuracionesGeneralesService.getConfiguracion().subscribe({
+      next: ({ configuraciones }) => {
+        this.configuraciones = {
+          venta_cantidad: configuraciones.venta_cantidad,
+          venta_precio: configuraciones.venta_precio
+        }
+        this.alertService.close();
+      }, error: () => this.alertService.errorApi('Error al cargar configuraciones generales')
+    });
+
   }
 
   // Listar productos - Para modo 'Buscador'

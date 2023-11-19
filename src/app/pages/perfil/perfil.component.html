@@ -1,31 +1,38 @@
 <div class="p-4 gsap-contenido max-w-5xl mx-auto w-full md:flex">
-    <div class="border border-gray-200 w-full md:w-1/2 shadow rounded">
 
-        <h1 class="text-2xl p-2 bg-primary-800 text-white text-center rounded-t"> Datos de usuario </h1>
+    <div class="border border-gray-400 w-full h-full rounded-t md:w-1/2 shadow">
+
+        <h1 class="text-2xl p-2 bg-primary-800 border-gray-800 rounded-t text-white text-center"> Datos de usuario </h1>
 
         <div *ngIf="usuarioLogin" class="p-4">
 
             <!-- Avatar -->
             <div class="mt-3 text-center">
-                <div *ngIf="usuarioLogin.role === 'ADMIN_ROLE'" class="bg-blue-100 mr-auto ml-auto rounded-full flex items-center justify-center w-24 h-24 shadow border border-blue-200">
+                <div *ngIf="usuarioLogin.role === 'ADMIN_ROLE'"
+                    class="bg-blue-100 mr-auto ml-auto rounded-full flex items-center justify-center w-24 h-24 shadow border border-blue-200">
                     <p class="text-4xl font-semibold text-blue-900"> A </p>
                 </div>
-                <div *ngIf="usuarioLogin.role === 'USER_ROLE'" class="bg-orange-100 mr-auto ml-auto flex items-center justify-center w-24 h-24 rounded-full shadow border border-orange-200">
+                <div *ngIf="usuarioLogin.role === 'USER_ROLE'"
+                    class="bg-orange-100 mr-auto ml-auto flex items-center justify-center w-24 h-24 rounded-full shadow border border-orange-200">
                     <p class="text-4xl font-semibold text-orange-500"> E </p>
                 </div>
-                <div *ngIf="usuarioLogin.role === 'DELIVERY_ROLE'" class="bg-green-100 mr-auto ml-auto flex items-center justify-center w-24 h-24 rounded-full shadow border border-green-200">
+                <div *ngIf="usuarioLogin.role === 'DELIVERY_ROLE'"
+                    class="bg-green-100 mr-auto ml-auto flex items-center justify-center w-24 h-24 rounded-full shadow border border-green-200">
                     <p class="text-4xl font-semibold text-green-500"> R </p>
                 </div>
-                <p *ngIf="usuarioLogin.role === 'ADMIN_ROLE'" class="mt-1 text-sm text-blue-700"> Usuario administrador </p>
+                <p *ngIf="usuarioLogin.role === 'ADMIN_ROLE'" class="mt-1 text-sm text-blue-700"> Usuario administrador
+                </p>
                 <p *ngIf="usuarioLogin.role === 'USER_ROLE'" class="mt-1 text-sm text-orange-700"> Usuario empleado </p>
-                <p *ngIf="usuarioLogin.role === 'DELIVERY_ROLE'" class="mt-1 text-sm text-green-700"> Usuario repartidor </p>
+                <p *ngIf="usuarioLogin.role === 'DELIVERY_ROLE'" class="mt-1 text-sm text-green-700"> Usuario repartidor
+                </p>
             </div>
 
             <!-- Datos de usuario -->
             <div class="w-full mt-2">
                 <div class="p-2 text-center">
                     <p class="font-semibold text-xl"> Apellido y Nombre </p>
-                    <p class="capitalize text-gray-500"> {{ usuarioLogin.apellido.toLowerCase() }} {{ usuarioLogin.nombre.toLowerCase() }} </p>
+                    <p class="capitalize text-gray-500"> {{ usuarioLogin.apellido.toLowerCase() }} {{
+                        usuarioLogin.nombre.toLowerCase() }} </p>
                 </div>
                 <div class="p-2 text-center mt-1">
                     <p class="font-semibold text-xl"> DNI </p>
@@ -44,29 +51,53 @@
         </div>
     </div>
     <div class="w-full mt-2 md:mt-0 md:w-1/2 md:ml-2">
-        <div class="border shadow rounded h-max">
+        <div class="border border-gray-400 shadow rounded h-max">
             <h1 class="bg-primary-800 text-white text-center text-xl rounded-t p-2"> Actualizar contraseña </h1>
             <form [formGroup]="passwordForm" (submit)="actualizarPassword()" class="p-2">
                 <div>
                     <p class="font-semibold ml-2"> Nueva contraseña </p>
-                    <input formControlName="password" type="password" placeholder="Ingresar contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
+                    <input formControlName="password" type="password" placeholder="Ingresar contraseña"
+                        class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
                 </div>
                 <div class="mt-2 mb-2">
                     <p class="font-semibold ml-2"> Repetir contraseña </p>
-                    <input formControlName="repetir" type="password" placeholder="Repite la contraseña" class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
+                    <input formControlName="repetir" type="password" placeholder="Repite la contraseña"
+                        class="p-2 border-b-2 transform outline-none duration-500 focus:border-secondaryColor focus:outline-none w-full">
                 </div>
-                <app-boton-formulario [deshabilitado]="!passwordForm.valid || (passwordForm.value.password.trim() !== passwordForm.value.repetir.trim())" texto="Actualizar contraseña"></app-boton-formulario>
+                <app-boton-formulario
+                    [deshabilitado]="!passwordForm.valid || (passwordForm.value.password.trim() !== passwordForm.value.repetir.trim())"
+                    texto="Actualizar contraseña"></app-boton-formulario>
             </form>
         </div>
         <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="mt-4 border shadow rounded h-max">
             <h1 class="bg-primary-800 text-white text-center text-xl rounded-t p-2"> Configuraciones generales </h1>
             <div class="border border-gray-400 p-2">
-                <div [ngClass]="{'bg-green-100' : configuraciones.stock === 'true', 'bg-red-100' : configuraciones.stock === 'false'}" class="p-2 flex items-center justify-between border border-gray-400">
-                    <p class="text-sm font-semibold"> Habilitar / Deshabilitar - STOCK </p> 
-                    <select (change)="actualizarConfiguracion()" [(ngModel)]="configuraciones.stock" class="border border-gray-400 focus:outline-none bg-white p-2 rounded">
+                <div [ngClass]="{'bg-green-100' : configuraciones.stock === 'true', 'bg-red-100' : configuraciones.stock === 'false'}"
+                    class="p-2 flex items-center justify-between border border-gray-400">
+                    <p class="text-sm font-semibold"> Habilitar / Deshabilitar - STOCK </p>
+                    <select (change)="actualizarConfiguracion()" [(ngModel)]="configuraciones.stock"
+                        class="border text-sm border-gray-400 focus:outline-none bg-white p-2 rounded">
                         <option value="false"> Deshabilitado </option>
                         <option value="true"> Habilitado </option>
-                    </select>    
+                    </select>
+                </div>
+                <div [ngClass]="{'bg-green-100' : configuraciones.venta_cantidad === 'true', 'bg-red-100' : configuraciones.venta_cantidad === 'false'}"
+                    class="p-2 flex items-center mt-2 justify-between border border-gray-400">
+                    <p class="text-sm font-semibold"> Ventas por cantidad </p>
+                    <select (change)="actualizarConfiguracion()" [(ngModel)]="configuraciones.venta_cantidad"
+                        class="border text-sm border-gray-400 focus:outline-none bg-white p-2 rounded">
+                        <option value="false"> Deshabilitado </option>
+                        <option value="true"> Habilitado </option>
+                    </select>
+                </div>
+                <div [ngClass]="{'bg-green-100' : configuraciones.venta_precio === 'true', 'bg-red-100' : configuraciones.venta_precio === 'false'}"
+                    class="p-2 flex items-center mt-2 justify-between border border-gray-400">
+                    <p class="text-sm font-semibold"> Ventas por precio </p>
+                    <select (change)="actualizarConfiguracion()" [(ngModel)]="configuraciones.venta_precio"
+                        class="border text-sm border-gray-400 focus:outline-none bg-white p-2 rounded">
+                        <option value="false"> Deshabilitado </option>
+                        <option value="true"> Habilitado </option>
+                    </select>
                 </div>
             </div>
         </div>

@@ -18,7 +18,9 @@ export class PerfilComponent implements OnInit {
 
   // Configuraciones generales
   public configuraciones = {
-    stock: 'true'
+    stock: 'false',
+    venta_cantidad: 'true',
+    venta_precio: 'false',
   }
 
   constructor(public authService: AuthService,
@@ -51,6 +53,8 @@ export class PerfilComponent implements OnInit {
       this.configuracionesGeneralesService.getConfiguracion().subscribe({
         next: ({ configuraciones }) => {
           this.configuraciones.stock = configuraciones.stock ? 'true' : 'false';
+          this.configuraciones.venta_cantidad = configuraciones.venta_cantidad ? 'true' : 'false';
+          this.configuraciones.venta_precio = configuraciones.venta_precio ? 'true' : 'false';
           this.alertService.close();
         }, error: ({ error }) => this.alertService.errorApi(error.message)
       })
@@ -63,10 +67,14 @@ export class PerfilComponent implements OnInit {
   actualizarConfiguracion(): void {
     this.alertService.loading();
     this.configuracionesGeneralesService.actualizarConfiguracion({
-      stock: this.configuraciones.stock === 'true' ? true : false
+      stock: this.configuraciones.stock === 'true' ? true : false,
+      venta_cantidad: this.configuraciones.venta_cantidad === 'true' ? true : false,
+      venta_precio: this.configuraciones.venta_precio === 'true' ? true : false,
     }).subscribe({
       next: ({ configuraciones }) => {
         this.configuraciones.stock = configuraciones.stock ? 'true' : 'false';
+        this.configuraciones.venta_cantidad = configuraciones.venta_cantidad ? 'true' : 'false';
+        this.configuraciones.venta_precio = configuraciones.venta_precio ? 'true' : 'false';
         this.alertService.success('Configuraciones actualizadas');
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
