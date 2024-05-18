@@ -26,13 +26,15 @@
             class="w-full mt-2 text-sm border p-2 bg-white focus:outline-none border-gray-400 rounded">
             <option value="Normal"> Normal </option>
             <option value="Fiscal"> Guia de despacho </option>
+            <option value="Factura A"> Factura A </option>
           </select>
         </div>
       </div>
-      <div *ngIf="comprobante === 'Fiscal'" class="w-1/2 ml-2">
+      <div *ngIf="comprobante === 'Fiscal' || comprobante === 'Factura A'" class="w-1/2 ml-2">
         <p class="text-sm text-white"> Proximo numero de factura </p>
         <div class="flex items-center mb-3 md:mb-0">
-          <button (click)="proximoNroFactura()" title="Buscar proximo numero de factura"
+          <button (click)="comprobante === 'Fiscal' ? proximoNroFactura('B') : proximoNroFactura('A')"
+            [title]="comprobante === 'Fiscal' ? 'Proximo numero de Factura B' : 'Proximo numero de Factura A'"
             class="p-2 rounded border md:mt-2 border-gray-400 focus:outline-none hover:text-secondaryColor">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor" stroke-width="2">
@@ -45,7 +47,6 @@
             {{ proximo_nro_factura }}
           </p>
         </div>
-
       </div>
     </div>
     <div class="mt-2">
@@ -71,6 +72,39 @@
         </div>
       </div>
     </div>
+
+    <div *ngIf="comprobante === 'Factura A'" class="mt-3 text-sm border-t border-b py-3 border-gray-300">
+      <div class="p-2 bg-gray-100 border border-gray-400 flex items-center justify-between">
+        <p class="font-semibold"> Datos de cliente </p>
+        <button (click)="eliminarContribuyente()" title="Eliminar seleccion" *ngIf="contribuyente" class="bg-white p-2 border border-gray-400 rounded focus:outline-none hover:text-secondaryColor">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div *ngIf="!contribuyente" class="flex items-center mt-2">
+        <input (keyup.enter)="getContribuyente()" [(ngModel)]="cuitContribuyente" type="text" class="p-2 outline-none border border-gray-400 rounded mt-2" placeholder="CUIT de cliente">
+        <button (click)="getContribuyente()" class="ml-2 hover:text-secondaryColor border border-gray-400 focus:outline-none rounded p-2 mt-2"
+          title="Buscar cliente">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </button>
+      </div>
+      <div *ngIf="contribuyente" class="text-sm mt-2 flex items-center">
+        <img class="w-14" src="assets/img/cliente.svg" alt="cliente.svg">
+        <div class="ml-2">
+          <p *ngIf="contribuyente?.tipoPersona === 'JURIDICA'"> <span class="font-semibold"> Razon social: </span> {{ contribuyente?.razonSocial }} </p>
+          <p *ngIf="contribuyente?.tipoPersona === 'FISICA'"> <span class="font-semibold"> Apellido y Nombre: </span> {{ contribuyente?.apellido }} {{ contribuyente?.nombre }} </p>
+          <p class="mt-1"> <span class="font-semibold"> Tipo de persona: </span> {{ contribuyente?.tipoPersona }} </p>
+          <p class="mt-1"> <span class="font-semibold"> {{ contribuyente.tipoClave }}: </span> {{ contribuyente?.idPersona }} </p>
+        </div>
+      </div>
+    </div>
+
     <div class="mt-2">
       <p class="font-semibold text-sm"> Calculadora de vuelto </p>
       <div class="md:flex text-sm md:items-center mt-2">
@@ -306,7 +340,7 @@
                   <!-- <button (click)="seleccionarProducto(producto)" title="Agregar producto" class="border focus:outline-none border-gray-300 hover:text-secondaryColor ml-2 p-2 rounded">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                      </svg>                    
+                      </svg>
                     </button> -->
                 </div>
               </div>
@@ -360,13 +394,15 @@
     <!-- Cuando no hay productos seleccionados -->
     <div *ngIf="productos.length <= 0"
       class="border max-h-screen text-gray-700 overflow-y-auto px-2 py-5 bg-gray-100 border-gray-400 mt-2 md:mt-0 shadow rounded-t md:ml-4 md:w-1/2 h-full">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 mx-auto h-16">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-16 mx-auto h-16">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
       </svg>
       <div class="text-center">
         <p class="mt-2 font-semibold"> No hay productos en la venta </p>
         <p class="text-xs"> Cargar al menos un producto para ver las opciones </p>
-      </div>      
+      </div>
     </div>
 
     <!-- Cuando hay productos seleccionados -->

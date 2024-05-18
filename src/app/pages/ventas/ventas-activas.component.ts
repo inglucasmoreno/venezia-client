@@ -189,11 +189,11 @@ export class VentasActivasComponent implements OnInit {
   //   let montoTotalPedidosYaEfectivoTMP = 0;
   //   let montoTotalPedidosYaAppTMP = 0;
   //   this.ventas.map((venta: any) => {
-  //     montoTotalTMP += venta.precio_total;  
-  //     if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;  
-  //     if(venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaTMP += venta.precio_total;   
-  //     if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaAppTMP += venta.precio_total;   
-  //     if(venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaEfectivoTMP += venta.precio_total; 
+  //     montoTotalTMP += venta.precio_total;
+  //     if(venta.comprobante === 'Fiscal') montoTotalFacturadoTMP += venta.precio_total;
+  //     if(venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaTMP += venta.precio_total;
+  //     if(venta.forma_pago[0].descripcion === 'PedidosYa') montoTotalPedidosYaAppTMP += venta.precio_total;
+  //     if(venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo') montoTotalPedidosYaEfectivoTMP += venta.precio_total;
   //   });
   //   this.montoTotal = montoTotalTMP;
   //   this.montoTotalFacturado = montoTotalFacturadoTMP;
@@ -237,7 +237,7 @@ export class VentasActivasComponent implements OnInit {
     // Verificacion: Falta numero de comprobante
     if((this.nuevaForma === 'PedidosYa' || this.nuevaForma === 'PedidosYa - Efectivo') && this.nuevoNroComprobante === ''){
       this.alertService.info('Debe colocar un número de comprobante');
-      return;    
+      return;
     }
 
     this.formaPagoSeleccionada.descripcion = this.nuevaForma;
@@ -251,7 +251,7 @@ export class VentasActivasComponent implements OnInit {
     }else{
       data = { forma_pago: this.ventaSeleccionada.forma_pago, pedidosya_comprobante: this.nuevoNroComprobante };
       this.ventaSeleccionada.pedidosya_comprobante = '';
-    } 
+    }
 
     this.alertService.loading();
     this.ventasService.actualizarVenta(this.ventaSeleccionada._id, data).subscribe({
@@ -268,18 +268,15 @@ export class VentasActivasComponent implements OnInit {
     this.ventaReserva = null;
     this.alertService.loading();
     this.ventasService.getVenta(venta._id).subscribe(({ venta, productos }) => {
-
       this.ventasReservasService.getRelacionPorVenta(venta._id).subscribe({
         next: ({ relacion }) => {
           this.ventaReserva = relacion;
-          console.log(this.ventaReserva);
           this.ventaSeleccionada = venta;
           this.productos = productos;
           this.showModalDetalle = true;
           this.alertService.close();
         }, error: ({ error }) => this.alertService.errorApi(error.message)
       })
-
     }, ({ error }) => {
       this.alertService.errorApi(error);
     });

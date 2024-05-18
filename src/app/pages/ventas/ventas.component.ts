@@ -33,7 +33,7 @@ export class VentasComponent implements OnInit {
     'PedidosYa',
     'PedidosYa - Efectivo'
   ];
-  
+
   // Flag - Impresion
   public imprimir: boolean = false;
 
@@ -80,6 +80,10 @@ export class VentasComponent implements OnInit {
     parametro: ''
   }
 
+  // Facturacion A
+  public contribuyente: any = null;
+  public cuitContribuyente: string = '';
+
   // Configuraciones generales
   public configuraciones = {
     venta_cantidad: false,
@@ -94,12 +98,12 @@ export class VentasComponent implements OnInit {
               private productosService: ProductosService) { }
 
   ngOnInit(): void {
-    
+
     // Se recuperan los valores del localstorage
     this.recuperarLocalStorage();
     gsap.from('.gsap-contenido', { y:100, opacity: 0, duration: .2 });
     this.dataService.ubicacionActual = 'Dashboard - Ventas';
-    
+
     // Carga de configuraciones generales
     this.alertService.loading();
     this.configuracionesGeneralesService.getConfiguracion().subscribe({
@@ -123,7 +127,7 @@ export class VentasComponent implements OnInit {
         this.alertService.close();
       },
       error: ({error}) => {
-        this.alertService.errorApi(error.message);  
+        this.alertService.errorApi(error.message);
       }
     });
   }
@@ -134,7 +138,7 @@ export class VentasComponent implements OnInit {
     if(this.codigo.trim() === ''){
       this.alertService.info('Debe colocar un código de producto');
       return;
-    } 
+    }
 
     this.productosService.getProductoParametro(this.codigo).subscribe({
       next: ({producto}) => {
@@ -160,7 +164,7 @@ export class VentasComponent implements OnInit {
       return;
     }
 
-    // El producto es de balanza    
+    // El producto es de balanza
     if(producto.balanza && desde === 'codigo'){
       cantidadProducto = Number(this.codigo.slice(7,this.codigo.length - 1)) / 1000;
     }else{
@@ -242,7 +246,7 @@ export class VentasComponent implements OnInit {
       precio_unitario: producto.precio,
       alicuota: producto.alicuota ? producto.alicuota : 21
     }
-    
+
     this.productos.unshift(nuevoProducto);
 
     this.calcularPrecio();
@@ -256,12 +260,12 @@ export class VentasComponent implements OnInit {
     this.productoSeleccionado = producto;
     this.agregandoProducto = true;
   }
-  
+
   // Seleccionando forma de pago
   seleccionarFormaPago(): void {
 
     if(!this.multiples_formasPago && (this.formaPago === 'Crédito' || this.formaPago === 'Débito' || this.formaPago === 'Mercado pago')){
-      this.comprobante = 'Fiscal';    
+      this.comprobante = 'Fiscal';
     }
 
     this.pedidosya_comprobante = '';
@@ -271,27 +275,29 @@ export class VentasComponent implements OnInit {
 
   // Cambiar tipo de comprobante - Almacenar
   cambiarTipoComprobante(): void {
+    this.proximo_nro_factura = '';
+    this.eliminarContribuyente();
     this.almacenamientoLocalStorage();
   }
 
   // Calcular precio de venta
   calcularPrecio(): void {
-    
+
     let precioTMP = 0;
-    
+
     this.productos.map(producto => {
-      
+
       precioTMP += producto.precio;
 
     })
-  
+
     // Precio sin adicionales ni descuentos
     this.precio_total_limpio = this.dataService.redondear(precioTMP, 2);
 
     if(this.formasPago.length === 0){ // Forma de pago unica
       // Con adicional por credito => precio total + 10% : Sin adicional por credito
-      this.formaPago === 'Crédito' 
-      ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2) 
+      this.formaPago === 'Crédito'
+      ? this.precio_total = this.dataService.redondear(precioTMP * 1.10, 2)
       : this.precio_total = this.dataService.redondear(precioTMP, 2);
     }else{}
 
@@ -312,7 +318,7 @@ export class VentasComponent implements OnInit {
   // Eliminar venta
   eliminarVenta(): void {
     this.alertService.question({ msg: 'Eliminando venta', buttonText: 'Eliminar' })
-        .then(({isConfirmed}) => { 
+        .then(({isConfirmed}) => {
           if(isConfirmed){
             this.productoActual = null;
             this.pagaCon = null;
@@ -326,22 +332,28 @@ export class VentasComponent implements OnInit {
             this.metodoPagoUnico();
             this.reiniciarValores();
             this.almacenamientoLocalStorage(); // Alamacenamiento de valores en localStorage
-          } 
-        }); 
+          }
+        });
   }
 
   // Eliminar producto de la venta
   eliminarProducto(producto): void {
     this.alertService.question({ msg: 'Eliminando producto', buttonText: 'Eliminar' })
-        .then(({isConfirmed}) => {  
-          if (isConfirmed) this.productos = this.productos.filter( elemento => elemento.producto !== producto.producto);  
+        .then(({isConfirmed}) => {
+          if (isConfirmed) this.productos = this.productos.filter( elemento => elemento.producto !== producto.producto);
           this.calcularPrecio();
-        }); 
+        });
   }
 
   // Completar venta
   completarVenta(): void {
-    
+
+    // Verificacion - Si el comprobante es factura A y no se coloco un contribuyente
+    if(this.comprobante === 'Factura A' && !this.contribuyente){
+      this.alertService.info('Debe seleccionar un contribuyente');
+      return;
+    }
+
     // Verificacion - Formas de pago multiples
     if(this.multiples_formasPago && this.formasPago.length === 0){ // Seleccionar al menos una forma de pago (Multiples formas de pago)
       this.alertService.info('Debe seleccionar una forma de pago');
@@ -360,20 +372,33 @@ export class VentasComponent implements OnInit {
     }
 
     this.alertService.question({ msg: 'Completando venta', buttonText: 'Completar' })
-        .then(({isConfirmed}) => { 
+        .then(({isConfirmed}) => {
           if(isConfirmed){
 
             let forma_pago: any[];
-    
+
             this.alertService.loading();
-        
+
             if(!this.multiples_formasPago) forma_pago = [{ descripcion: this.formaPago, valor: this.precio_total }];
             else if(this.multiples_formasPago) forma_pago = this.formasPago;
-            
+
+            // Armamos la razonSocial
+            let razonSocial = '';
+            if(this.contribuyente){
+              if(this.contribuyente.tipoPersona === 'FISICA') razonSocial = `${this.contribuyente.apellido} ${this.contribuyente.nombre}`;
+              else if(this.contribuyente.tipoPersona === 'JURIDICA') razonSocial = this.contribuyente.razonSocial;
+            }
+
             const data = {
               productos: this.productos,
               precio_total: this.precio_total,
               precio_total_limpio: this.precio_total_limpio,
+              contribuyente: {
+                razonSocial: this.contribuyente ? razonSocial : '',
+                tipoPersona: this.contribuyente ? this.contribuyente.tipoPersona : '',
+                tipoIdentificacion: this.contribuyente ? this.contribuyente.tipoClave : '',
+                identificacion: this.contribuyente ? this.contribuyente.idPersona : ''
+              },
               comprobante: this.comprobante,
               pedidosya_comprobante: (this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') ? this.pedidosya_comprobante : '',
               forma_pago,
@@ -383,22 +408,22 @@ export class VentasComponent implements OnInit {
             };
             this.ventasService.nuevaVenta(data).subscribe({
               next: ({venta}) => {
-                
+
                 this.productoActual = null;
                 this.precio_total = 0;
                 this.precio_total_limpio = 0;
                 this.comprobante = 'Normal',
-                this.productos = [];    
-                this.showModalVenta = false;   
+                this.productos = [];
+                this.showModalVenta = false;
                 this.pagaCon = null;
                 this.formaPago = 'Efectivo';
                 this.vuelto = 0;
                 this.pedidosya_comprobante = '';
-                
+
                 this.reiniciarValores();
                 this.metodoPagoUnico();
                 this.almacenamientoLocalStorage();  // Alamacenamiento de valores en localStorage
-                  
+
                 // Imprimir comprobante
                 if(this.imprimir){
                   this.ventasService.getComprobante(venta._id).subscribe({
@@ -412,22 +437,22 @@ export class VentasComponent implements OnInit {
                 }
 
               },
-              error: ({error}) => this.alertService.errorApi(error.message) 
-            });  
+              error: ({error}) => this.alertService.errorApi(error.message)
+            });
 
-          } 
-        }); 
+          }
+        });
   }
 
   // Cambiar modo de busqueda
   modoBusqueda(modo: string): void {
     this.reiniciarValores();
-    this.modo = modo;   
+    this.modo = modo;
     if(modo === 'codigo'){
       this.codigo = '';
       this.productosBuscador = [];
     }else if(modo === 'buscador' || modo === 'precio'){
-      this.listarProductos();  
+      this.listarProductos();
     }
   }
 
@@ -453,23 +478,23 @@ export class VentasComponent implements OnInit {
     }
 
     this.formasPago.push({ descripcion: this.formaPago, valor: this.formaPagoMonto });
-    
+
     // Se elimina el elemento
     this.itemsFormasPago = this.itemsFormasPago.filter(elemento => elemento !== this.formaPago);
 
     this.formaPago = this.itemsFormasPago[0];
-    
+
     // this.formaPagoMonto = null;
     this.calcularDiferencia();
-  
+
   }
 
   // Eliminar forma de pago
   eliminarFormaPago(formaPago: any): void {
-    
+
     this.formasPago = this.formasPago.filter(elemento => elemento.descripcion !== formaPago.descripcion);
-    
-    this.itemsFormasPago = [];  
+
+    this.itemsFormasPago = [];
 
     let efectivo = false;
     let debito = false;
@@ -540,8 +565,8 @@ export class VentasComponent implements OnInit {
   calcularDiferencia(): void {
     let precioTotalTMP = this.precio_total;
     for(const elemento of this.formasPago){
-      precioTotalTMP = precioTotalTMP - elemento.valor;      
-    }  
+      precioTotalTMP = precioTotalTMP - elemento.valor;
+    }
 
     this.formaPagoMonto = this.dataService.redondear(precioTotalTMP, 2);
     this.diferenciaPago = this.dataService.redondear(precioTotalTMP, 2);
@@ -558,7 +583,7 @@ export class VentasComponent implements OnInit {
   almacenamientoLocalStorage(): void {
     localStorage.setItem('imprimir', JSON.stringify(this.imprimir));
     localStorage.setItem('precio_total', JSON.stringify(this.precio_total));
-    localStorage.setItem('precio_total_limpio', JSON.stringify(this.precio_total_limpio));  
+    localStorage.setItem('precio_total_limpio', JSON.stringify(this.precio_total_limpio));
     localStorage.setItem('productos', JSON.stringify(this.productos));
     localStorage.setItem('comprobante', JSON.stringify(this.comprobante));
     localStorage.setItem('productoActual', JSON.stringify(this.productoActual));
@@ -574,11 +599,11 @@ export class VentasComponent implements OnInit {
 
   // Recuperacion de valores de localStorage
   recuperarLocalStorage(): void {
-    this.imprimir = localStorage.getItem('imprimir') ? JSON.parse(localStorage.getItem('imprimir')) : false;  
-    this.precio_total = localStorage.getItem('precio_total') ? JSON.parse(localStorage.getItem('precio_total')) : 0;  
-    this.precio_total_limpio = localStorage.getItem('precio_total_limpio') ? JSON.parse(localStorage.getItem('precio_total_limpio')) : 0; 
+    this.imprimir = localStorage.getItem('imprimir') ? JSON.parse(localStorage.getItem('imprimir')) : false;
+    this.precio_total = localStorage.getItem('precio_total') ? JSON.parse(localStorage.getItem('precio_total')) : 0;
+    this.precio_total_limpio = localStorage.getItem('precio_total_limpio') ? JSON.parse(localStorage.getItem('precio_total_limpio')) : 0;
     this.productos = localStorage.getItem('productos') ? JSON.parse(localStorage.getItem('productos')) : [];
-    this.comprobante = localStorage.getItem('comprobante') ? JSON.parse(localStorage.getItem('comprobante')) : 'Normal';    
+    this.comprobante = localStorage.getItem('comprobante') ? JSON.parse(localStorage.getItem('comprobante')) : 'Normal';
     this.productoActual = localStorage.getItem('productoActual') ? JSON.parse(localStorage.getItem('productoActual')) : null;
     this.vuelto = localStorage.getItem('vuelto') ? JSON.parse(localStorage.getItem('vuelto')) : 0;
     this.pagaCon = localStorage.getItem('pagaCon') ? JSON.parse(localStorage.getItem('pagaCon')) : null;
@@ -597,15 +622,41 @@ export class VentasComponent implements OnInit {
     ];
   }
 
-  // Proximo numero de factura
-  proximoNroFactura(): void {
+  // Proximo numero de factura B
+  proximoNroFactura(comprobante: string): void {
     this.alertService.loading();
-    this.ventasService.proximoNroFactura('B').subscribe({
+    this.ventasService.proximoNroFactura(comprobante).subscribe({
       next: ({nro_factura}) => {
         this.proximo_nro_factura = nro_factura;
         this.alertService.close();
       },error: ({error}) => this.alertService.errorApi(error.message)
     })
+  }
+
+  // Datos de contribuyente
+  getContribuyente(): void {
+
+    if(this.cuitContribuyente.trim() === ''){
+      this.alertService.info('Debe colocar un CUIT');
+      return;
+    }
+
+    this.alertService.loading();
+
+    this.ventasService.getContribuyente(this.cuitContribuyente).subscribe({
+      next: ({ contribuyente }) => {
+        this.contribuyente = contribuyente;
+        console.log(this.contribuyente)
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    });
+
+  }
+
+  // Eliminar contribuyente
+  eliminarContribuyente(): void {
+    this.contribuyente = null;
+    this.cuitContribuyente = '';
   }
 
   // Reiniciar paginador

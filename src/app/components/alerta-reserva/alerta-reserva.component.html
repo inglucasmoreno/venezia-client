@@ -1,18 +1,62 @@
+<div *ngIf="dataService.showAlertaReserva && authService.usuario.role !== 'DELIVERY_ROLE' && permisos.all">
+  <div name="custom" enter-active-class="animate__animated animate__fadeIn"
+    leave-active-class=" animate__animated animate__fadeOut"
+    class="z-10 bg-white md:flex hidden shadow-lg items-center right-10 bottom-10 border-2 border-gray-800 text-center fixed w-45 h-25">
+    <div class="border-l-8 fondo border-red-700">
+      <div class="text-center flex items-center text-sm px-4 py-2">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="none">
+          <style>
+            @keyframes n-info-2 {
 
-    <div *ngIf="dataService.showAlertaReserva && authService.usuario.role !== 'DELIVERY_ROLE' && permisos.all">
-        <div name="custom" enter-active-class="animate__animated animate__fadeIn" leave-active-class=" animate__animated animate__fadeOut" class="z-10 bg-white md:flex hidden shadow-lg items-center right-10 bottom-10 border-2 border-gray-800 text-center fixed w-45 h-25">
-            <div class="border-l-8 fondo border-red-700">
-                <div class="text-center flex items-center text-sm px-4 py-2">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="none"><style>@keyframes n-info-2{0%,to{transform:rotate(0deg);transform-origin:top center}10%,90%{transform:rotate(2deg)}20%,40%,60%{transform:rotate(-6deg)}30%,50%,70%{transform:rotate(6deg)}80%{transform:rotate(-2deg)}}</style><path stroke="#0A0A30" stroke-width="1.5" d="M12 3.398a5 5 0 00-5 5v2c0 .758-.442 1.505-1.005 2.012A3 3 0 008 17.642h8a3 3 0 002.005-5.232C17.442 11.903 17 11.156 17 10.398v-2a5 5 0 00-5-5z"/><g style="animation:n-info-2 1.5s cubic-bezier(.455,.03,.515,.955) both infinite"><path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5" d="M14.39 20.312l-.043.01a9.715 9.715 0 01-4.67-.01"/><path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5" d="M12 7.923v3.206"/><circle cx="12" cy="13.245" r=".832" fill="#A31D1E"/></g></svg>
-                    <div class="flex items-center ml-4 justify-center">
-                        <p class="font-semibold"> Reservas ({{ dataService.cantidadReservasPorVencer }}) </p>
-                    </div>
-                </div>
-                <div class="flex items-center border-t border-gray-400 bg-gray-50 mt-2 justify-between text-xs">
-                    <button routerLink="/dashboard/reservas" class="font-semibold focus:outline-none border-r border-gray-400 p-2 hover:text-secondaryColor cursor-pointer text-center w-1/2"> Ver </button>
-                    <button (click)="dataService.cerrarAlertaReservas()" class="font-semibold focus:outline-none hover:text-secondaryColor text-center p-2 cursor-pointer w-1/2"> Cerrar </button>
-                </div>
-            </div>
+              0%,
+              to {
+                transform: rotate(0deg);
+                transform-origin: top center
+              }
+
+              10%,
+              90% {
+                transform: rotate(2deg)
+              }
+
+              20%,
+              40%,
+              60% {
+                transform: rotate(-6deg)
+              }
+
+              30%,
+              50%,
+              70% {
+                transform: rotate(6deg)
+              }
+
+              80% {
+                transform: rotate(-2deg)
+              }
+            }
+          </style>
+          <path stroke="#0A0A30" stroke-width="1.5"
+            d="M12 3.398a5 5 0 00-5 5v2c0 .758-.442 1.505-1.005 2.012A3 3 0 008 17.642h8a3 3 0 002.005-5.232C17.442 11.903 17 11.156 17 10.398v-2a5 5 0 00-5-5z" />
+          <g style="animation:n-info-2 1.5s cubic-bezier(.455,.03,.515,.955) both infinite">
+            <path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5"
+              d="M14.39 20.312l-.043.01a9.715 9.715 0 01-4.67-.01" />
+            <path stroke="#A31D1E" stroke-linecap="round" stroke-width="1.5" d="M12 7.923v3.206" />
+            <circle cx="12" cy="13.245" r=".832" fill="#A31D1E" />
+          </g>
+        </svg>
+        <div class="flex items-center ml-4 justify-center">
+          <p class="font-semibold"> Reservas ({{ dataService.cantidadReservasPorVencer }}) </p>
         </div>
+      </div>
+      <div class="flex items-center border-t border-gray-400 bg-gray-50 mt-2 justify-between text-xs">
+        <button routerLink="/dashboard/reservas"
+          class="font-semibold focus:outline-none border-r border-gray-400 p-2 hover:text-secondaryColor cursor-pointer text-center w-1/2">
+          Ver </button>
+        <button (click)="dataService.cerrarAlertaReservas()"
+          class="font-semibold focus:outline-none hover:text-secondaryColor text-center p-2 cursor-pointer w-1/2">
+          Cerrar </button>
+      </div>
     </div>
-
+  </div>
+</div>

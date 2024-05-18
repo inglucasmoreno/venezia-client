@@ -6,15 +6,13 @@ import { ReservasService } from './reservas.service';
   providedIn: 'root'
 })
 export class DataService {
-  
+
   public ubicacionActual: string = 'Dashboard';  // Statebar - Direccion actual
   public showMenu: Boolean = true;               // Header - Controla la visualizacion de la barra de navegacion
   public showAlertaReserva: Boolean = false;
   public showAlertaReservaBarra: Boolean = false;
   public cantidadReservasPorVencer: number = 0;
   public audioReserva = new Audio();
-    
-
 
   constructor(
     private reservasService: ReservasService,
@@ -23,13 +21,13 @@ export class DataService {
 
   // Redonde de numeros
   redondear(numero:number, decimales:number):number {
-  
+
     if (typeof numero != 'number' || typeof decimales != 'number') return null;
 
     let signo = numero >= 0 ? 1 : -1;
 
     return Number((Math.round((numero * Math.pow(10, decimales)) + (signo * 0.0001)) / Math.pow(10, decimales)).toFixed(decimales));
-  
+
   }
 
   // Consultar reservas por vencer
@@ -53,11 +51,11 @@ export class DataService {
   sonidoReserva(): void {
     this.audioReserva.src = "assets/sounds/Alert-Reserva.wav";
     this.audioReserva.load();
-    this.audioReserva.play();    
+    this.audioReserva.play();
   }
 
   cerrarAlertaReservas(): void {
     this.showAlertaReserva = false;
   }
-    
+
 }

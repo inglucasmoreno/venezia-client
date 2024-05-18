@@ -10,7 +10,7 @@ const base_url = environment.base_url;
 })
 export class VentasService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Nueva venta
   nuevaVenta(data: any): Observable<any> {
@@ -23,7 +23,7 @@ export class VentasService {
 
   // Venta por ID
   getVenta(id: string): Observable<any> {
-    return this.http.get(`${base_url}/ventas/${ id }`,{
+    return this.http.get(`${base_url}/ventas/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -32,7 +32,7 @@ export class VentasService {
 
   // Listar ventas
   listarVentas(
-    direccion : number = -1, 
+    direccion: number = -1,
     columna: string = 'createdAt',
     desde: number = 0,
     registerpp: number = 10,
@@ -63,7 +63,7 @@ export class VentasService {
   }
 
   // Actualizar venta
-  actualizarVenta(id:string, data: any): Observable<any> {
+  actualizarVenta(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/ventas/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -82,7 +82,7 @@ export class VentasService {
 
   // Comprobante electronico
   getComprobante(id: string): Observable<any> {
-    return this.http.get(`${base_url}/ventas/comprobante/${ id }`,{
+    return this.http.get(`${base_url}/ventas/comprobante/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -91,7 +91,16 @@ export class VentasService {
 
   // Proximo numero de factura
   proximoNroFactura(tipo_factura: string): Observable<any> {
-    return this.http.get(`${base_url}/ventas/ultimo/nro/factura/${tipo_factura}`,{
+    return this.http.get(`${base_url}/ventas/ultimo/nro/factura/${tipo_factura}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
+  // Datos de contribuyente
+  getContribuyente(cuit: string): Observable<any> {
+    return this.http.get(`${base_url}/ventas/contribuyente/${cuit}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }

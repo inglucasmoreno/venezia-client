@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   base_url: 'http://localhost:3000',
-  sucursal: 'SUCURSAL LINCE'
+  sucursal: 'SUCURSAL ARISTOBULO'
 };

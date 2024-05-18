@@ -1,149 +1,206 @@
-
 <!-- Editar formas de pago -->
 <app-modal [showModal]="showModalEditarFormasPago">
-    <div class="text-white bg-primary-800 flex items-center p-2 rounded-t justify-between">
-        <h1 class="text-lg"> Actualizando forma de pago </h1>
-        <button (click)="cerrarEditarFormasPago()" class="focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>           
-        </button>
-    </div>
-    <div class="p-2 text-sm">
-        <div class="flex items-center">
-            <div class="w-1/2">
-                <p class="font-semibold"> Forma de pago actual </p>
-                <div class="border border-gray-300 bg-gray-50 p-2 mt-1 rounded">
-                    {{ formaPagoSeleccionada.descripcion }}   
-                </div>
-            </div>
-            <div class="text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mt-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-            </div>
-            <div class="w-1/2">
-                <p class="font-semibold ml-2"> Nueva forma de pago </p>
-                <select [(ngModel)]="nuevaForma" class="border border-gray-300 mr-4 w-full mt-1 p-2 focus:outline-none rounded">
-                    <option *ngFor="let item of itemsFormasPago" [value]="item"> {{ item }} </option>
-                </select>
-            </div>
+  <div class="text-white bg-primary-800 flex items-center p-2 rounded-t justify-between">
+    <h1 class="text-lg"> Actualizando forma de pago </h1>
+    <button (click)="cerrarEditarFormasPago()" class="focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+  <div class="p-2 text-sm">
+    <div class="flex items-center">
+      <div class="w-1/2">
+        <p class="font-semibold"> Forma de pago actual </p>
+        <div class="border border-gray-300 bg-gray-50 p-2 mt-1 rounded">
+          {{ formaPagoSeleccionada.descripcion }}
         </div>
-        <div *ngIf="nuevaForma === 'PedidosYa' || nuevaForma === 'PedidosYa - Efectivo'" class="mt-2">
-            <p class="font-semibold"> Nro de comprobante </p>
-            <input [(ngModel)]="nuevoNroComprobante" type="text" placeholder="Ej. 2345" class="border border-gray-300 mr-4 w-full mt-1 p-2 focus:outline-none rounded">
-        </div>
-        <button (click)="actualizandoFormaPago()" class="border p-2 rounded border-gray-300 w-full mt-2 font-semibold bg-gray-100 hover:text-secondaryColor focus:outline-none"> 
-            Actualizar 
-        </button>
+      </div>
+      <div class="text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mt-5" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </div>
+      <div class="w-1/2">
+        <p class="font-semibold ml-2"> Nueva forma de pago </p>
+        <select [(ngModel)]="nuevaForma" class="border border-gray-300 mr-4 w-full mt-1 p-2 focus:outline-none rounded">
+          <option *ngFor="let item of itemsFormasPago" [value]="item"> {{ item }} </option>
+        </select>
+      </div>
     </div>
+    <div *ngIf="nuevaForma === 'PedidosYa' || nuevaForma === 'PedidosYa - Efectivo'" class="mt-2">
+      <p class="font-semibold"> Nro de comprobante </p>
+      <input [(ngModel)]="nuevoNroComprobante" type="text" placeholder="Ej. 2345"
+        class="border border-gray-300 mr-4 w-full mt-1 p-2 focus:outline-none rounded">
+    </div>
+    <button (click)="actualizandoFormaPago()"
+      class="border p-2 rounded border-gray-300 w-full mt-2 font-semibold bg-gray-100 hover:text-secondaryColor focus:outline-none">
+      Actualizar
+    </button>
+  </div>
 </app-modal>
 
 <!-- Detalles de venta -->
 <app-modal [showModal]="showModalDetalle">
   <div>
-      <div class="text-white bg-primary-800 flex items-center p-2 rounded-t justify-between">
-          <h1 class="text-lg"> Detalles de venta </h1>
-          <button (click)="showModalDetalle = false" class="focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>           
-          </button>
+    <div class="text-white bg-primary-800 flex items-center p-2 rounded-t justify-between">
+      <h1 class="text-lg"> Detalles de venta </h1>
+      <button (click)="showModalDetalle = false" class="focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="p-4 max-h-96 overflow-y-auto text-sm">
+      <div class="md:flex px-2 md:justify-between border-gray-300">
+        <p class="text-left"> <span class="font-semibold"> Fecha: </span> {{ ventaSeleccionada?.createdAt | fecha }}
+        </p>
+        <p class="md:text-right capitalize mt-2 md:mt-0"> <span class="font-semibold"> Creador: </span> {{
+          ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{
+          ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>
       </div>
-      <div class="p-4 max-h-96 overflow-y-auto text-sm">
-          <div class="md:flex px-2 md:justify-between border-gray-300">
-              <p class="text-left"> <span class="font-semibold"> Fecha: </span>  {{ ventaSeleccionada?.createdAt | fecha }} </p>  
-              <p class="md:text-right capitalize mt-2 md:mt-0"> <span class="font-semibold"> Creador: </span> {{ ventaSeleccionada?.creatorUser.apellido.toLowerCase() }} {{ ventaSeleccionada?.creatorUser.nombre.toLowerCase() }}</p>  
-          </div>
-          
-          <!-- Tipo de comprobante -->
-          <div class="text-left px-2 flex items-center mt-4 text-sm"> 
-              <div class="font-semibold mr-2"> Tipo de comprobante: </div> 
-              <div clas="flex items-center">
-                  <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}" class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded"> 
-                      {{ ventaSeleccionada?.comprobante !== 'Fiscal' ? ventaSeleccionada?.comprobante : 'Guia de despacho' }} 
-                  </span> 
-                  <button (click)="facturacionElectronica()" *ngIf="ventaSeleccionada?.comprobante === 'Normal' && authService.usuario.role === 'ADMIN_ROLE'" class="bg-primary-800 hover:bg-secondaryColor transform duration-300 px-2 focus:outline-none text-white text-xs py-1 rounded ml-2 font-semibold"> Facturar </button>
-              </div>
-          </div>  
-          
-          <!-- Interaccion con reserva -->
-          <div *ngIf="this.ventaReserva">
-            
-            <div class="mt-2 text-sm w-max" *ngIf="this.ventaReserva.instancia === 'Adelanto'"> 
-                <div class="flex items-center p-1">
-                    <div [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="rounded-full cursor-pointer border border-yellow-600 p-2 bg-yellow-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-yellow-600">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                          </svg>  
-                    </div>
-                    <span [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="ml-2 cursor-pointer hover:text-yellow-700 font-semibold">
-                        Cobro de seña - Reserva N°{{ this.ventaReserva.reserva.nro }} 
-                    </span>  
-                </div>
-            </div>
 
-            <div class="mt-2 text-sm w-max" *ngIf="this.ventaReserva.instancia === 'Completada'"> 
-                <div class="flex items-center p-1">     
-                    <div [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="rounded-full cursor-pointer border border-green-600 p-2 bg-green-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-600">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                          </svg>  
-                    </div>
-                    <span [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]" class="ml-2 cursor-pointer hover:text-green-600 font-semibold">
-                        Reserva completada - Reserva N°{{ this.ventaReserva.reserva.nro }} 
-                    </span>  
-                </div>
-            </div>
-          
-          </div>
-          
-          <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa'" class="mt-4 w-max"> 
-              <span class="bg-yellow-100 text-yellow-700 border border-yellow-300 p-1 font-semibold rounded"> PedidosYa - Online - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
-          </p>
-          <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa - Efectivo'" class="mt-4 w-max"> 
-            <span class="bg-orange-100 text-orange-700 border border-orange-300 p-1 font-semibold rounded"> PedidosYa - Efectivo - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>                 
-          </p>
-          <div class="mt-4">
-                
-                <div class="flex items-center justify-between bg-gray-100 text-sm p-2 w-full border border-gray-400">
-                    <h2 class="font-semibold"> Montos y formas de pago </h2>
-                </div>
-            
-                <div class="text-sm border-b border-gray-300 flex items-center justify-between" *ngFor="let formaPago of ventaSeleccionada?.forma_pago"> 
-                    <span class="font-semibold p-2 flex items-center">
-                        {{ formaPago.descripcion }}
-                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirEditarFormasPago(formaPago)" title="Editar forma de pago" class="hover:text-secondaryColor bg-gray-100 ml-2 border rounded border-gray-400 p-1 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                            </svg>                    
-                        </button>
-                    </span>
-                    <span > 
-                        ${{ formaPago.valor | moneda }}  
-                    </span> 
-                </div>
-                <div class="py-2 flex items-center justify-between"> 
-                    <span class="font-semibold ml-2"> 
-                        Monto total
-                    </span>
-                    <span class="font-semibold">
-                        ${{ ventaSeleccionada?.precio_total | moneda }} 
-                    </span> 
-                </div>
-          
-            </div>
-          <div *ngIf="productos.length !== 0" class="mt-3 text-sm">
-              <h2 class="font-semibold bg-gray-100 p-2 w-full border border-gray-400"> Listado de productos </h2>
-              <div class="max-h-60 mt-2 overflow-y-auto">
-                  <div class="border border-gray-400 p-2 mt-2 rounded" *ngFor="let producto of productos">
-                      <p class="font-semibold"> {{ producto.descripcion }} </p>
-                      <p class="text-xs"> Cantidad: {{ producto.cantidad }} ({{ producto.unidad_medida }}) </p>
-                      <p class="text-sm font-semibold"> ${{ producto.precio | moneda }} </p>   
-                  </div>   
-              </div>
-          </div>
+      <!-- Tipo de comprobante -->
+      <div class="text-left px-2 flex items-center mt-4 text-sm">
+        <div class="font-semibold mr-2"> Tipo de comprobante: </div>
+        <div clas="flex items-center">
+          <span [ngClass]="{'bg-blue-100 border-blue-300 text-blue-800':ventaSeleccionada?.comprobante === 'Fiscal'}"
+            class="p-1 bg-gray-100 font-semibold border border-gray-300 rounded">
+            {{ ventaSeleccionada?.comprobante !== 'Fiscal' ? ventaSeleccionada?.comprobante : 'Guia de despacho' }}
+          </span>
+          <button (click)="facturacionElectronica()"
+            *ngIf="ventaSeleccionada?.comprobante === 'Normal' && authService.usuario.role === 'ADMIN_ROLE'"
+            class="bg-primary-800 hover:bg-secondaryColor transform duration-300 px-2 focus:outline-none text-white text-xs py-1 rounded ml-2 font-semibold">
+            Facturar </button>
+        </div>
       </div>
+
+      <!-- Interaccion con reserva -->
+      <div *ngIf="this.ventaReserva">
+
+        <div class="mt-2 text-sm w-max" *ngIf="this.ventaReserva.instancia === 'Adelanto'">
+          <div class="flex items-center p-1">
+            <div [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]"
+              class="rounded-full cursor-pointer border border-yellow-600 p-2 bg-yellow-100">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-5 h-5 text-yellow-600">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+              </svg>
+            </div>
+            <span [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]"
+              class="ml-2 cursor-pointer hover:text-yellow-700 font-semibold">
+              Cobro de seña - Reserva N°{{ this.ventaReserva.reserva.nro }}
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-2 text-sm w-max" *ngIf="this.ventaReserva.instancia === 'Completada'">
+          <div class="flex items-center p-1">
+            <div [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]"
+              class="rounded-full cursor-pointer border border-green-600 p-2 bg-green-100">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-5 h-5 text-green-600">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+              </svg>
+            </div>
+            <span [routerLink]="['/dashboard/reservas/detalles', this.ventaReserva.reserva._id]"
+              class="ml-2 cursor-pointer hover:text-green-600 font-semibold">
+              Reserva completada - Reserva N°{{ this.ventaReserva.reserva.nro }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa'" class="mt-4 w-max">
+        <span class="bg-yellow-100 text-yellow-700 border border-yellow-300 p-1 font-semibold rounded"> PedidosYa -
+          Online - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>
+      </p>
+      <p *ngIf="ventaSeleccionada?.forma_pago[0]?.descripcion === 'PedidosYa - Efectivo'" class="mt-4 w-max">
+        <span class="bg-orange-100 text-orange-700 border border-orange-300 p-1 font-semibold rounded"> PedidosYa -
+          Efectivo - #{{ ventaSeleccionada?.pedidosya_comprobante }} </span>
+      </p>
+
+
+      <div class="mt-4">
+
+        <div class="flex items-center justify-between bg-gray-100 text-sm p-2 w-full border border-gray-400">
+          <h2 class="font-semibold"> Montos y formas de pago </h2>
+        </div>
+
+        <div class="text-sm border-b border-gray-300 flex items-center justify-between"
+          *ngFor="let formaPago of ventaSeleccionada?.forma_pago">
+          <span class="font-semibold p-2 flex items-center">
+            {{ formaPago.descripcion }}
+            <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirEditarFormasPago(formaPago)"
+              title="Editar forma de pago"
+              class="hover:text-secondaryColor bg-gray-100 ml-2 border rounded border-gray-400 p-1 focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+          </span>
+          <span>
+            ${{ formaPago.valor | moneda }}
+          </span>
+        </div>
+        <div class="py-2 flex items-center justify-between">
+          <span class="font-semibold ml-2">
+            Monto total
+          </span>
+          <span class="font-semibold">
+            ${{ ventaSeleccionada?.precio_total | moneda }}
+          </span>
+        </div>
+      </div>
+      <div *ngIf="ventaSeleccionada?.comprobante === 'Fiscal'" class="mt-2">
+        <h2 class="font-semibold bg-gray-100 p-2 w-full border border-gray-400"> Datos de facturacion </h2>
+        <div>
+          <p class="p-2 border-b flex items-center justify-between">
+            <span class="font-semibold"> Tipo </span>
+            <span> {{ ventaSeleccionada?.facturacion.tipoComprobante === 1 ? 'Factura A' : 'Factura B' }} </span>
+          </p>
+          <p class="p-2 border-b flex items-center justify-between">
+            <span class="font-semibold"> Nro de factura </span>
+            <span> {{ ventaSeleccionada?.facturacion.puntoVenta.toString().padStart(5, '0') }} - {{ ventaSeleccionada?.facturacion.nroComprobante.toString().padStart(8, '0') }} </span>
+          </p>
+          <div *ngIf="ventaSeleccionada?.facturacion.tipoComprobante === 1">
+            <p class="bg-gray-100 border p-2 border-gray-400 font-semibold"> Datos de cliente </p>
+            <p class="p-2 border-b flex items-center justify-between">
+              <span class="font-semibold"> {{ ventaSeleccionada?.facturacion?.clienteTipoPersona === 'FISICA' ? 'Apellido y Nombre' : 'Razon social' }} </span>
+              <span> {{ ventaSeleccionada?.facturacion?.clienteRazonSocial }} </span>
+            </p>
+            <p class="p-2 border-b flex items-center justify-between">
+              <span class="font-semibold"> Tipo de persona </span>
+              <span> {{ ventaSeleccionada?.facturacion?.clienteTipoPersona }} </span>
+            </p>
+            <p class="p-2 border-b flex items-center justify-between">
+              <span class="font-semibold"> {{ ventaSeleccionada?.facturacion?.clienteTipoIdentificacion }} </span>
+              <span> {{ ventaSeleccionada?.facturacion?.clienteIdentificacion }} </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="productos.length !== 0" class="mt-3 text-sm">
+        <h2 class="font-semibold bg-gray-100 p-2 w-full border border-gray-400"> Listado de productos </h2>
+        <div class="max-h-60 mt-2 overflow-y-auto">
+          <div class="border border-gray-400 p-2 mt-2 rounded" *ngFor="let producto of productos">
+            <p class="font-semibold"> {{ producto.descripcion }} </p>
+            <p class="text-xs"> Cantidad: {{ producto.cantidad }} ({{ producto.unidad_medida }}) </p>
+            <p class="text-sm font-semibold"> ${{ producto.precio | moneda }} </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </app-modal>
 
@@ -151,168 +208,242 @@
 <div class="md:max-w-5xl mx-auto">
   <app-tarjeta-lista>
     <div class="container mx-auto">
-        <div>
-            <div class="flex items-center bg-primary-800 text-white px-4 py-3 rounded-t">
-                  <app-boton-regresar routerLink="/dashboard/ventas"></app-boton-regresar>
-                  <div class="ml-3">
-                    <h2 class="text-xl md:text-2xl leading-tight">
-                        Listado de ventas activas
-                    </h2>
-                    <p> Total de ventas: {{ totalItems }} </p>
-                </div>
+      <div>
+        <div class="flex items-center bg-primary-800 text-white px-4 py-3 rounded-t">
+          <app-boton-regresar routerLink="/dashboard/ventas"></app-boton-regresar>
+          <div class="ml-3">
+            <h2 class="text-xl md:text-2xl leading-tight">
+              Listado de ventas activas
+            </h2>
+            <p> Total de ventas: {{ totalItems }} </p>
+          </div>
+        </div>
+        <div class="md:flex md:items-center md:justify-center px-4 py-2">
+          <div class="md:my-2 flex text-sm sm:flex-row flex-col">
+            <input (change)="cambiarPagina(1)" [(ngModel)]="filtro.parametro" type="text"
+              class="p-2 border focus:outline-none border-gray-400 rounded" placeholder="Usuario, Nro comp.">
+            <div>
+              <select (change)="cambiarPagina(1)" [(ngModel)]="filtro.pedidosYa"
+                class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
+                <option value=""> Todos </option>
+                <option value="PedidosYa"> PedidosYa </option>
+                <option value="PedidosYa - App"> PedidosYa - Online </option>
+                <option value="PedidosYa - Efectivo"> PedidosYa - Efectivo </option>
+                <option value="SinPedidosYa"> Sin PedidosYa </option>
+              </select>
+              <select (change)="cambiarPagina(1)" [(ngModel)]="filtro.facturacion"
+                class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
+                <option value=""> Todos </option>
+                <option value="Normal"> Normal </option>
+                <option value="Fiscal"> Guia de despacho </option>
+              </select>
             </div>
-            <div class="md:flex md:items-center md:justify-center px-4 py-2">
-                <div class="md:my-2 flex text-sm sm:flex-row flex-col">
-                      <input (change)="cambiarPagina(1)" [(ngModel)]="filtro.parametro" type="text" class="p-2 border focus:outline-none border-gray-400 rounded" placeholder="Usuario, Nro comp.">
-                      <div>
-                          <select (change)="cambiarPagina(1)" [(ngModel)]="filtro.pedidosYa" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
-                              <option value=""> Todos </option>
-                              <option value="PedidosYa"> PedidosYa </option>
-                              <option value="PedidosYa - App"> PedidosYa - Online </option>
-                              <option value="PedidosYa - Efectivo"> PedidosYa - Efectivo </option>
-                              <option value="SinPedidosYa"> Sin PedidosYa </option>
-                          </select>
-                          <select (change)="cambiarPagina(1)" [(ngModel)]="filtro.facturacion" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded">
-                              <option value=""> Todos </option>
-                              <option value="Normal"> Normal </option>
-                              <option value="Fiscal"> Guia de despacho </option>
-                          </select>
+            <select (change)="cambiarPagina(1)"
+              class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded"
+              [(ngModel)]="cantidadItems">
+              <option value="10"> 10 elementos </option>
+              <option value="20"> 20 elementos </option>
+              <option value="50"> 50 elementos </option>
+              <option value="100"> 100 elementos </option>
+            </select>
+          </div>
+        </div>
+        <div class="md:flex md:items-center px-4 text-center md:justify-center">
+
+          <!-- Monto total -->
+          <div
+            class="font-semibold border-l-8 border-green-500 w-full mt-2 md:mt-0 bg-green-100 text-green-800 text-xs text-center rounded p-2">
+            Monto total: ${{ montoTotal | moneda }} </div>
+
+          <!-- Guia de despacho -->
+          <div
+            class="font-semibold border-l-8 border-blue-500 w-full mt-2 md:mt-0 bg-blue-100 md:ml-4 text-blue-800 text-xs text-center rounded p-2">
+            Guia de despacho: ${{ montoTotalFacturado | moneda }} </div>
+
+          <!-- PedidosYa -->
+          <div *ngIf="filtro.pedidosYa === '' || filtro.pedidosYa === 'SinPedidosYa'"
+            class="font-semibold border-l-8 border-red-500 w-full mt-2 md:mt-0 bg-red-100 md:ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-2">
+            PedidosYa: ${{ montoTotalPedidosYa | moneda }} </div>
+
+          <div *ngIf="filtro.pedidosYa === 'PedidosYa'"
+            class="font-semibold border-l-8 border-red-500 w-full mt-2 md:mt-0 bg-red-100 md:ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-2">
+            PedidosYa: ${{ montoTotalPedidosYa | moneda }} </div>
+
+          <div *ngIf="filtro.pedidosYa === 'PedidosYa - App'"
+            class="font-semibold border-l-8 border-yellow-500 w-full mt-2 md:mt-0 bg-yellow-100 md:ml-4 text-yellow-700 text-xs text-center rounded mr-2 md:mr-0 p-2">
+            PedidosYa - Online: ${{ montoTotalPedidosYaApp | moneda }} </div>
+
+          <div *ngIf="filtro.pedidosYa === 'PedidosYa - Efectivo'"
+            class="font-semibold border-l-8 border-orange-500 w-full mt-2 md:mt-0 bg-orange-100 md:ml-4 text-orange-700 text-xs text-center rounded mr-2 md:mr-0 p-2">
+            PedidosYa - Efectivo: ${{ montoTotalPedidosYaEfectivo | moneda }} </div>
+
+        </div>
+        <div class="px-4 py-2 mt-2 overflow-x-auto">
+          <div class="inline-block max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
+            <table class="min-w-full leading-normal">
+              <thead>
+                <tr class="border">
+                  <th
+                    class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
+                    <div (click)="ordenarPorColumna('createdAt')"
+                      class="cursor-pointer flex items-center focus:outline-none">
+                      <span> Fecha </span>
+                      <span class="ml-2 text-gray-600">
+                        <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == 1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-down">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == -1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-up">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna != 'createdAt'" width="15" height="15" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                    <div (click)="ordenarPorColumna('precio_total')"
+                      class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                      <span>
+                        Monto total
+                      </span>
+                      <span class="ml-2">
+                        <svg *ngIf="ordenar.columna == 'precio_total' && ordenar.direccion == 1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-down">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna == 'precio_total' && ordenar.direccion == -1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-up">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna != 'precio_total'" width="15" height="15" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                    <div class="w-max flex items-center justify-center focus:outline-none">
+                      <span>
+                        Características
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
+                    <div (click)="ordenarPorColumna('creatorUser')"
+                      class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
+                      <span>
+                        Usuario creador
+                      </span>
+                      <span class="ml-2">
+                        <svg *ngIf="ordenar.columna == 'creatorUser' && ordenar.direccion == 1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-down">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna == 'creatorUser' && ordenar.direccion == -1" width="15" height="15"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-chevron-up">
+                          <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <svg *ngIf="ordenar.columna != 'creatorUser'" width="15" height="15" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round" class="feather feather-minus">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 flex items-center justify-center text-sm font-semibold text-gray-900 tracking-wider">
+                    <p class="w-max text-center flex items-center justify-center focus:outline-none">
+                      <span class="mx-auto">
+                        Acciones
+                      </span>
+                    </p>
+                  </th>
+                </tr>
+              </thead>
+              <tbody *ngIf="ventas">
+                <tr
+                  [ngClass]="{'bg-blue-50': (venta.forma_pago[0].descripcion  === 'Débito' || venta.forma_pago[0].descripcion  === 'Crédito' || venta.forma_pago[0].descripcion  === 'Mercado pago') && venta.comprobante === 'Normal' && venta.forma_pago.length === 1}"
+                  class="animate__animated animate__fadeIn"
+                  *ngFor="let venta of ventas | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
+                  <td class="px-5 py-3 border-b border-gray-200 text-xs">
+                    <p class="text-gray-900 w-max whitespace-no-wrap">
+                      {{ venta.createdAt | fecha }}
+                    </p>
+                  </td>
+                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                    <p class="text-gray-900 whitespace-no-wrap">
+                      ${{ venta.precio_total | moneda }}
+                    </p>
+                  </td>
+                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                    <div class="flex items-center">
+                      <div [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}"
+                        class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
+                        {{ venta.comprobante !== 'Fiscal' ? venta.comprobante : 'Guia de despacho' }}
                       </div>
-                      <select (change)="cambiarPagina(1)" class="bg-white text-sm focus:outline-none w-max p-2 md:ml-2 mt-2 md:mt-0 border text-gray-600 border-gray-400 rounded" [(ngModel)]="cantidadItems">
-                          <option value="10"> 10 elementos </option>
-                          <option value="20"> 20 elementos </option>
-                          <option value="50"> 50 elementos </option>
-                          <option value="100"> 100 elementos </option>
-                      </select>
-                </div>
-            </div>
-            <div class="md:flex md:items-center px-4 text-center md:justify-center"> 
-                
-                <!-- Monto total -->
-                <div class="font-semibold border-l-8 border-green-500 w-full mt-2 md:mt-0 bg-green-100 text-green-800 text-xs text-center rounded p-2"> Monto total: ${{ montoTotal | moneda }} </div> 
-                
-                <!-- Guia de despacho -->
-                <div class="font-semibold border-l-8 border-blue-500 w-full mt-2 md:mt-0 bg-blue-100 md:ml-4 text-blue-800 text-xs text-center rounded p-2"> Guia de despacho:  ${{ montoTotalFacturado | moneda }} </div> 
-                
-                <!-- PedidosYa -->           
-                <div *ngIf="filtro.pedidosYa === '' || filtro.pedidosYa === 'SinPedidosYa'" class="font-semibold border-l-8 border-red-500 w-full mt-2 md:mt-0 bg-red-100 md:ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa:  ${{ montoTotalPedidosYa | moneda }} </div> 
-                
-                <div *ngIf="filtro.pedidosYa === 'PedidosYa'" class="font-semibold border-l-8 border-red-500 w-full mt-2 md:mt-0 bg-red-100 md:ml-4 text-red-800 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa:  ${{ montoTotalPedidosYa | moneda }} </div> 
-                
-                <div *ngIf="filtro.pedidosYa === 'PedidosYa - App'" class="font-semibold border-l-8 border-yellow-500 w-full mt-2 md:mt-0 bg-yellow-100 md:ml-4 text-yellow-700 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa - Online:  ${{ montoTotalPedidosYaApp | moneda }} </div>     
-                
-                <div *ngIf="filtro.pedidosYa === 'PedidosYa - Efectivo'" class="font-semibold border-l-8 border-orange-500 w-full mt-2 md:mt-0 bg-orange-100 md:ml-4 text-orange-700 text-xs text-center rounded mr-2 md:mr-0 p-2"> PedidosYa - Efectivo:  ${{ montoTotalPedidosYaEfectivo | moneda }} </div>     
-              
-            </div>
-            <div class="px-4 py-2 mt-2 overflow-x-auto">
-                <div class="inline-block max-h-96 overflow-y-auto min-w-full overflow-hidden pb-5">
-                    <table class="min-w-full leading-normal">
-                        <thead>
-                            <tr class="border">
-                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-900 tracking-wider">
-                                    <div (click)="ordenarPorColumna('createdAt')" class="cursor-pointer flex items-center focus:outline-none">
-                                        <span> Fecha </span>
-                                        <span class="ml-2 text-gray-600">    
-                                            <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
-                                            <svg *ngIf="ordenar.columna == 'createdAt' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                            <svg *ngIf="ordenar.columna != 'createdAt'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                        </span>
-                                    </div>
-                                </th>
-                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
-                                    <div (click)="ordenarPorColumna('precio_total')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
-                                        <span>
-                                            Monto total                                              
-                                        </span>
-                                        <span class="ml-2">
-                                            <svg *ngIf="ordenar.columna == 'precio_total' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
-                                            <svg *ngIf="ordenar.columna == 'precio_total' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                            <svg *ngIf="ordenar.columna != 'precio_total'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                        </span>
-                                    </div>
-                                </th>
-                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
-                                  <div class="w-max flex items-center justify-center focus:outline-none">
-                                      <span>
-                                          Características                                             
-                                      </span>
-                                  </div>
-                              </th>
-                                <th class="px-5 border-b-2 border-gray-200 bg-gray-100 text-sm font-semibold text-gray-900 tracking-wider">
-                                  <div (click)="ordenarPorColumna('creatorUser')" class="cursor-pointer w-max flex items-center justify-center focus:outline-none">
-                                      <span>
-                                          Usuario creador                                             
-                                      </span>
-                                      <span class="ml-2">
-                                          <svg *ngIf="ordenar.columna == 'creatorUser' && ordenar.direccion == 1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>                                   
-                                          <svg *ngIf="ordenar.columna == 'creatorUser' && ordenar.direccion == -1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                                          <svg *ngIf="ordenar.columna != 'creatorUser'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                      </span>
-                                  </div>
-                                </th>
-                                <th class="px-5 py-2 border-b-2 border-gray-200 bg-gray-100 flex items-center justify-center text-sm font-semibold text-gray-900 tracking-wider">
-                                  <p class="w-max text-center flex items-center justify-center focus:outline-none">
-                                    <span class="mx-auto">
-                                      Acciones                                            
-                                    </span>
-                                  </p>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody  *ngIf="ventas">
-                            <tr [ngClass]="{'bg-blue-50': (venta.forma_pago[0].descripcion  === 'Débito' || venta.forma_pago[0].descripcion  === 'Crédito' || venta.forma_pago[0].descripcion  === 'Mercado pago') && venta.comprobante === 'Normal' && venta.forma_pago.length === 1}" class="animate__animated animate__fadeIn" *ngFor="let venta of ventas | paginate: {itemsPerPage: cantidadItems, currentPage: paginaActual, totalItems: totalItems}">
-                                <td class="px-5 py-3 border-b border-gray-200 text-xs">
-                                    <p class="text-gray-900 w-max whitespace-no-wrap">
-                                        {{ venta.createdAt | fecha }}
-                                    </p>
-                                </td>
-                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                    <p class="text-gray-900 whitespace-no-wrap">
-                                        ${{ venta.precio_total | moneda }}
-                                    </p>
-                                </td>
-                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                    <div class="flex items-center">
-                                        <div [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}" class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
-                                            {{ venta.comprobante !== 'Fiscal' ? venta.comprobante : 'Guia de despacho' }}
-                                        </div>
-                                        <div class="p-1 border border-gray-300 bg-gray-100 rounded ml-2" *ngIf="venta.forma_pago[0].descripcion !== 'PedidosYa' && venta.forma_pago[0].descripcion !== 'PedidosYa - Efectivo'">
-                                            {{ venta.forma_pago.length <= 1 ? venta.forma_pago[0].descripcion : 'Multiples' }}
-                                        </div>
-                                        <div [ngClass]="{'bg-orange-100 text-orange-700 border-orange-300':venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo', 'bg-yellow-100 text-yellow-700 border-yellow-300':venta.forma_pago[0].descripcion === 'PedidosYa'}" *ngIf="venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo'" class="p-1 ml-2 w-max border rounded font-semibold">
-                                            PedidosYA - #{{ venta.pedidosya_comprobante }}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-2 border-b border-gray-200 text-xs">
-                                    <p class="text-gray-900 whitespace-no-wrap capitalize">
-                                        {{ venta.creatorUser.apellido.toLowerCase() }} {{ venta.creatorUser.nombre.toLowerCase() }} 
-                                    </p>
-                                </td>
-                                <td class="px-5 py-2 border-b flex items-center justify-center border-gray-200 text-xs text-center">
-                                    <p class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
-                                        <app-boton-tabla (click)="abrirModalDetalles(venta)" title="Detalles de venta">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                                        </svg>
-                                        </app-boton-tabla>
-                                        <app-boton-tabla (click)="comprobanteElectronico(venta)" class="ml-2" title="Imprimir comprobante">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                            </svg>
-                                        </app-boton-tabla>
-                                    </p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                      <div class="p-1 border border-gray-300 bg-gray-100 rounded ml-2"
+                        *ngIf="venta.forma_pago[0].descripcion !== 'PedidosYa' && venta.forma_pago[0].descripcion !== 'PedidosYa - Efectivo'">
+                        {{ venta.forma_pago.length <= 1 ? venta.forma_pago[0].descripcion : 'Multiples' }} </div>
+                          <div
+                            [ngClass]="{'bg-orange-100 text-orange-700 border-orange-300':venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo', 'bg-yellow-100 text-yellow-700 border-yellow-300':venta.forma_pago[0].descripcion === 'PedidosYa'}"
+                            *ngIf="venta.forma_pago[0].descripcion === 'PedidosYa' || venta.forma_pago[0].descripcion === 'PedidosYa - Efectivo'"
+                            class="p-1 ml-2 w-max border rounded font-semibold">
+                            PedidosYA - #{{ venta.pedidosya_comprobante }}
+                          </div>
+                      </div>
+                  </td>
+                  <td class="px-5 py-2 border-b border-gray-200 text-xs">
+                    <p class="text-gray-900 whitespace-no-wrap capitalize">
+                      {{ venta.creatorUser.apellido.toLowerCase() }} {{ venta.creatorUser.nombre.toLowerCase() }}
+                    </p>
+                  </td>
+                  <td class="px-5 py-2 border-b flex items-center justify-center border-gray-200 text-xs text-center">
+                    <p class="flex items-center justify-center text-gray-900 whitespace-no-wrap">
+                      <app-boton-tabla (click)="abrirModalDetalles(venta)" title="Detalles de venta">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                          stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                      </app-boton-tabla>
+                      <app-boton-tabla (click)="comprobanteElectronico(venta)" class="ml-2"
+                        title="Imprimir comprobante">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                          stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                      </app-boton-tabla>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="px-5 py-5 mt-4 text-sm bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
-            <pagination-controls nextLabel="Siguiente" previousLabel="Anterior"  (pageChange)="cambiarPagina($event)"></pagination-controls>
-        </div>
+      </div>
+      <div
+        class="px-5 py-5 mt-4 text-sm bg-white border-t flex shadow flex-col xs:flex-row items-center xs:justify-between">
+        <pagination-controls nextLabel="Siguiente" previousLabel="Anterior"
+          (pageChange)="cambiarPagina($event)"></pagination-controls>
+      </div>
     </div>
   </app-tarjeta-lista>
 </div>
-
