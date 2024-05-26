@@ -30,10 +30,10 @@ export class NuevaReservaComponent implements OnInit {
   public showModalProductos = false;
   public showModalEditarProducto = false;
   public estadoFormulario = 'crear';
+  public showCompletarVenta = false;
 
   // Venta
   public fechaVenta = format(new Date(), 'dd/MM/yyyy');
-  public showCompletarVenta = false;
   public precio_total: number = null;
   public precio_total_limpio: number = 0;
   public proximo_nro_factura: string = null;
@@ -107,6 +107,10 @@ export class NuevaReservaComponent implements OnInit {
     email: ''
   }
 
+  // Facturacion A
+  public contribuyente: any = null;
+  public cuitContribuyente: string = '';
+
   // Filtros
   public filtro = {
     parametroProductos: ''
@@ -165,6 +169,14 @@ export class NuevaReservaComponent implements OnInit {
   cambiarCliente(): void {
     this.clienteSeleccionado = null;
     this.identificacion_cliente = '';
+    this.proximo_nro_factura = '';
+    this.eliminarContribuyente();
+  }
+
+  // Cambiar tipo de comprobante
+  cambiarTipoComprobante(): void {
+    this.proximo_nro_factura = '';
+    this.eliminarContribuyente();
   }
 
   // Nuevo cliente
@@ -251,6 +263,26 @@ export class NuevaReservaComponent implements OnInit {
     }, ({ error }) => {
       this.alertService.errorApi(error.message);
     });
+  }
+
+  // Datos de contribuyente
+  getContribuyente(): void {
+
+    if (this.cuitContribuyente.trim() === '') {
+      this.alertService.info('Debe colocar un CUIT');
+      return;
+    }
+
+    this.alertService.loading();
+
+    this.ventasService.getContribuyente(this.cuitContribuyente).subscribe({
+      next: ({ contribuyente }) => {
+        this.contribuyente = contribuyente;
+        console.log(this.contribuyente)
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    });
+
   }
 
   // Abrir modal - Editar cliente
@@ -444,6 +476,31 @@ export class NuevaReservaComponent implements OnInit {
 
   // Completar reserva
   completarReserva(): void {
+
+    // Verificacion -> DATOS DE VENTA
+
+    // Verificacion - Si el comprobante es factura A y no se coloco un contribuyente
+    if (this.comprobante === 'Factura A' && !this.contribuyente) {
+      this.alertService.info('Debe seleccionar un cliente');
+      return;
+    }
+
+    // Verificacion - Formas de pago multiples
+    if (this.multiples_formasPago && this.formasPago.length === 0) { // Seleccionar al menos una forma de pago (Multiples formas de pago)
+      this.alertService.info('Debe seleccionar una forma de pago');
+      return;
+    }
+
+    if (this.multiples_formasPago && this.diferenciaPago !== 0) {
+      this.alertService.info('Debe cubrir el precio total de la seña');
+      return;
+    }
+
+    // Verificacion - PedidosYa
+    if ((this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') && this.pedidosya_comprobante.trim() === '') {
+      this.alertService.info('Colocar número de comprobante de PedidosYa');
+      return;
+    }
 
     // Verificacion -> DATOS DE RESERVA
 
@@ -673,9 +730,9 @@ export class NuevaReservaComponent implements OnInit {
   // ---------------------------- VENTAS ---------------------------------------
 
   // Proximo numero de factura
-  proximoNroFactura(): void {
+  proximoNroFactura(comprobante: string): void {
     this.alertService.loading();
-    this.ventasService.proximoNroFactura('B').subscribe({
+    this.ventasService.proximoNroFactura(comprobante).subscribe({
       next: ({ nro_factura }) => {
         this.proximo_nro_factura = nro_factura;
         this.alertService.close();
@@ -801,23 +858,6 @@ export class NuevaReservaComponent implements OnInit {
   // Completar reserva
   completarVenta(): void {
 
-    // Verificacion - Formas de pago multiples
-    if (this.multiples_formasPago && this.formasPago.length === 0) { // Seleccionar al menos una forma de pago (Multiples formas de pago)
-      this.alertService.info('Debe seleccionar una forma de pago');
-      return;
-    }
-
-    if (this.multiples_formasPago && this.diferenciaPago !== 0) {
-      this.alertService.info('Debe cubrir el precio total de la seña');
-      return;
-    }
-
-    // Verificacion - PedidosYa
-    if ((this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') && this.pedidosya_comprobante.trim() === '') {
-      this.alertService.info('Colocar número de comprobante de PedidosYa');
-      return;
-    }
-
     let forma_pago: any[];
 
     this.alertService.loading();
@@ -825,11 +865,24 @@ export class NuevaReservaComponent implements OnInit {
     if (!this.multiples_formasPago) forma_pago = [{ descripcion: this.formaPago, valor: this.precio_total }];
     else if (this.multiples_formasPago) forma_pago = this.formasPago;
 
+    // Armamos la razonSocial
+    let razonSocial = '';
+    if (this.contribuyente) {
+      if (this.contribuyente.tipoPersona === 'FISICA') razonSocial = `${this.contribuyente.apellido} ${this.contribuyente.nombre}`;
+      else if (this.contribuyente.tipoPersona === 'JURIDICA') razonSocial = this.contribuyente.razonSocial;
+    }
+
     const data = {
       sena: true,
       productos: [],
       precio_total: this.precio_total,
       precio_total_limpio: this.precio_total_limpio,
+      contribuyente: {
+        razonSocial: this.contribuyente ? razonSocial : '',
+        tipoPersona: this.contribuyente ? this.contribuyente.tipoPersona : '',
+        tipoIdentificacion: this.contribuyente ? this.contribuyente.tipoClave : '',
+        identificacion: this.contribuyente ? this.contribuyente.idPersona : ''
+      },
       comprobante: this.comprobante,
       pedidosya_comprobante: (this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') ? this.pedidosya_comprobante : '',
       forma_pago,
@@ -841,7 +894,7 @@ export class NuevaReservaComponent implements OnInit {
     // Generando venta
     this.ventasService.nuevaVenta(data).subscribe({
       next: ({ venta }) => {
-            
+
         // Generando Relacion Venta -> Reserva
         this.ventasReservasService.nuevaRelacion({
           venta: venta._id,
@@ -855,7 +908,7 @@ export class NuevaReservaComponent implements OnInit {
             this.precio_total = 0;
             this.precio_total_limpio = 0;
             this.comprobante = 'Normal',
-            this.productos = [];
+              this.productos = [];
             this.pagaCon = null;
             this.formaPago = 'Efectivo';
             this.vuelto = 0;
@@ -868,7 +921,7 @@ export class NuevaReservaComponent implements OnInit {
             this.alertService.success('Reserva generada correctamente');
           }, error: ({ error }) => this.alertService.errorApi(error.message)
         })
-      
+
       },
       error: ({ error }) => {
         this.reservasService.eliminarReserva(this.idReserva).subscribe({
@@ -907,6 +960,12 @@ export class NuevaReservaComponent implements OnInit {
 
     this.calcularDiferencia();
 
+  }
+
+  // Eliminar contribuyente
+  eliminarContribuyente(): void {
+    this.contribuyente = null;
+    this.cuitContribuyente = '';
   }
 
 }

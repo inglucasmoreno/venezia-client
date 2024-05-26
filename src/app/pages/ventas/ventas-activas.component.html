@@ -47,12 +47,19 @@
   <div>
     <div class="text-white bg-primary-800 flex items-center p-2 rounded-t justify-between">
       <h1 class="text-lg"> Detalles de venta </h1>
-      <button (click)="showModalDetalle = false" class="focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-          stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      <div class="flex items-center text-gray-900">
+        <button (click)="comprobanteElectronico(ventaSeleccionada)" title="Imprimir comprobante" class="focus:outline-none mr-2 p-2 bg-white rounded hover:text-secondaryColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+        </button>
+        <button (click)="showModalDetalle = false" class="focus:outline-none p-2 bg-white rounded hover:text-secondaryColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="p-4 max-h-96 overflow-y-auto text-sm">
       <div class="md:flex px-2 md:justify-between border-gray-300">
@@ -160,6 +167,7 @@
           </span>
         </div>
       </div>
+
       <div *ngIf="ventaSeleccionada?.comprobante === 'Fiscal'" class="mt-2">
         <h2 class="font-semibold bg-gray-100 p-2 w-full border border-gray-400"> Datos de facturacion </h2>
         <div>
@@ -169,12 +177,14 @@
           </p>
           <p class="p-2 border-b flex items-center justify-between">
             <span class="font-semibold"> Nro de factura </span>
-            <span> {{ ventaSeleccionada?.facturacion.puntoVenta.toString().padStart(5, '0') }} - {{ ventaSeleccionada?.facturacion.nroComprobante.toString().padStart(8, '0') }} </span>
+            <span> {{ ventaSeleccionada?.facturacion.puntoVenta.toString().padStart(5, '0') }} - {{
+              ventaSeleccionada?.facturacion.nroComprobante.toString().padStart(8, '0') }} </span>
           </p>
           <div *ngIf="ventaSeleccionada?.facturacion.tipoComprobante === 1">
             <p class="bg-gray-100 border p-2 border-gray-400 font-semibold"> Datos de cliente </p>
             <p class="p-2 border-b flex items-center justify-between">
-              <span class="font-semibold"> {{ ventaSeleccionada?.facturacion?.clienteTipoPersona === 'FISICA' ? 'Apellido y Nombre' : 'Razon social' }} </span>
+              <span class="font-semibold"> {{ ventaSeleccionada?.facturacion?.clienteTipoPersona === 'FISICA' ?
+                'Apellido y Nombre' : 'Razon social' }} </span>
               <span> {{ ventaSeleccionada?.facturacion?.clienteRazonSocial }} </span>
             </p>
             <p class="p-2 border-b flex items-center justify-between">
@@ -394,6 +404,16 @@
                   </td>
                   <td class="px-5 py-2 border-b border-gray-200 text-xs">
                     <div class="flex items-center">
+                      <span
+                        class="bg-blue-100 border mr-2 text-blue-900 font-semibold border-blue-300 rounded px-2 py-1 text-center"
+                        *ngIf="venta.comprobante === 'Fiscal' && venta.facturacion.tipoComprobante === 1">
+                        A
+                      </span>
+                      <span
+                        class="bg-blue-100 border mr-2 text-blue-900 font-semibold border-blue-300 rounded px-2 py-1 text-center"
+                        *ngIf="venta.comprobante === 'Fiscal' && venta.facturacion.tipoComprobante === 6">
+                        B
+                      </span>
                       <div [ngClass]="{'bg-blue-100 text-blue-800 border-blue-300':venta.comprobante === 'Fiscal'}"
                         class="text-gray-900 w-max border border-gray-300 font-semibold bg-gray-100 p-1 rounded whitespace-no-wrap">
                         {{ venta.comprobante !== 'Fiscal' ? venta.comprobante : 'Guia de despacho' }}

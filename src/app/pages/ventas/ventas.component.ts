@@ -350,7 +350,7 @@ export class VentasComponent implements OnInit {
 
     // Verificacion - Si el comprobante es factura A y no se coloco un contribuyente
     if(this.comprobante === 'Factura A' && !this.contribuyente){
-      this.alertService.info('Debe seleccionar un contribuyente');
+      this.alertService.info('Debe seleccionar un cliente');
       return;
     }
 

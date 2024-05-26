@@ -1,13 +1,13 @@
-
 <!-- Modal: Completando pago de reserva -->
 <app-modal class="text-xs md:text-base" [showModal]="showCompletarVenta">
   <div class="bg-gray-100 border-b border-gray-300">
     <div class="bg-primary-800 flex p-2 items-center justify-between text-white">
       <h1 class="text-lg"> Completando pago de seña </h1>
       <button (click)="regresarCompletarReserva()" class="focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>        
+        </svg>
       </button>
     </div>
     <div class="px-4">
@@ -22,89 +22,135 @@
       <div class="w-1/2">
         <p class="font-semibold text-sm"> Tipo de comprobante </p>
         <div class="flex items-center">
-          <select [(ngModel)]="comprobante" class="w-full mt-2 text-sm border p-2 bg-white focus:outline-none border-gray-400 rounded">
+          <select [(ngModel)]="comprobante" (change)="cambiarTipoComprobante()"
+            class="w-full mt-2 text-sm border p-2 bg-white focus:outline-none border-gray-400 rounded">
             <option value="Normal"> Normal </option>
             <option value="Fiscal"> Guia de despacho </option>
+            <option value="Factura A"> Factura A </option>
           </select>
         </div>
       </div>
-      <div *ngIf="comprobante === 'Fiscal'" class="w-1/2 ml-2">
+      <div *ngIf="comprobante === 'Fiscal' || comprobante === 'Factura A'" class="w-1/2 ml-2">
         <p class="text-sm text-white"> Proximo numero de factura </p>
         <div class="flex items-center mb-3 md:mb-0">
-          <button (click)="proximoNroFactura()" title="Buscar proximo numero de factura" class="p-2 rounded border md:mt-2 border-gray-400 focus:outline-none hover:text-secondaryColor">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
-            </svg>          
+          <button (click)="comprobante === 'Fiscal' ? proximoNroFactura('B') : proximoNroFactura('A')"
+            [title]="comprobante === 'Fiscal' ? 'Proximo numero de Factura B' : 'Proximo numero de Factura A'"
+            class="p-2 rounded border md:mt-2 border-gray-400 focus:outline-none hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
+            </svg>
           </button>
-          <p *ngIf="proximo_nro_factura" class="md:text-sm w-full text-xs rounded bg-gray-100 p-2 border border-gray-400 text-center font-semibold ml-2 md:mt-2">
+          <p *ngIf="proximo_nro_factura"
+            class="md:text-sm w-full text-xs rounded bg-gray-100 p-2 border border-gray-400 text-center font-semibold ml-2 md:mt-2">
             {{ proximo_nro_factura }}
           </p>
         </div>
       </div>
     </div>
-    <!-- <div class="mt-2">
-      <div (click)="cambiarImprimir()" class="text-xs w-max bg-gray-50 cursor-pointer border border-gray-400 rounded p-1">  
-        <div class="flex items-center" *ngIf="imprimir">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 font-semibold text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+
+    <div *ngIf="comprobante === 'Factura A'" class="mt-3 text-sm border-t border-b py-3 border-gray-300">
+      <div class="p-2 bg-gray-100 border border-gray-400 flex items-center justify-between">
+        <p class="font-semibold"> Datos de cliente </p>
+        <button (click)="eliminarContribuyente()" title="Eliminar seleccion" *ngIf="contribuyente"
+          class="bg-white p-2 border border-gray-400 rounded focus:outline-none hover:text-secondaryColor">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
           </svg>
-          <span>
-            Con impresión
-          </span>
-        </div>
-        <div class="flex items-center" *ngIf="!imprimir">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 font-semibold text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          <span>
-            Sin impresión
-          </span>
-        </div> 
+        </button>
       </div>
-    </div> -->
+
+      <div *ngIf="!contribuyente" class="flex items-center mt-2">
+        <input (keyup.enter)="getContribuyente()" [(ngModel)]="cuitContribuyente" type="text"
+          class="p-2 outline-none border border-gray-400 rounded mt-2" placeholder="CUIT de cliente">
+        <button (click)="getContribuyente()"
+          class="ml-2 hover:text-secondaryColor border border-gray-400 focus:outline-none rounded p-2 mt-2"
+          title="Buscar cliente">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </button>
+      </div>
+      <div *ngIf="contribuyente" class="text-sm mt-2 flex items-center">
+        <img class="w-14" src="assets/img/cliente.svg" alt="cliente.svg">
+        <div class="ml-2">
+          <p *ngIf="contribuyente?.tipoPersona === 'JURIDICA'"> <span class="font-semibold"> Razon social: </span> {{
+            contribuyente?.razonSocial }} </p>
+          <p *ngIf="contribuyente?.tipoPersona === 'FISICA'"> <span class="font-semibold"> Apellido y Nombre: </span> {{
+            contribuyente?.apellido }} {{ contribuyente?.nombre }} </p>
+          <p class="mt-1"> <span class="font-semibold"> Tipo de persona: </span> {{ contribuyente?.tipoPersona }} </p>
+          <p class="mt-1"> <span class="font-semibold"> {{ contribuyente.tipoClave }}: </span> {{
+            contribuyente?.idPersona }} </p>
+        </div>
+      </div>
+    </div>
+
     <div class="mt-2">
       <p class="font-semibold text-sm"> Calculadora de vuelto </p>
       <div class="md:flex text-sm md:items-center mt-2">
-        <input (keyup)="calcularVuelto()" [(ngModel)]="pagaCon" class="border p-2 focus:outline-none border-gray-400 w-full md:w-1/2 rounded" placeholder="Paga con..." type="number">
-        <div class="border md:ml-2 mt-2 md:mt-0 p-2 focus:outline-none text-center bg-gray-100 text-primary-900 border-gray-400 md:w-1/2 rounded" placeholder="Paga con..." type="number"> {{ (vuelto && vuelto >= 0) ? '$' + (vuelto | moneda) : 'Monto a devolver' }} </div>
+        <input (keyup)="calcularVuelto()" [(ngModel)]="pagaCon"
+          class="border p-2 focus:outline-none border-gray-400 w-full md:w-1/2 rounded" placeholder="Paga con..."
+          type="number">
+        <div
+          class="border md:ml-2 mt-2 md:mt-0 p-2 focus:outline-none text-center bg-gray-100 text-primary-900 border-gray-400 md:w-1/2 rounded"
+          placeholder="Paga con..." type="number"> {{ (vuelto && vuelto >= 0) ? '$' + (vuelto | moneda) : 'Monto a devolver' }} </div>
       </div>
     </div>
     <div class="mt-4">
       <div class="md:flex md:items-center">
         <div class="md:w-1/2">
-          <p class="font-semibold text-sm"> {{ multiples_formasPago ? 'Multiples metodos de pago' : 'Metodo de pago' }} </p>
-          <select [(ngModel)]="formaPago" (change)="seleccionarFormaPago()" class="border bg-white mt-2 w-full border-gray-400 text-sm p-2 rounded focus:outline-none">
-            <option *ngFor="let item of itemsFormasPago" [value]="item"> {{ item === 'PedidosYa' ? 'PedidosYa - Online' : item }} </option>          
+          <p class="font-semibold text-sm"> {{ multiples_formasPago ? 'Multiples metodos de pago' : 'Metodo de pago' }}
+          </p>
+          <select [(ngModel)]="formaPago" (change)="seleccionarFormaPago()"
+            class="border bg-white mt-2 w-full border-gray-400 text-sm p-2 rounded focus:outline-none">
+            <option *ngFor="let item of itemsFormasPago" [value]="item"> {{ item === 'PedidosYa' ? 'PedidosYa - Online'
+              : item }} </option>
           </select>
         </div>
-        <button *ngIf="!multiples_formasPago && formaPago !== 'PedidosYa' && formaPago !== 'PedidosYa - Efectivo'" (click)="metodoPagoMultiple()" class="md:ml-2 mt-2 md:mt-7 hover:text-secondaryColor border border-gray-400 p-2 w-full md:w-1/2 rounded focus:outline-none text-sm"> Multiples formas de pago </button>
+        <button *ngIf="!multiples_formasPago && formaPago !== 'PedidosYa' && formaPago !== 'PedidosYa - Efectivo'"
+          (click)="metodoPagoMultiple()"
+          class="md:ml-2 mt-2 md:mt-7 hover:text-secondaryColor border border-gray-400 p-2 w-full md:w-1/2 rounded focus:outline-none text-sm">
+          Multiples formas de pago </button>
         <div *ngIf="multiples_formasPago" class="md:ml-2 text-sm w-1/2 mt-2 md:mt-7 flex items-center">
-          <input (keyup.enter)="agregarFormaPago()" [(ngModel)]="formaPagoMonto" type="number" class="w-1/2 border focus:outline-none border-gray-400 p-2 rounded" placeholder="Monto">
-          <button (click)="agregarFormaPago()" title="Agregar metodo de pago" class="p-2 border hover:text-secondaryColor focus:outline-none border-gray-400 ml-2 rounded">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <input (keyup.enter)="agregarFormaPago()" [(ngModel)]="formaPagoMonto" type="number"
+            class="w-1/2 border focus:outline-none border-gray-400 p-2 rounded" placeholder="Monto">
+          <button (click)="agregarFormaPago()" title="Agregar metodo de pago"
+            class="p-2 border hover:text-secondaryColor focus:outline-none border-gray-400 ml-2 rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>           
+            </svg>
           </button>
-          <button (click)="metodoPagoUnico()" title="Volver a metodo de pago unico" class="p-2 border hover:text-secondaryColor focus:outline-none border-gray-400 ml-2 rounded">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <button (click)="metodoPagoUnico()" title="Volver a metodo de pago unico"
+            class="p-2 border hover:text-secondaryColor focus:outline-none border-gray-400 ml-2 rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>         
-          </button>         
+            </svg>
+          </button>
         </div>
         <div *ngIf="formaPago === 'PedidosYa' || formaPago === 'PedidosYa - Efectivo'" class="md:w-1/2 md:ml-2">
           <p class="text-sm font-semibold"> Nro comprobante pedidosYa </p>
-          <input (keyup.enter)="completarVenta()" [(ngModel)]="pedidosya_comprobante" type="text" class="border w-full text-sm mt-2 border-gray-400 p-2 focus:outline-none rounded" placeholder="Ej. 2233">
+          <input (keyup.enter)="completarVenta()" [(ngModel)]="pedidosya_comprobante" type="text"
+            class="border w-full text-sm mt-2 border-gray-400 p-2 focus:outline-none rounded" placeholder="Ej. 2233">
         </div>
       </div>
       <div class="mt-3" *ngIf="multiples_formasPago && formasPago.length > 0">
         <h2 class="text-sm font-semibold mb-2 border border-gray-400 bg-gray-100 p-2"> Formas de pago agregadas </h2>
         <div *ngFor="let elemento of formasPago">
-          <div class="border-b p-2 text-left flex items-center justify-between text-sm">  
+          <div class="border-b p-2 text-left flex items-center justify-between text-sm">
             <p class="w-1/3"> {{ elemento.descripcion }} </p>
             <p class="w-1/3"> ${{ elemento.valor | moneda }} </p>
-            <button (click)="eliminarFormaPago(elemento)" class="p-2 w-max border border-gray-400 focus:outline-none rounded hover:text-secondaryColor">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <button (click)="eliminarFormaPago(elemento)"
+              class="p-2 w-max border border-gray-400 focus:outline-none rounded hover:text-secondaryColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </button>
           </div>
@@ -113,15 +159,18 @@
     </div>
   </div>
   <div class="px-2 mr-2 md:pt-2 pb-2 flex items-center">
-    <button (click)="regresarCompletarReserva()" class="border text-sm ml-2 flex items-center justify-center bg-primary-800 focus:outline-none text-white shadow w-full p-2 rounded"> 
+    <button (click)="regresarCompletarReserva()"
+      class="border text-sm ml-2 flex items-center justify-center bg-primary-800 focus:outline-none text-white shadow w-full p-2 rounded">
       <span>
         Regresar
       </span>
     </button>
-    <button (click)="completarReserva()" class="border text-sm ml-2 flex items-center justify-center bg-green-800 focus:outline-none text-white shadow w-full p-2 rounded">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <button (click)="completarReserva()"
+      class="border text-sm ml-2 flex items-center justify-center bg-green-800 focus:outline-none text-white shadow w-full p-2 rounded">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-      </svg>  
+      </svg>
       <span>
         Completar pago
       </span>
@@ -145,18 +194,24 @@
     </div>
     <div class="p-2">
       <p class="font-semibold"> {{ productoSeleccionadoEdicion?.descripcion }} </p>
-      <p class="text-xs text-gray-500"> ${{ productoSeleccionadoEdicion?.precio_unitario | moneda }} x {{ productoSeleccionadoEdicion?.unidad_medida }} </p>
+      <p class="text-xs text-gray-500"> ${{ productoSeleccionadoEdicion?.precio_unitario | moneda }} x {{
+        productoSeleccionadoEdicion?.unidad_medida }} </p>
       <div class="flex items-center text-sm mt-2">
-        <input #idCantidad (keyup.enter)="actualizarProducto()" [(ngModel)]="cantidad" type="number" class="p-2 w-40 rounded border focus:outline-none border-gray-400 shadow" placeholder="Cantidad">
-        <button (click)="actualizarProducto()" title="Actualizar producto" class="p-2 rounded focus:outline-none bg-green-700 ml-2 text-white">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <input #idCantidad (keyup.enter)="actualizarProducto()" [(ngModel)]="cantidad" type="number"
+          class="p-2 w-40 rounded border focus:outline-none border-gray-400 shadow" placeholder="Cantidad">
+        <button (click)="actualizarProducto()" title="Actualizar producto"
+          class="p-2 rounded focus:outline-none bg-green-700 ml-2 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-          </svg>          
+          </svg>
         </button>
-        <button (click)="showModalEditarProducto = false" title="Cancelar" class="p-2 rounded bg-red-700 focus:outline-none text-white border border-gray-400 shadow ml-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <button (click)="showModalEditarProducto = false" title="Cancelar"
+          class="p-2 rounded bg-red-700 focus:outline-none text-white border border-gray-400 shadow ml-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>       
+          </svg>
         </button>
       </div>
     </div>
@@ -177,32 +232,43 @@
     </div>
   </div>
   <div *ngIf="!productoSeleccionado" class="text-sm p-2">
-    <input type="text" [(ngModel)]="filtro.parametroProductos" placeholder="Buscar" class="p-2 border w-60 border-gray-400 focus:outline-none">
+    <input type="text" [(ngModel)]="filtro.parametroProductos" placeholder="Buscar"
+      class="p-2 border w-60 border-gray-400 focus:outline-none">
     <div class="max-h-96 overflow-y-auto mt-2">
-      <div (click)="seleccionarProducto(producto)" *ngFor="let producto of productos | filtroProductos:filtro.parametroProductos:'true'" class="border hover:border-secondaryColor cursor-pointer my-2 border-gray-400 p-2">
+      <div (click)="seleccionarProducto(producto)"
+        *ngFor="let producto of productos | filtroProductos:filtro.parametroProductos:'true'"
+        class="border hover:border-secondaryColor cursor-pointer my-2 border-gray-400 p-2">
         <p class="font-semibold"> {{ producto.descripcion }} </p>
-        <p class="text-xs text-gray-600"> ${{ producto.precio | moneda }} x {{ producto.unidad_medida.descripcion }} </p>
+        <p class="text-xs text-gray-600"> ${{ producto.precio | moneda }} x {{ producto.unidad_medida.descripcion }}
+        </p>
       </div>
     </div>
   </div>
   <div *ngIf="productoSeleccionado" class="text-sm p-2">
     <p class="font-semibold"> {{ productoSeleccionado?.descripcion }} </p>
-    <div class="text-gray-500 mt-1 text-sm"> 
-      <input type="number" placeholder="Precio" [(ngModel)]="precio" class="border w-28 border-gray-400 p-2 rounded focus:outline-none"> x {{ productoSeleccionado?.unidad_medida.descripcion }} 
+    <div class="text-gray-500 mt-1 text-sm">
+      <input type="number" placeholder="Precio" [(ngModel)]="precio"
+        class="border w-28 border-gray-400 p-2 rounded focus:outline-none"> x {{
+      productoSeleccionado?.unidad_medida.descripcion }}
     </div>
 
     <!-- <p class="text-gray-500 text-xs"> ${{ productoSeleccionado?.precio | moneda }} x {{ productoSeleccionado?.unidad_medida.descripcion }} </p> -->
     <div class="mt-2 flex items-center">
-      <input appAutoFocus (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad" class="border border-gray-400 p-2 rounded focus:outline-none" placeholder="Cantidad" type="number">
-      <button (click)="agregarProducto()" title="Agregar producto" class="p-2 border bg-green-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <input appAutoFocus (keyup.enter)="agregarProducto()" [(ngModel)]="cantidad"
+        class="border border-gray-400 p-2 rounded focus:outline-none" placeholder="Cantidad" type="number">
+      <button (click)="agregarProducto()" title="Agregar producto"
+        class="p-2 border bg-green-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        </svg>  
+        </svg>
       </button>
-      <button (click)="productoSeleccionado = null" title="Cancelar" class="p-2 border bg-red-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <button (click)="productoSeleccionado = null" title="Cancelar"
+        class="p-2 border bg-red-700 focus:outline-none ml-2 border-gray-400 shadow rounded">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg> 
+        </svg>
       </button>
     </div>
   </div>
@@ -226,7 +292,7 @@
         <div class="w-full">
           <p class="font-semibold"> <span class="text-red-500"> * </span> Apellido y Nombre / Razon social </p>
           <input [(ngModel)]="dataCliente.descripcion" placeholder="Ej. Equinoccio Technology" type="text"
-          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+            class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
         </div>
       </div>
       <div class="md:flex md:items-center mt-4">
@@ -242,26 +308,26 @@
         <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
           <p class="font-semibold"> <span class="text-red-500"> * </span> Identificación </p>
           <input [(ngModel)]="dataCliente.identificacion" placeholder="Ej. 34060398" type="text"
-          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+            class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
         </div>
       </div>
       <div class="md:flex md:items-center mt-4">
         <div class="md:w-1/2">
           <p class="font-semibold"> Direccion </p>
           <input [(ngModel)]="dataCliente.direccion" placeholder="Ej. Pringles 539" type="text"
-          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+            class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
         </div>
         <div class="md:w-1/2 md:ml-2 mt-2 md:mt-0">
           <p class="font-semibold"> Teléfono </p>
           <input [(ngModel)]="dataCliente.telefono" placeholder="Ej. 2664869642" type="text"
-          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+            class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
         </div>
       </div>
       <div class="md:flex md:items-center mt-4">
         <div class="w-full">
           <p class="font-semibold"> Correo electronico </p>
           <input [(ngModel)]="dataCliente.email" placeholder="Ej. equinocciotechnology@gmail.com" type="text"
-          class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
+            class="py-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800">
         </div>
       </div>
     </div>
@@ -292,15 +358,17 @@
     </div>
     <div class="text-sm border-b border-gray-400 pb-2">
       <div class="flex items-center border-b bg-gray-100 p-2 border-gray-400 justify-between">
-        <p> <span class="font-semibold"> Fecha reserva: </span> {{ fechaMuestra }}  </p>
-        <p> <span class="font-semibold"> Precio total: </span>  ${{ dataReserva.precio_total | moneda }} </p>
+        <p> <span class="font-semibold"> Fecha reserva: </span> {{ fechaMuestra }} </p>
+        <p> <span class="font-semibold"> Precio total: </span> ${{ dataReserva.precio_total | moneda }} </p>
       </div>
       <div class="mt-1 p-2 text-center">
         <div class="text-center">
           <p class="font-semibold"> Fecha y hora de entrega </p>
           <div class="flex items-center">
-            <input [(ngModel)]="dataReserva.fecha_entrega" type="date" [min]="dataReserva.fecha_reserva" class="border mt-2 w-1/2 focus:outline-none border-gray-400 p-2">
-            <input [(ngModel)]="dataReserva.hora_entrega" type="time" class="border ml-3 w-1/2 mt-2 focus:outline-none border-gray-400 p-2">
+            <input [(ngModel)]="dataReserva.fecha_entrega" type="date" [min]="dataReserva.fecha_reserva"
+              class="border mt-2 w-1/2 focus:outline-none border-gray-400 p-2">
+            <input [(ngModel)]="dataReserva.hora_entrega" type="time"
+              class="border ml-3 w-1/2 mt-2 focus:outline-none border-gray-400 p-2">
           </div>
         </div>
       </div>
@@ -308,7 +376,8 @@
         <div class="text-center">
           <p class="font-semibold"> La alerta se activará </p>
           <div class="flex items-center">
-            <select [(ngModel)]="dataReserva.horas_antes" class="border border-gray-400 p-2 rounded focus:outline-none w-full mt-2">
+            <select [(ngModel)]="dataReserva.horas_antes"
+              class="border border-gray-400 p-2 rounded focus:outline-none w-full mt-2">
               <option value="1"> 1 hora antes </option>
               <option value="2"> 2 horas antes </option>
               <option value="3"> 3 horas antes </option>
@@ -319,7 +388,8 @@
         </div>
         <div class="text-center mt-3">
           <p class="font-semibold"> ¿Quien eres? </p>
-          <input placeholder="Ej. Moreno Lucas Omar" [(ngModel)]="dataReserva.usuario_generador" type="text" class="border rounded w-full mt-2 focus:outline-none border-gray-400 p-2">
+          <input placeholder="Ej. Moreno Lucas Omar" [(ngModel)]="dataReserva.usuario_generador" type="text"
+            class="border rounded w-full mt-2 focus:outline-none border-gray-400 p-2">
         </div>
       </div>
     </div>
@@ -327,7 +397,8 @@
       <div class="flex items-center">
         <div class="w-1/2">
           <p class="font-semibold"> Monto de seña </p>
-          <input (keyup)="calcularFaltaPagar()" [(ngModel)]="dataReserva.adelanto" type="number" placeholder="Ej. 1500" class="border text-center border-gray-400 mt-1 focus:outline-none p-2">
+          <input (keyup)="calcularFaltaPagar()" [(ngModel)]="dataReserva.adelanto" type="number" placeholder="Ej. 1500"
+            class="border text-center border-gray-400 mt-1 focus:outline-none p-2">
         </div>
         <div class="w-1/2 ml-2">
           <p class="font-semibold"> Falta pagar </p>
@@ -336,9 +407,10 @@
       </div>
     </div>
     <div class="p-2">
-      <button (click)="abrirCompletarVenta()" class="p-2 bg-secondaryColor w-full text-white rounded focus:outline-none shadow">
+      <button (click)="abrirCompletarVenta()"
+        class="p-2 bg-secondaryColor w-full text-white rounded focus:outline-none shadow">
         Generar reserva
-      </button>   
+      </button>
     </div>
   </div>
 </app-modal-small>
@@ -346,16 +418,18 @@
 <!-- Paginar principal -->
 <div class="gsap-contenido">
   <div class="max-w-3xl w-11/12 mx-auto mt-4 mb-4 border border-gray-400">
-    
+
     <div class="bg-primary-800 p-2 text-white flex items-center justify-between">
       <div class="flex items-center">
         <app-boton-regresar routerLink="/dashboard/reservas"></app-boton-regresar>
         <h1 class="text-xl ml-1"> Nueva reserva </h1>
       </div>
-      <button *ngIf="carro.length > 0 && clienteSeleccionado" (click)="abrirCompletarReserva()" title="Generar reserva" class="p-2 bg-white mr-1 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-green-700">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <button *ngIf="carro.length > 0 && clienteSeleccionado" (click)="abrirCompletarReserva()" title="Generar reserva"
+        class="p-2 bg-white mr-1 focus:outline-none border rounded text-primary-900 border-gray-400 shadow hover:text-green-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        </svg>          
+        </svg>
       </button>
     </div>
 
@@ -366,11 +440,13 @@
       <div class="flex items-center justify-between">
         <div class="text-center">
           <p class="font-semibold"> Fecha de reserva </p>
-          <input type="date" [(ngModel)]="dataReserva.fecha_reserva" class="border mt-2 focus:outline-none border-gray-400 p-2">
+          <input type="date" [(ngModel)]="dataReserva.fecha_reserva"
+            class="border mt-2 focus:outline-none border-gray-400 p-2">
         </div>
         <div class="text-center mr-2">
           <p class="font-semibold"> Precio total</p>
-          <p class="border border-gray-400 p-2 bg-gray-100 mt-2 w-32 font-semibold"> ${{ dataReserva.precio_total | moneda }} </p>
+          <p class="border border-gray-400 p-2 bg-gray-100 mt-2 w-32 font-semibold"> ${{ dataReserva.precio_total |
+            moneda }} </p>
         </div>
       </div>
 
@@ -381,13 +457,16 @@
           <!-- <button title="Nuevo cliente" class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>            
+            </svg>
           </button> -->
         </div>
         <div *ngIf="!clienteSeleccionado" class="flex items-center mt-3">
-          <input (keyup.enter)="buscarCliente()" [(ngModel)]="identificacion_cliente" placeholder="DNI, CUIL o CUIT" type="text" class="p-2 border focus:outline-none border-gray-400">
-          <button (click)="buscarCliente()" title="Buscar cliente" class="border ml-2 p-2 shadow bg-gray-100 rounded border-gray-400 hover:text-secondaryColor focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <input (keyup.enter)="buscarCliente()" [(ngModel)]="identificacion_cliente" placeholder="DNI, CUIL o CUIT"
+            type="text" class="p-2 border focus:outline-none border-gray-400">
+          <button (click)="buscarCliente()" title="Buscar cliente"
+            class="border ml-2 p-2 shadow bg-gray-100 rounded border-gray-400 hover:text-secondaryColor focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
@@ -400,17 +479,24 @@
               </div>
               <div class="ml-2">
                 <p class="font-semibold text-xs md:text-sm"> {{ clienteSeleccionado.descripcion }} </p>
-                <p class="text-gray-700 text-xs"> {{ clienteSeleccionado.tipo_identificacion }} {{ clienteSeleccionado.identificacion }} </p>
+                <p class="text-gray-700 text-xs"> {{ clienteSeleccionado.tipo_identificacion }} {{
+                  clienteSeleccionado.identificacion }} </p>
                 <p class="text-xs text-gray-700"> Tel. {{ clienteSeleccionado.telefono }} </p>
                 <div class="flex items-center">
-                  <button (click)="cambiarCliente()" title="Cambiar cliente" class="text-xs flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor"> 
+                  <button (click)="cambiarCliente()" title="Cambiar cliente"
+                    class="text-xs flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                      <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd" />
                     </svg>
                   </button>
-                  <button (click)="abrirEditarCliente()" title="Editar cliente" class="text-xs ml-2 flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor"> 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  <button (click)="abrirEditarCliente()" title="Editar cliente"
+                    class="text-xs ml-2 flex items-center rounded bg-gray-100 focus:outline-none mt-4 w-max border cursor-pointer p-1 border-gray-400 text-gray-900 hover:text-secondaryColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                   </button>
                 </div>
@@ -424,34 +510,44 @@
       <div class="mt-3">
         <div class="p-2 flex items-center justify-between bg-gray-100 border border-gray-400">
           <h2 class="font-semibold"> Datos de productos </h2>
-          <button title="Nuevo producto" (click)="abrirProductos()" class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <button title="Nuevo producto" (click)="abrirProductos()"
+            class="p-2 border focus:outline-none border-gray-400 bg-white rounded shadow hover:text-secondaryColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>            
+            </svg>
           </button>
         </div>
         <div *ngIf="carro.length === 0" class="mt-3">
           <p class="text-gray-500"> Todavia no se cargo ningun producto </p>
-          <button (click)="abrirProductos()" class="p-2 border shadow mt-2 focus:outline-none border-gray-400 bg-secondaryColor text-white rounded">
+          <button (click)="abrirProductos()"
+            class="p-2 border shadow mt-2 focus:outline-none border-gray-400 bg-secondaryColor text-white rounded">
             Agregar producto
           </button>
         </div>
         <div *ngIf="carro.length !== 0" class="mt-3 text-sm">
-          <div *ngFor="let producto of carro" class="border flex items-center justify-between border-gray-400 shadow p-2 mb-2">
+          <div *ngFor="let producto of carro"
+            class="border flex items-center justify-between border-gray-400 shadow p-2 mb-2">
             <div>
               <p class="font-semibold"> {{ producto.descripcion }} </p>
-              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida }} </p>
+              <p class="text-gray-500 text-xs"> ${{ producto.precio_unitario | moneda }} x {{ producto.unidad_medida }}
+              </p>
               <p class="text-xs"> Cantidad: {{ producto.cantidad }} </p>
               <p class="font-semibold"> Precio: ${{ producto.precio | moneda }} </p>
             </div>
             <div class="flex items-center">
-              <button (click)="abrirEditarProducto(producto)" title="Editar producto" class="border border-gray-400 p-2 focus:outline-none rounded hover:text-secondaryColor">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              <button (click)="abrirEditarProducto(producto)" title="Editar producto"
+                class="border border-gray-400 p-2 focus:outline-none rounded hover:text-secondaryColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               </button>
-              <button (click)="eliminarProducto(producto)" title="Eliminar producto" class="border border-gray-400 p-2 focus:outline-none ml-1 rounded hover:text-red-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <button (click)="eliminarProducto(producto)" title="Eliminar producto"
+                class="border border-gray-400 p-2 focus:outline-none ml-1 rounded hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -462,63 +558,74 @@
 
       <!-- Observaciones -->
       <div class="mt-4 w-full">
-        
+
         <div class="px-2 py-2 bg-gray-100 flex items-center justify-between border border-gray-400">
           <h2 class="font-semibold"> Observaciones </h2>
-          <select [(ngModel)]="dataReserva.tipo_observaciones" class="border focus:outline-none text-sm border-gray-400 p-2 rounded">
+          <select [(ngModel)]="dataReserva.tipo_observaciones"
+            class="border focus:outline-none text-sm border-gray-400 p-2 rounded">
             <option value="General"> General </option>
             <option value="Torta"> Torta </option>
           </select>
-        </div>  
-        
+        </div>
+
         <div *ngIf="dataReserva.tipo_observaciones === 'Torta'">
           <div class="flex bg-gray-100 items-center p-2 border border-gray-400 mt-2">
             <img class="w-10" src="assets/img/torta.svg" alt="Torta.svg">
             <h2 class="font-semibold ml-2 text-lg"> Detalles de torta </h2>
           </div>
           <div class="w-full mb-3 mt-3">
-            <div class="w-full flex text-sm"> 
+            <div class="w-full flex text-sm">
               <div class="w-1/2">
                 <p class="text-gray-600 font-semibold"> <span class="text-red-700"> * </span> Relleno 1 </p>
-                <input [(ngModel)]="dataReserva.torta_relleno1" type="text" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Cholocolate">
-              </div>  
+                <input [(ngModel)]="dataReserva.torta_relleno1" type="text"
+                  class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Cholocolate">
+              </div>
               <div class="w-1/2 ml-2">
                 <p class="text-gray-600 font-semibold"> Relleno 2 </p>
-                <input [(ngModel)]="dataReserva.torta_relleno2" type="text" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Vainilla">
-              </div>  
+                <input [(ngModel)]="dataReserva.torta_relleno2" type="text"
+                  class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Vainilla">
+              </div>
             </div>
             <div class="w-full mt-3 flex text-sm">
               <div class="w-1/2">
                 <p class="text-gray-600 font-semibold"> Relleno 3 </p>
-                <input [(ngModel)]="dataReserva.torta_relleno3" type="text" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Frutilla">
-              </div>   
+                <input [(ngModel)]="dataReserva.torta_relleno3" type="text"
+                  class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Frutilla">
+              </div>
               <div class="w-1/2 ml-2">
                 <p class="text-gray-600 font-semibold"> <span class="text-red-700"> * </span> Forma </p>
-                <input [(ngModel)]="dataReserva.torta_forma" type="text" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Redonda">
-              </div>  
+                <input [(ngModel)]="dataReserva.torta_forma" type="text"
+                  class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Redonda">
+              </div>
             </div>
             <div class="w-full mt-3 flex text-sm">
               <div class="w-1/2">
                 <p class="text-gray-600 font-semibold"> <span class="text-red-700"> * </span> Peso (Kg) </p>
-                <input [(ngModel)]="dataReserva.torta_peso" type="number" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. 1.5">
-              </div>  
+                <input [(ngModel)]="dataReserva.torta_peso" type="number"
+                  class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. 1.5">
+              </div>
               <div class="w-1/2 ml-2">
                 <p class="text-gray-600 font-semibold"> <span class="text-red-700"> * </span> Cobertura </p>
-                <input [(ngModel)]="dataReserva.torta_cobertura" type="text" class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Chocolate">
-              </div>   
+                <input [(ngModel)]="dataReserva.torta_cobertura" type="text"
+                  class="p-2 border mt-1 w-full border-gray-400 focus:outline-none" placeholder="Ej. Chocolate">
+              </div>
             </div>
           </div>
-        </div> 
+        </div>
         <div class="mt-1 mb-2" *ngIf="dataReserva.tipo_observaciones === 'Torta'">
           <p class="text-gray-600 font-semibold"> Detalles de torta </p>
-          <textarea [(ngModel)]="dataReserva.torta_detalles" placeholder="Otros detalles de la torta" class="border mt-2 border-gray-400 w-full p-2 focus:outline-none"></textarea>     
-        </div> 
+          <textarea [(ngModel)]="dataReserva.torta_detalles" placeholder="Otros detalles de la torta"
+            class="border mt-2 border-gray-400 w-full p-2 focus:outline-none"></textarea>
+        </div>
         <div>
-          <p *ngIf="dataReserva.tipo_observaciones === 'Torta'" class="text-gray-600 font-semibold"> Observaciones generales (No impacta en comprobante) </p>
-          <textarea [(ngModel)]="dataReserva.observaciones" placeholder="Puedes colocar una observación aquí (No saldran en el comprobante)" class="border mt-2 border-gray-400 w-full p-2 focus:outline-none"></textarea>     
-        </div> 
+          <p *ngIf="dataReserva.tipo_observaciones === 'Torta'" class="text-gray-600 font-semibold"> Observaciones
+            generales (No impacta en comprobante) </p>
+          <textarea [(ngModel)]="dataReserva.observaciones"
+            placeholder="Puedes colocar una observación aquí (No saldran en el comprobante)"
+            class="border mt-2 border-gray-400 w-full p-2 focus:outline-none"></textarea>
+        </div>
 
-      </div> 
+      </div>
 
     </div>
 

@@ -127,6 +127,10 @@ export class DetallesReservasComponent implements OnInit {
     email: ''
   }
 
+  // Facturacion A
+  public contribuyente: any = null;
+  public cuitContribuyente: string = '';
+
   // Filtros
   public filtro = {
     parametroProductos: ''
@@ -239,6 +243,18 @@ export class DetallesReservasComponent implements OnInit {
   cambiarCliente(): void {
     this.clienteSeleccionado = null;
     this.identificacion_cliente = '';
+  }
+
+  // Cambiar tipo de comprobante
+  cambiarTipoComprobante(): void {
+    this.proximo_nro_factura = '';
+    this.eliminarContribuyente();
+  }
+
+  // Eliminar contribuyente
+  eliminarContribuyente(): void {
+    this.contribuyente = null;
+    this.cuitContribuyente = '';
   }
 
   // Nuevo cliente
@@ -758,14 +774,34 @@ export class DetallesReservasComponent implements OnInit {
   // ---------------------- VENTAS ----------------------
 
   // Proximo numero de factura
-  proximoNroFactura(): void {
+  proximoNroFactura(comprobante: string): void {
     this.alertService.loading();
-    this.ventasService.proximoNroFactura('B').subscribe({
+    this.ventasService.proximoNroFactura(comprobante).subscribe({
       next: ({ nro_factura }) => {
         this.proximo_nro_factura = nro_factura;
         this.alertService.close();
       }, error: ({ error }) => this.alertService.errorApi(error.message)
     })
+  }
+
+  // Datos de contribuyente
+  getContribuyente(): void {
+
+    if (this.cuitContribuyente.trim() === '') {
+      this.alertService.info('Debe colocar un CUIT');
+      return;
+    }
+
+    this.alertService.loading();
+
+    this.ventasService.getContribuyente(this.cuitContribuyente).subscribe({
+      next: ({ contribuyente }) => {
+        this.contribuyente = contribuyente;
+        console.log(this.contribuyente)
+        this.alertService.close();
+      }, error: ({ error }) => this.alertService.errorApi(error.message)
+    });
+
   }
 
   cambiarImprimir(): void {
@@ -877,6 +913,12 @@ export class DetallesReservasComponent implements OnInit {
   // Completar venta
   completarVenta(): void {
 
+    // Verificacion - Si el comprobante es factura A y no se coloco un contribuyente
+    if (this.comprobante === 'Factura A' && !this.contribuyente) {
+      this.alertService.info('Debe seleccionar un cliente');
+      return;
+    }
+
     // Verificacion - Formas de pago multiples
     if (this.multiples_formasPago && this.formasPago.length === 0) { // Seleccionar al menos una forma de pago (Multiples formas de pago)
       this.alertService.info('Debe seleccionar una forma de pago');
@@ -905,11 +947,24 @@ export class DetallesReservasComponent implements OnInit {
           if (!this.multiples_formasPago) forma_pago = [{ descripcion: this.formaPago, valor: this.precio_total }];
           else if (this.multiples_formasPago) forma_pago = this.formasPago;
 
+          // Armamos la razonSocial
+          let razonSocial = '';
+          if (this.contribuyente) {
+            if (this.contribuyente.tipoPersona === 'FISICA') razonSocial = `${this.contribuyente.apellido} ${this.contribuyente.nombre}`;
+            else if (this.contribuyente.tipoPersona === 'JURIDICA') razonSocial = this.contribuyente.razonSocial;
+          }
+
           const data = {
             sena: true,
             productos: this.carro,
             precio_total: this.precio_total,
             precio_total_limpio: this.precio_total_limpio,
+            contribuyente: {
+              razonSocial: this.contribuyente ? razonSocial : '',
+              tipoPersona: this.contribuyente ? this.contribuyente.tipoPersona : '',
+              tipoIdentificacion: this.contribuyente ? this.contribuyente.tipoClave : '',
+              identificacion: this.contribuyente ? this.contribuyente.idPersona : ''
+            },
             comprobante: this.comprobante,
             pedidosya_comprobante: (this.formaPago === 'PedidosYa' || this.formaPago === 'PedidosYa - Efectivo') ? this.pedidosya_comprobante : '',
             forma_pago,
@@ -925,7 +980,7 @@ export class DetallesReservasComponent implements OnInit {
               this.precio_total = 0;
               this.precio_total_limpio = 0;
               this.comprobante = 'Normal',
-              this.productos = [];
+                this.productos = [];
               this.pagaCon = null;
               this.formaPago = 'Efectivo';
               this.vuelto = 0;
@@ -937,36 +992,36 @@ export class DetallesReservasComponent implements OnInit {
               this.reservasService.actualizarReserva(this.idReserva, { estado: 'Completada' }).subscribe({
                 next: () => {
 
-                // Generando Relacion Venta -> Reserva
-                this.ventasReservasService.nuevaRelacion({
-                  venta: venta._id,
-                  reserva: this.idReserva,
-                  instancia: 'Completada',
-                  creatorUser: this.authService.usuario.userId,
-                  updatorUser: this.authService.usuario.userId,
-                }).subscribe({
-                  next: () => {
+                  // Generando Relacion Venta -> Reserva
+                  this.ventasReservasService.nuevaRelacion({
+                    venta: venta._id,
+                    reserva: this.idReserva,
+                    instancia: 'Completada',
+                    creatorUser: this.authService.usuario.userId,
+                    updatorUser: this.authService.usuario.userId,
+                  }).subscribe({
+                    next: () => {
 
-                    this.reserva.estado = 'Completada';
+                      this.reserva.estado = 'Completada';
 
-                    // Imprimir comprobante
-                    if (this.imprimir) {
-                      this.ventasService.getComprobante(venta._id).subscribe({
-                        next: () => {
-                          this.dataService.alertaReservas();
-                          window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
-                          this.alertService.success('Venta completada');
-                        }, error: (error) => this.alertService.errorApi(error.message)
-                      })
-                    } else {
-                      this.dataService.alertaReservas();
-                      this.alertService.success('Venta completada');
-                    }
-  
-                    this.showCompletarVenta = false;
+                      // Imprimir comprobante
+                      if (this.imprimir) {
+                        this.ventasService.getComprobante(venta._id).subscribe({
+                          next: () => {
+                            this.dataService.alertaReservas();
+                            window.open(`${base_url}/pdf/comprobante.pdf`, '_blank');
+                            this.alertService.success('Venta completada');
+                          }, error: (error) => this.alertService.errorApi(error.message)
+                        })
+                      } else {
+                        this.dataService.alertaReservas();
+                        this.alertService.success('Venta completada');
+                      }
 
-                  }, error: ({ error }) => this.alertService.errorApi(error.message)
-                })
+                      this.showCompletarVenta = false;
+
+                    }, error: ({ error }) => this.alertService.errorApi(error.message)
+                  })
 
                 }, error: ({ error }) => this.alertService.errorApi(error.message)
               })

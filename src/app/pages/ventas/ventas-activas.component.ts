@@ -126,6 +126,7 @@ export class VentasActivasComponent implements OnInit {
         totalPedidosYaEfectivo
       }) => {
         this.ventas = ventas;
+        console.log(this.ventas);
         this.montoTotalPedidosYa = totalPedidosYa,
           this.totalItems = totalItems;
         this.montoTotalFacturado = totalFacturado;
