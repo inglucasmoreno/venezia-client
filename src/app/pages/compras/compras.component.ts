@@ -20,7 +20,7 @@ export class ComprasComponent implements OnInit {
   // Modal
   public showModalCompra = false;
 
-  // Estado formulario 
+  // Estado formulario
   public estadoFormulario = 'crear';
 
   // Compra
@@ -47,7 +47,7 @@ export class ComprasComponent implements OnInit {
   // Ordenar
   public ordenar = {
     direccion: -1,  // Asc (1) | Desc (-1)
-    columna: 'fecha_compra'
+    columna: 'createdAt'
   }
 
   constructor(private comprasService: ComprasService,
@@ -115,35 +115,38 @@ export class ComprasComponent implements OnInit {
   // Nueva compra
   nuevaCompra(): void {
 
-    if(this.compra.fecha_compra === '') return this.alertService.info('Debe colocar una fecha de compra');
-
-    this.alertService.loading();
+    if (this.compra.fecha_compra === '') return this.alertService.info('Debe colocar una fecha de compra');
 
     const data = {
-      fecha_compra: format(add(new Date(this.compra.fecha_compra),{ hours: 3 }), 'yyyy-MM-dd'),
+      fecha_compra: format(add(new Date(this.compra.fecha_compra), { hours: 3 }), 'yyyy-MM-dd'),
       numero_factura: this.compra.numero_factura,
       comentarios: this.compra.comentarios,
       creatorUser: this.authService.usuario.userId,
       updatorUser: this.authService.usuario.userId,
     }
 
-    this.comprasService.nuevaCompra(data).subscribe(({ compra }) => {
-      this.router.navigateByUrl(`/dashboard/compras/detalles/${compra._id}`);
-    }, ({ error }) => {
-      this.alertService.errorApi(error.message);
-    });
+    this.alertService.question({ msg: 'Creando compra', buttonText: 'Crear' })
+      .then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          this.comprasService.nuevaCompra(data).subscribe(({ compra }) => {
+            this.router.navigateByUrl(`/dashboard/compras/detalles/${compra._id}`);
+          }, ({ error }) => {
+            this.alertService.errorApi(error.message);
+          });
+        }
+      });
 
   }
 
   // Actualizar compra
   actualizarCompra(): void {
 
-    if(this.compra.fecha_compra === '') return this.alertService.info('Debe colocar una fecha de compra');
+    if (this.compra.fecha_compra === '') return this.alertService.info('Debe colocar una fecha de compra');
 
     this.alertService.loading();
 
     const data = {
-      fecha_compra: format(add(new Date(this.compra.fecha_compra),{ hours: 3 }), 'yyyy-MM-dd'),
+      fecha_compra: format(add(new Date(this.compra.fecha_compra), { hours: 3 }), 'yyyy-MM-dd'),
       numero_factura: this.compra.numero_factura,
       comentarios: this.compra.comentarios,
       updatorUser: this.authService.usuario.userId,
@@ -178,7 +181,7 @@ export class ComprasComponent implements OnInit {
         }
       });
 
-  }  
+  }
 
   // Reiniciando formulario
   reiniciarFormulario(): void {

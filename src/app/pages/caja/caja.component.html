@@ -6,17 +6,17 @@
       <button (click)="showModalSaldoInicial = false" class="focus:outline-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>  
+        </svg>
       </button>
     </div>
     <div class="p-2">
       <p class="font-semibold"> Saldo inicial de caja </p>
       <input (keyup.enter)="actualizarSaldoInicial()" [(ngModel)]="nuevoSaldo" type="number" class="border mt-2 focus:outline-none border-gray-300 w-full p-2 rounded" placeholder="Ej. 3000">
       <button (click)="actualizarSaldoInicial()" class="w-full bg-secondaryColor focus:outline-none text-white p-2 shadow rounded mt-2">
-        Acutalizar saldo
+        Actualizar saldo
       </button>
     </div>
-  </div>  
+  </div>
 </app-modal-small>
 
 <!-- Modal: Ingresos/Gastos -->
@@ -47,10 +47,10 @@
       <div class="mt-2">
         <p class="font-semibold"> <span class="text-red-500"> * </span> Descripción </p>
         <input
-          (keyup.enter)="nuevoIngresoGasto()" 
-          [(ngModel)]="formIngresosGastos.descripcion" 
-          type="text" 
-          class="py-2 px-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800" 
+          (keyup.enter)="nuevoIngresoGasto()"
+          [(ngModel)]="formIngresosGastos.descripcion"
+          type="text"
+          class="py-2 px-2 mt-1 border-b-2 border-gray-300 tranform duration-500 focus:border-secondaryColor appearance-none outline-none w-full text-gray-800"
           [placeholder]="formIngresosGastos.tipo === 'ingreso' ? 'Ej. Cobro atrasado' : 'Ej. Pago a proveedor'"
         />
       </div>
@@ -83,34 +83,34 @@
           <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirModalSaldoInicial()" title="Actualizar saldo inicial de caja" class="w-max border focus:outline-none hover:text-secondaryColor border-gray-400 shadow p-2 rounded ml-2 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>          
+            </svg>
           </button>
         </div>
         <div class="mt-3">
           <div class="flex items-center bg-gray-100 rounded border font-semibold border-gray-400 justify-between p-2">
-            <p class="flex items-center">  
-              <span class="ml-1"> Cantidad de ventas </span>       
+            <p class="flex items-center">
+              <span class="ml-1"> Cantidad de ventas </span>
             </p>
             <p> {{ cantidad_ventas }} </p>
           </div>
           <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex items-center justify-between p-2">
-            <p class="flex items-center">  
+            <p class="flex items-center">
               <span class="text-green-500 font-semibold"> (+) </span>
-              <span class="ml-1"> Total balanza </span>       
+              <span class="ml-1"> Total balanza </span>
             </p>
             <p> ${{ valoresCaja?.total_balanza | moneda }} </p>
           </div>
           <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex items-center justify-between p-2">
-            <p class="flex items-center">  
+            <p class="flex items-center">
               <span class="text-green-500 font-semibold"> (+) </span>
-              <span class="ml-1"> Total no balanza </span>       
+              <span class="ml-1"> Total no balanza </span>
             </p>
             <p> ${{ valoresCaja?.total_no_balanza | moneda }} </p>
           </div>
           <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex items-center justify-between p-2">
-            <p class="flex items-center">  
+            <p class="flex items-center">
               <span class="text-green-500 font-semibold"> (+) </span>
-              <span class="ml-1"> Total adicional por crédito </span>       
+              <span class="ml-1"> Total adicional por crédito </span>
             </p>
             <p> ${{ valoresCaja?.total_adicional_credito | moneda }} </p>
           </div>
@@ -121,82 +121,82 @@
             </div>
             <div *ngIf="showFacturado" class="flex bg-blue-100 border border-blue-300 text-blue-700 p-2 mt-2 items-center justify-between">
               <p> Guia de despacho </p>
-              <p> ${{ valoresCaja?.total_facturado | moneda }} </p>  
+              <p> ${{ valoresCaja?.total_facturado | moneda }} </p>
             </div>
           </div>
 
           <div>
             <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex items-center justify-between p-2">
-              <p class="flex items-center">  
+              <p class="flex items-center">
                 <span class="text-green-500 font-semibold"> (+) </span>
-                <span class="ml-1"> Saldo inicial de caja </span>       
+                <span class="ml-1"> Saldo inicial de caja </span>
               </p>
               <p> ${{ saldoInicial | moneda }} </p>
-            </div>   
+            </div>
             <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex items-center justify-between p-2">
-              <p class="flex items-center">  
+              <p class="flex items-center">
                 <span class="text-green-500 font-semibold"> (+) </span>
-                <span class="ml-1"> Otros ingresos </span>       
+                <span class="ml-1"> Otros ingresos </span>
               </p>
               <p> ${{ totalIngresos | moneda }} </p>
-            </div>   
+            </div>
             <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex items-center justify-between p-2">
-              <p class="flex items-center">  
+              <p class="flex items-center">
                 <span class="text-red-500 font-semibold"> (-) </span>
-                <span class="ml-1"> Otros gastos </span>       
+                <span class="ml-1"> Otros gastos </span>
               </p>
               <p class="text-red-500"> -${{ totalGastos | moneda }} </p>
             </div>
             <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex items-center justify-between p-2">
-              <p class="flex items-center">  
+              <p class="flex items-center">
                 <span class="text-red-500 font-semibold"> (-) </span>
-                <span class="ml-1"> PedidosYa - Online </span>       
+                <span class="ml-1"> PedidosYa - Online </span>
               </p>
               <p class="text-red-500"> -${{ total_pedidosYa | moneda }} </p>
-            </div>    
+            </div>
             <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="showPostnet = !showPostnet" class="flex cursor-pointer items-center justify-between p-2">
-              <div class="flex items-center">  
+              <div class="flex items-center">
                 <span class="text-red-500 font-semibold"> (-) </span>
-                <div class="ml-1 flex items-center"> 
+                <div class="ml-1 flex items-center">
                   <span>
                     Total postnet
                   </span>
                   <span *ngIf="showPostnet" class="p-1 ml-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 bg-gray-100 border border-gray-400 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>      
+                    </svg>
                   </span>
                   <span *ngIf="!showPostnet" class="p-1 ml-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 bg-gray-100 border border-gray-400 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-                    </svg>   
+                    </svg>
                   </span>
-                </div>       
+                </div>
               </div>
               <p class="text-red-500"> -${{ valoresCaja?.total_postnet | moneda }} </p>
-            </div>  
+            </div>
             <div *ngIf="showPostnet" class="bg-red-100 border border-red-300">
               <div class="flex items-center justify-between p-2">
-                <p class="flex items-center">  
+                <p class="flex items-center">
                   <span class="text-red-500 font-semibold"> (-) </span>
-                  <span class="ml-1"> Débito </span>       
+                  <span class="ml-1"> Débito </span>
                 </p>
                 <p class="text-red-500"> -${{ valoresCaja?.total_debito | moneda }} </p>
-              </div>  
+              </div>
               <div class="flex items-center justify-between p-2">
-                <p class="flex items-center">  
+                <p class="flex items-center">
                   <span class="text-red-500 font-semibold"> (-) </span>
-                  <span class="ml-1"> Crédito </span>       
+                  <span class="ml-1"> Crédito </span>
                 </p>
                 <p class="text-red-500"> -${{ valoresCaja?.total_credito | moneda }} </p>
-              </div>  
+              </div>
               <div class="flex items-center justify-between p-2">
-                <p class="flex items-center">  
+                <p class="flex items-center">
                   <span class="text-red-500 font-semibold"> (-) </span>
-                  <span class="ml-1"> Mercado pago </span>       
+                  <span class="ml-1"> Mercado pago </span>
                 </p>
                 <p class="text-red-500"> -${{ valoresCaja?.total_mercadopago | moneda }} </p>
-              </div>            
+              </div>
             </div>
           </div>
           <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" class="flex my-2 font-semibold items-center bg-gray-100 p-2 rounded border border-gray-400 justify-between">
@@ -241,22 +241,22 @@
       No se encontraron elementos cargados
     </div>
     <div *ngIf="ingresos.length > 0 || gastos.length > 0" class="p-2">
-      
+
       <!-- Ingresos -->
       <div class="pb-2" *ngIf="ingresos.length > 0">
         <p class="font-semibold p-1 bg-green-100 border border-green-200"> Listado de ingresos </p>
         <div>
           <div (click)="eliminarIngresoGasto(ingreso)" class="flex items-center justify-between mt-1 p-2 text-xs hover:bg-green-100 cursor-pointer" *ngFor="let ingreso of ingresos">
-            <div class="flex items-center"> 
-              <span class="font-semibold text-green-500"> (+) </span> 
-              <span class="ml-1"> {{ ingreso.descripcion }}  </span>      
+            <div class="flex items-center">
+              <span class="font-semibold text-green-500"> (+) </span>
+              <span class="ml-1"> {{ ingreso.descripcion }}  </span>
             </div>
             <p> ${{ ingreso.monto | moneda }} </p>
           </div>
           <div class="flex items-center font-semibold border-t justify-between p-2 mt-1">
-            <div class="flex items-center"> 
-              <span class="font-semibold text-green-500"> (+) </span> 
-              <span class="ml-1"> Total de ingresos  </span>      
+            <div class="flex items-center">
+              <span class="font-semibold text-green-500"> (+) </span>
+              <span class="ml-1"> Total de ingresos  </span>
             </div>
             <p> ${{ totalIngresos | moneda }} </p>
           </div>
@@ -268,16 +268,16 @@
         <p class="font-semibold p-1 bg-red-100 border border-red-200"> Listado de gastos </p>
         <div>
           <div (click)="eliminarIngresoGasto(gasto)" class="flex items-center hover:bg-red-100 text-xs justify-between cursor-pointer mt-1 p-2" *ngFor="let gasto of gastos">
-            <div class="flex items-center"> 
-              <span class="font-semibold text-red-500"> (-) </span> 
-              <span class="ml-1"> {{ gasto.descripcion }}  </span>      
+            <div class="flex items-center">
+              <span class="font-semibold text-red-500"> (-) </span>
+              <span class="ml-1"> {{ gasto.descripcion }}  </span>
             </div>
             <p> -${{ gasto.monto | moneda }} </p>
           </div>
           <div class="flex items-center font-semibold border-t justify-between p-2 mt-1">
-            <div class="flex items-center"> 
-              <span class="font-semibold text-red-500"> (-) </span> 
-              <span class="ml-1"> Total de gastos  </span>      
+            <div class="flex items-center">
+              <span class="font-semibold text-red-500"> (-) </span>
+              <span class="ml-1"> Total de gastos  </span>
             </div>
             <p> ${{ totalGastos | moneda }} </p>
           </div>
