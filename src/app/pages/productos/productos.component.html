@@ -160,7 +160,7 @@
                         <p> Total de productos: {{ productos.length }} </p>
                     </div>
                     <div *ngIf="permisos.all">
-                        <!-- <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" title="Importar productos"
+                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE' && SUCURSAL !== 'SUCURSAL ARISTOBULO' " title="Importar productos"
                             (click)="abrirImportarProductos()"
                             class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -168,7 +168,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
-                        </button> -->
+                        </button>
                         <!-- <button *ngIf="authService.usuario.usuario === 'lmoreno'" title="Inicializar productos"
                             (click)="copiarProductos()"
                             class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
