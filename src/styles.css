@@ -8,6 +8,17 @@
 
 /* Para evitar cuadro azul en celular al hacer clic */
 
+.tarjeta-login {
+  width: 450px;
+}
+
+/* Para celilar width 300px */
+@media (max-width: 600px) {
+  .tarjeta-login {
+    width: 350px;
+  }
+}
+
 a {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
