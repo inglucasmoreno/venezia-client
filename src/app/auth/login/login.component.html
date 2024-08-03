@@ -1,5 +1,7 @@
 <div class="relative w-screen h-screen">
-  <img class="absolute inset-0 w-screen h-screen object-cover" src="assets/fondos/login.webp" alt="Fondo de login">
+  <img class="absolute inset-0 w-screen h-screen object-cover"
+    [src]=" SUCURSAL === 'SUCURSAL ARISTOBULO' ? 'assets/fondos/login_aristobulo.webp' : 'assets/fondos/login_lince.webp'"
+    alt="Fondo de login">
   <div class="absolute inset-0 bg-black opacity-50"></div>
   <div class="relative z-10 flex flex-col md:justify-center items-center w-full h-full">
     <!-- <img class="z-10 gsap-logo mt-3 md:mt-0 md:block hidden w-1/3 md:w-1/6" src="assets/img/Equinoccio.png"> -->

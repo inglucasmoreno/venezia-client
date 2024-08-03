@@ -160,7 +160,7 @@
                         <p> Total de productos: {{ productos.length }} </p>
                     </div>
                     <div *ngIf="permisos.all">
-                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE' && SUCURSAL !== 'SUCURSAL ARISTOBULO' " title="Importar productos"
+                        <button *ngIf="authService.usuario.role === 'ADMIN_ROLE'" title="Importar productos"
                             (click)="abrirImportarProductos()"
                             class="p-2 border mr-3 focus:outline-none hover:text-secondaryColor border-gray-300 bg-white rounded shadow">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
