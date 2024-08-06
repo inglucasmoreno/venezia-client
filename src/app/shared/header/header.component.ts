@@ -21,7 +21,7 @@ export class HeaderComponent implements OnInit {
   public items: any[];
   public itemsMayoristas: any[];
   public itemsReservas: any[];
- 
+
   // Flags - Navegacion
   public administrador = false;
   public showMayoristas = false;
@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit {
                public dataService: DataService ) { }
 
   ngOnInit(): void {
-   
+
     this.items = items;
     this.itemsMayoristas = itemsMayoristas;
     this.itemsReservas = itemsReservas;
@@ -47,30 +47,30 @@ export class HeaderComponent implements OnInit {
 
     // Observable -> Monitoreo de reservas por vencer
     if(this.authService.usuario.role !== 'DELIVERY_ROLE' && this.permisos.all){
-      
+
       this.dataService.alertaReservas();
 
       this.consultarReservas = interval(this.TIEMPO_CONSULTA);
-  
+
       this.consultarReservasSubscription = this.consultarReservas.subscribe( () => {
         this.dataService.alertaReservas();
       })
     }
-  
+
   }
 
   // Asignar permisos de usuario login
   permisosUsuarioLogin(): boolean {
     return this.authService.usuario.permisos.includes('RESERVAS_ALL') || this.authService.usuario.permisos.includes('RESERVAS_READ') || this.authService.usuario.role === 'ADMIN_ROLE';
   }
-  
+
   // Habilitacion de navegacion
   habilitacionNavegacion(): void {}
 
   // Metodo: Cerrar sesion
-  logout(): void{ 
+  logout(): void{
     if(this.authService.usuario.role !== 'DELIVERY_ROLE' && this.permisos.all) this.consultarReservasSubscription.unsubscribe();
-    this.authService.logout(); 
+    this.authService.logout();
   }
 
 }
