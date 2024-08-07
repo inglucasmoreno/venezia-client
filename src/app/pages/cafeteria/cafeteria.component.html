@@ -1,0 +1,44 @@
+<!-- Modal: Nueva mesa -->
+<app-modal-small [showModal]="showModalNuevaMesa">
+    <div class="bg-primary-800 text-white flex items-center justify-between p-2 rounded-t">
+        <h1> Nueva mesa </h1>
+        <button (click)="showModalNuevaMesa = false" class="focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    <div class="p-2 text-sm">
+        <div>
+            <p class="font-semibold"> <span class="text-red-500"> * </span> Nombre de mesa </p>
+            <input 
+                [(ngModel)]="formNuevaMesa.descripcion"
+                (keyup.enter)="crearMesa()"
+                type="text" 
+                placeholder="Ej. Mesa 1"
+                class="p-2 rounded border mt-2 border-gray-400 w-full">
+        </div>
+        <button (click)="crearMesa()" class="p-2 bg-secondaryColor mt-3 focus:outline-none text-white rounded w-full">
+            Nueva mesa
+        </button>
+    </div>
+</app-modal-small>
+
+<!-- Cafeteria -->
+<div class="p-5 gsap-contenido">
+    <div class="flex items-center flex-wrap">
+        <div
+            (click)="abrirModalNuevaMesa()"
+            class="h-36 w-1/6 ml-2 mt-2 cursor-pointer bg-gray-100 flex flex-col items-center justify-center border text-center border-gray-400">
+            <img class="w-16" src="assets/svg/icono-suma.svg">
+            <p class="mt-2 text-gray-600 text-xs"> Nueva mesa </p>
+        </div>
+        <div
+            *ngFor="let mesa of mesas"
+            [ngClass]="{'bg-red-100 border-red-500':mesa.estado === 'Ocupada', 'bg-green-100 border-green-500':mesa.estado === 'Libre'}"
+            class="h-36 w-1/6 ml-2 mt-2 cursor-pointer flex flex-col items-center justify-center border text-center">
+            <img class="w-16" src="assets/svg/icono-mesa.svg">
+            <p class="mt-2"> {{ mesa.descripcion }} </p>
+        </div>
+    </div>
+</div>

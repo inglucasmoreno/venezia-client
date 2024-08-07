@@ -47,6 +47,7 @@ import { NuevaReservaComponent } from './reservas/nueva-reserva.component';
 import { DetallesReservasComponent } from './reservas/detalles-reservas.component';
 import { ComprasComponent } from './compras/compras.component';
 import { ComprasDetallesComponent } from './compras-detalles/compras-detalles.component';
+import { CafeteriaComponent } from './cafeteria/cafeteria.component';
 
 const routes: Routes = [
     {
@@ -138,6 +139,8 @@ const routes: Routes = [
             { path: 'caja', data: { permisos: 'CAJAS_NAV' }, canActivate: [PermisosGuard], component: CajaComponent },
             { path: 'caja/historial', data: { permisos: 'CAJAS_NAV' }, canActivate: [PermisosGuard], component: CajasHistorialComponent },
 
+            // Cafeteria
+            { path: 'cafeteria', data: { permisos: 'CAFETERIA_NAV' }, canActivate: [PermisosGuard], component: CafeteriaComponent },
 
         ]
     }
