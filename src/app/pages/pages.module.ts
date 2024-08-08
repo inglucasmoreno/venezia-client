@@ -50,6 +50,7 @@ import { DetallesReservasComponent } from './reservas/detalles-reservas.componen
 import { ComprasComponent } from './compras/compras.component';
 import { ComprasDetallesComponent } from './compras-detalles/compras-detalles.component';
 import { CafeteriaComponent } from './cafeteria/cafeteria.component';
+import { MesasDetallesComponent } from './cafeteria/mesas-detalles/mesas-detalles.component';
 
 
 @NgModule({
@@ -97,6 +98,7 @@ import { CafeteriaComponent } from './cafeteria/cafeteria.component';
     ComprasComponent,
     ComprasDetallesComponent,
     CafeteriaComponent,
+    MesasDetallesComponent,
   ],
   imports: [
     CommonModule,

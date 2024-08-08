@@ -1,0 +1,132 @@
+<!-- Buscador de productos -->
+<app-modal [showModal]="showModalProductos">
+  <div class="bg-primary-800 text-white flex items-center justify-between p-2 rounded-t">
+    <h1> Listado de productos </h1>
+    <button (click)="showModalProductos = false" class="focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="p-2 text-sm">
+
+    <div *ngIf="!productoSeleccionado">
+
+      <input [(ngModel)]="filtroProductos.parametro" type="text" placeholder="Ej. Buscador de productos"
+        class="border focus:outline-none mb-2 rounded w-full border-gray-400 p-2">
+
+      <div class="border-b border-gray-400 max-h-96 overflow-y-auto">
+        <div (click)="seleccionarProducto(producto)" *ngFor="let producto of productos | filtroProductos:filtroProductos.parametro:'true'"
+          class="hover:bg-gray-50 border-b-0 cursor-pointer border border-gray-400 p-3">
+          <p class="font-semibold"> {{ producto.descripcion }} </p>
+          <p class="text-xs text-gray-500"> Precio: ${{ producto.precio | moneda }} </p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="productoSeleccionado">
+      <div class="p-2">
+        <p class="font-semibold"> {{ productoSeleccionado.descripcion }} </p>
+        <p class="text-xs text-gray-500"> Precio: ${{ productoSeleccionado.precio | moneda }} </p>
+      </div>
+      <div class="flex items-center mt-2">
+        <button (click)="cantidad = cantidad > 1 ? cantidad - 1 : cantidad" class="p-2 ml-2 focus:outline-none bg-gray-100 border border-gray-400 rounded">
+          <img class="w-4" src="assets/svg/icono-resta.svg">
+        </button>
+        <input type="number" [(ngModel)]="cantidad" class="border ml-2 border-gray-400 p-2 w-20 text-center rounded">
+        <button (click)="cantidad = cantidad + 1" class="p-2 ml-2 focus:outline-none bg-gray-100 border border-gray-400 rounded">
+          <img class="w-4" src="assets/svg/icono-suma.svg">
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mt-4">
+        <button (click)="agregarProducto()" class="bg-green-500 text-white p-2 rounded focus:outline-none">
+          Agregar
+        </button>
+        <button (click)="deseleccionarProducto()" class="bg-red-500 text-white p-2 rounded focus:outline-none">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+  </div>
+</app-modal>
+
+<!-- Pagina principal -->
+<div class="p-2">
+  <div class="w-2/3 mx-auto">
+
+    <div class="border border-primary-800 bg-primary-800 text-white p-2">
+      <div class="flex items-center">
+        <button routerLink="/dashboard/cafeteria" title="Regresar"
+          class="p-2 focus:outline-none text-gray-900 rounded hover:text-secondaryColor bg-gray-200">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <h1 class="ml-2 text-xl"> {{ mesa?.descripcion }} </h1>
+      </div>
+    </div>
+
+    <!-- Sin pedido -->
+    <div *ngIf="productosCarrito.length === 0" class="flex flex-col items-center justify-center">
+      <div class="text-center flex flex-col items-center text-gray-700 mt-4">
+        <img class="w-16" src="assets/svg/icono-ok.svg">
+        <p class="text-lg font-semibold mt-2"> La mesa se encuentra libre </p>
+      </div>
+      <button (click)="abrirListadoProductos()"
+        class="p-2 mt-4 text-lg bg-green-500 hover:opacity-90 focus:outline-none rounded text-white"> Tomar pedido
+      </button>
+    </div>
+    <div class="mt-2 text-sm" *ngIf="productosCarrito.length > 0">
+
+      <div class="bg-gray-100 p-2 border border-gray-400 mb-2 flex items-center justify-between">
+          <h2 class="font-semibold"> Detalles de pedido </h2>
+          <button (click)="abrirListadoProductos()" title="Agregar producto" class="p-2 focus:outline-none hover:text-green-500 bg-white rounded border border-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+            </svg>
+          </button>
+      </div>
+
+      <div class="text-sm p-2 flex items-center justify-between">
+        <div class="flex items-center justify-center mb-2">
+          <button (click)="generarPedido()" class="p-2 bg-green-500 focus:outline-none hover:opacity-90 text-white rounded">
+            Generar pedido
+          </button>
+          <button (click)="cancelarPedido()" class="p-2 focus:outline-none bg-red-500 hover:opacity-90 text-white rounded ml-2">
+            Cancelar pedido
+          </button>
+          <button (click)="abrirListadoProductos()" class="p-2 focus:outline-none bg-orange-500 hover:opacity-90 text-white rounded ml-2">
+            Agregar producto
+          </button>
+        </div>
+        <p> <span class="font-semibold"> Precio total: </span> ${{ precioTotal | moneda }} </p>
+      </div>
+
+      <div class="mb-2" *ngFor="let elemento of productosCarrito">
+        <div class="flex items-center justify-between border border-gray-400 p-3">
+          <div class="flex items-center">
+            <div class="flex items-center">
+              <button (click)="eliminarProducto(elemento)" title="Eliminar producto" class="p-2 hover:opacity-90 focus:outline-none bg-red-500 mt-2 text-white rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <img class="w-12 ml-2" src="assets/svg/icono-producto-cafeteria.svg">
+            </div>
+            <div class="ml-2 mt-2">
+              <p class="font-semibold"> {{ elemento.producto.descripcion }} </p>
+              <p class="text-gray-800"> Cantidad: {{ elemento.cantidad }} </p>
+            </div>
+          </div>
+          <p> ${{ elemento.precioTotal | moneda }} </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
