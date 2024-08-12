@@ -18,6 +18,7 @@ import { FiltroCuentasCorrientesMayoristasPipe } from './filtro-cuentas-corrient
 import { AlertaReservasPipe } from './alerta-reservas.pipe';
 import { FiltroComprasPipe } from './filtro-compras.pipe';
 import { FiltroProductosCompraPipe } from './filtro-productos-compra.pipe';
+import { FiltroMesasPipe } from './filtro-mesas.pipe';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { FiltroProductosCompraPipe } from './filtro-productos-compra.pipe';
     AlertaReservasPipe,
     FiltroComprasPipe,
     FiltroProductosCompraPipe,
+    FiltroMesasPipe,
   ],
   imports: [
     CommonModule

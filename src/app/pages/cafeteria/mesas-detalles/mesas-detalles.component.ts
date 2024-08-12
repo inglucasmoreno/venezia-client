@@ -96,6 +96,7 @@ export class MesasDetallesComponent implements OnInit {
   ngOnInit(): void {
     this.dataService.ubicacionActual = 'Dashboard - Detalles de mesa';
     this.alertService.loading();
+    this.recuperarLocalStorage();
     this.listarProductos();
     this.activatedRoute.params.subscribe({
       next: ({ id }) => {
@@ -119,6 +120,11 @@ export class MesasDetallesComponent implements OnInit {
 
       }
     });
+  }
+
+  recuperarLocalStorage(): void {
+    const imprimir = localStorage.getItem('imprimir-cafeteria');
+    if (imprimir) this.imprimir = JSON.parse(imprimir);
   }
 
   abrirActualizarMesa(): void {
@@ -395,6 +401,7 @@ export class MesasDetallesComponent implements OnInit {
 
   cambiarImprimir(): void {
     this.imprimir = !this.imprimir;
+    this.almacenamientoLocalStorage();
   }
 
   // Datos de contribuyente
@@ -665,6 +672,10 @@ export class MesasDetallesComponent implements OnInit {
   abrirModalVenta(): void {
     this.proximo_nro_factura = null;
     this.showModalVenta = true;
+  }
+
+  almacenamientoLocalStorage(): void {
+    localStorage.setItem('imprimir-cafeteria', JSON.stringify(this.imprimir));
   }
 
 

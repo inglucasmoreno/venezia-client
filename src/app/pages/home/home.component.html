@@ -1,26 +1,28 @@
 <div class="mr-auto ml-auto text-center">
-    <div class="md:flex justify-center mt-10">
-        <div class="gsap-contenido">
-            <img src="assets/img/home/Logo.png" class="w-1/2 mx-auto" alt="Logo de venezia">
-            <div class="flex flex-col md:flex-row items-center justify-center mt-4 md:mt-10 md:mb-5">
-              <button routerLink="/dashboard/ventas" class="w-56 h-40 focus:outline-none outline-none bg-gray-100 hover:bg-blue-50 border hover:translate-y-2 duration-200 transform shadow-lg border-gray-400 rounded flex flex-col items-center justify-center">
-                <p class="font-semibold text-lg"> Ventas por caja </p>
-                <img class="w-16 mt-2" src="assets/svg/icono-caja-registradora.svg">
-              </button>
-              <button routerLink="/dashboard/cafeteria" class="w-56 h-40 focus:outline-none outline-none mt-4 md:mt-0 md:ml-4 bg-gray-100 hover:bg-pink-50 border hover:translate-y-2 duration-200 transform shadow-lg border-gray-400 rounded flex flex-col items-center justify-center">
-                <p class="font-semibold text-lg"> Cafeteria </p>
-                <img class="w-16 mt-2" src="assets/svg/icono-cafeteria.svg">
-              </button>
-            </div>
-            <div class="mx-auto mt-5 md:mt-10">
-                <p class="text-xl font-semibold text-primary-800"> Sistema para panaderia </p>
-                <P class="font-semibold text-red-900"> {{ SUCURSAL }} </P>
-                <p class="font-semibold text-gray-800"> Versión 4.1.0 </p>
-                <p class="text-sm text-gray-800 mt-1"> Desarrollado por Equinoccio Technology </p>
-                <br>
-            </div>
-        </div>
+  <div class="md:flex justify-center mt-10">
+    <div class="gsap-contenido">
+      <img src="assets/img/home/Logo.png" [ngClass]="{'w-96':!permiso_cafeteria && !permiso_ventas}" class="w-44 mx-auto" alt="Logo de venezia">
+      <div class="flex flex-col md:flex-row items-center justify-center mt-4 md:mt-10 md:mb-5">
+        <button *ngIf="permiso_ventas" routerLink="/dashboard/ventas"
+          class="w-56 h-40 focus:outline-none outline-none bg-gray-100 hover:bg-blue-50 border hover:translate-y-2 duration-200 transform shadow-lg border-gray-400 rounded flex flex-col items-center justify-center">
+          <p class="font-semibold text-lg"> Ventas por caja </p>
+          <img class="w-16 mt-2" src="assets/svg/icono-caja-registradora.svg">
+        </button>
+        <button *ngIf="permiso_cafeteria" routerLink="/dashboard/cafeteria"
+          class="w-56 h-40 focus:outline-none outline-none mt-4 md:mt-0 md:ml-4 bg-gray-100 hover:bg-pink-50 border hover:translate-y-2 duration-200 transform shadow-lg border-gray-400 rounded flex flex-col items-center justify-center">
+          <p class="font-semibold text-lg"> Cafeteria </p>
+          <img class="w-16 mt-2" src="assets/svg/icono-cafeteria.svg">
+        </button>
+      </div>
+      <div class="mx-auto mt-5 md:mt-10">
+        <p class="text-xl font-semibold text-primary-800"> Sistema para panaderia </p>
+        <P class="font-semibold text-red-900"> {{ SUCURSAL }} </P>
+        <p class="font-semibold text-gray-800"> Versión 4.1.0 </p>
+        <p class="text-sm text-gray-800 mt-1"> Desarrollado por Equinoccio Technology </p>
+        <br>
+      </div>
     </div>
-    <br>
-    <br>
+  </div>
+  <br>
+  <br>
 </div>
