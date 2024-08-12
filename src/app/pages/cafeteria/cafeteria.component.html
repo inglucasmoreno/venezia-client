@@ -24,31 +24,33 @@
 <!-- Cafeteria -->
 <div class="p-5 gsap-contenido pb-20 md:pb-0">
 
-  <div class="p-2 bg-gray-50 border flex items-center justify-between rounded border-gray-400">
+  <div class="p-2 bg-gray-50 border md:flex md:items-center md:justify-between rounded border-gray-400">
     <div class="flex items-center">
       <img class="w-12" src="assets/svg/icono-cafeteria.svg">
-      <h2 class="text-xl font-semibold ml-3"> Control de cafeteria </h2>
+      <h2 class="md:text-xl font-semibold ml-3"> Control de cafeteria </h2>
     </div>
-    <select class="text-sm p-2 focus:outline-none border border-gray-400 bg-white rounded">
+    <select [(ngModel)]="filtroMesas.estado" class="text-sm p-2 w-full mt-2 md:mt-0 md:w-auto focus:outline-none border mr-2 border-gray-400 bg-white rounded">
       <option value=""> Todas las mesas </option>
-      <option value="Ocupadas"> Ocupadas </option>
-      <option value="Libres"> Libres </option>
+      <option value="Ocupada"> Ocupadas </option>
+      <option value="Libre"> Libres </option>
     </select>
   </div>
 
-  <div class="md:flex md:items-center md:flex-wrap mt-2">
+  <!-- [ngClass]="{'grid grid-cols-2 gap-4' : ver === 'Cuadricula'}" -->
+
+  <div  class="grid grid-cols-2 md:grid-cols-5 w-full gap-4 md:flex-wrap mt-4">
     <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirModalNuevaMesa()"
-      class="md:h-36 p-4 md:pd-0 md:w-1/6 ml-2 mt-2 cursor-pointer bg-gray-100 flex flex-col items-center justify-center rounded border text-center border-gray-400">
+      class="p-4 w-full h-40 md:pd-0 cursor-pointer bg-gray-100 flex flex-col items-center justify-center rounded border text-center border-gray-400">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"
         stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
       </svg>
       <p class="mt-2 text-gray-600 text-xs"> Nueva mesa </p>
     </div>
-    <div *ngFor="let mesa of mesas"
+    <div *ngFor="let mesa of mesas | filtroMesas:filtroMesas.estado"
       [routerLink]="[mesa.estado === 'Ocupada' ? '/dashboard/cafeteria/mesa/detalles' : '/dashboard/cafeteria/mesa/nuevo-pedido', mesa._id]"
       [ngClass]="{'bg-red-100 border-red-500':mesa.estado === 'Ocupada', 'bg-green-100 border-green-500':mesa.estado === 'Libre'}"
-      class="md:h-36 p-4 rounded md:p-0 md:w-1/6 ml-2 mt-2 cursor-pointer flex flex-col items-center justify-center border text-center">
+      class="p-4 w-full h-40 rounded md:p-0 cursor-pointer flex flex-col items-center justify-center border text-center">
       <img class="w-12 md:w-16" src="assets/svg/icono-mesa.svg">
       <p class="mt-2"> {{ mesa.descripcion }} </p>
     </div>

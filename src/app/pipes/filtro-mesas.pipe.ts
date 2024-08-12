@@ -5,36 +5,21 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FiltroMesasPipe implements PipeTransform {
 
-  transform(valores: any[], parametro: string, activo: string): any {
+  transform(valores: any[], estado: string): any {
 
     // Trabajando con activo boolean
-    let boolActivo: boolean;
     let filtrados: any[];
 
-    // Creando variable booleana
-    if (activo === 'true') boolActivo = true;
-    else if (activo === 'false') boolActivo = false;
-    else boolActivo = null;
-
     // Filtrado Activo - Inactivo - Todos
-    if (boolActivo !== null) {
+    if (estado !== '') {
       filtrados = valores.filter(valor => {
-        return valor.activo == boolActivo;
+        return valor.estado === estado;
       });
-    } else if (boolActivo === null) {
+    } else if (estado === '') {
       filtrados = valores;
     }
 
-    // Filtrado por parametro
-    parametro = parametro.toLocaleLowerCase();
-
-    if (parametro.length !== 0) {
-      return filtrados.filter(valor => {
-        return valor.descripcion.toLocaleLowerCase().includes(parametro)
-      });
-    } else {
-      return filtrados;
-    }
+    return filtrados;
 
   }
 

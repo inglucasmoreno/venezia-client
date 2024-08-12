@@ -14,9 +14,16 @@ export class CafeteriaComponent implements OnInit {
 
   public showModalNuevaMesa = false;
   public mesas: any[] = [];
+
+  public ver = 'Cuadricula';
+
   public formNuevaMesa = {
     descripcion: ''
-  }
+  };
+
+  public filtroMesas = {
+    estado: ''
+  };
 
   constructor(
     public authService: AuthService,

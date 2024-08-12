@@ -63,6 +63,7 @@ import { FiltroMesasPipe } from './filtro-mesas.pipe';
     FiltroMayoristasGastosTiposPipe,
     FiltroMayoristasIngresosTiposPipe,
     FiltroCuentasCorrientesMayoristasPipe,
+    FiltroMesasPipe,
     AlertaReservasPipe
   ]
 })
