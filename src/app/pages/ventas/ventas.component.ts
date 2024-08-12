@@ -406,6 +406,7 @@ export class VentasComponent implements OnInit {
               creatorUser: this.authService.usuario.userId,
               updatorUser: this.authService.usuario.userId,
             };
+
             this.ventasService.nuevaVenta(data).subscribe({
               next: ({venta}) => {
 

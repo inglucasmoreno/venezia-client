@@ -49,6 +49,7 @@ import { ComprasComponent } from './compras/compras.component';
 import { ComprasDetallesComponent } from './compras-detalles/compras-detalles.component';
 import { CafeteriaComponent } from './cafeteria/cafeteria.component';
 import { MesasDetallesComponent } from './cafeteria/mesas-detalles/mesas-detalles.component';
+import { MesasNuevoPedidoComponent } from './cafeteria/mesas-nuevo-pedido/mesas-nuevo-pedido.component';
 
 const routes: Routes = [
   {
@@ -143,8 +144,11 @@ const routes: Routes = [
       // Cafeteria
       { path: 'cafeteria', data: { permisos: 'CAFETERIA_NAV' }, canActivate: [PermisosGuard], component: CafeteriaComponent },
 
+      // Cafeteria - Nuevo pedido
+      { path: 'cafeteria/mesa/nuevo-pedido/:id', data: { permisos: 'CAFETERIA_NAV' }, canActivate: [PermisosGuard], component: MesasNuevoPedidoComponent },
+
       // Cafeteria - Detalles de mesas
-      { path: 'cafeteria/mesa/:id', data: { permisos: 'CAFETERIA_NAV' }, canActivate: [PermisosGuard], component: MesasDetallesComponent },
+      { path: 'cafeteria/mesa/detalles/:id', data: { permisos: 'CAFETERIA_NAV' }, canActivate: [PermisosGuard], component: MesasDetallesComponent },
 
     ]
   }

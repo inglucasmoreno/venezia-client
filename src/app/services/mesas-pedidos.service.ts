@@ -10,7 +10,7 @@ const base_url = environment.base_url;
 })
 export class MesasPedidosService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Nuevo pedido
   nuevoPedido(data: any): Observable<any> {
@@ -21,9 +21,18 @@ export class MesasPedidosService {
     });
   };
 
+  // Pedido por mesa
+  getPedidoPorMesa(idMesa: string): Observable<any> {
+    return this.http.get(`${base_url}/mesas-pedidos/mesa/${idMesa}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
+
   // Pedido por ID
   getPedido(id: string): Observable<any> {
-    return this.http.get(`${base_url}/mesas-pedidos/${ id }`,{
+    return this.http.get(`${base_url}/mesas-pedidos/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -47,12 +56,30 @@ export class MesasPedidosService {
   }
 
   // Actualizar pedido
-  actualizarPedido(id:string, data: any): Observable<any> {
+  actualizarPedido(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/mesas-pedidos/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
   }
+
+  // Cancelar pedido
+  cancelarPedido(id: string): Observable<any> {
+    return this.http.put(`${base_url}/mesas-pedidos/cancelar/${id}`,{}, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+  // Imprimir detalles de pedido
+  imprimirDetallesPedido(idMesa: string): Observable<any> {
+    return this.http.get(`${base_url}/mesas-pedidos/imprimir/detalles/${idMesa}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
 
 }

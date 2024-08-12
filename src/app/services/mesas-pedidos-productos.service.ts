@@ -33,12 +33,14 @@ export class MesasPedidosProductosService {
   // Listar relaciones
   listarRelaciones(
     direccion: number = 1,
-    columna: string = 'descripcion'
+    columna: string = 'descripcion',
+    mesa: string = ''
   ): Observable<any> {
     return this.http.get(`${base_url}/mesas-pedidos-productos`, {
       params: {
         direccion: String(direccion),
-        columna
+        columna,
+        mesa
       },
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -48,11 +50,22 @@ export class MesasPedidosProductosService {
 
   // Actualizar relacion
   actualizarRelacion(id:string, data: any): Observable<any> {
+    console.log(data);
     return this.http.put(`${base_url}/mesas-pedidos-productos/${id}`, data, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
     });
   }
+
+
+  // Eliminar relacion
+  eliminarRelacion(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/mesas-pedidos-productos/${id}`, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  };
 
 }

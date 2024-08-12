@@ -19,7 +19,7 @@ export class CafeteriaComponent implements OnInit {
   }
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private dataService: DataService,
     private mesasService: MesasService,
     private alertService: AlertService
@@ -43,7 +43,7 @@ export class CafeteriaComponent implements OnInit {
   }
 
   crearMesa(): void {
-    
+
     if (this.formNuevaMesa.descripcion.trim() === '') {
       this.alertService.info('Debe ingresar el nombre de la mesa');
       return;
@@ -64,7 +64,7 @@ export class CafeteriaComponent implements OnInit {
         this.alertService.success('Mesa creada correctamente');
       }, error: (error) => this.alertService.errorApi(error.message)
     });
-  
+
   }
 
 }

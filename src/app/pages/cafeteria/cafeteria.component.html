@@ -22,17 +22,21 @@
 </app-modal-small>
 
 <!-- Cafeteria -->
-<div class="p-5 gsap-contenido">
-  <div class="flex items-center flex-wrap">
-    <div (click)="abrirModalNuevaMesa()"
-      class="h-36 w-1/6 ml-2 mt-2 cursor-pointer bg-gray-100 flex flex-col items-center justify-center border text-center border-gray-400">
-      <img class="w-16" src="assets/svg/icono-suma.svg">
+<div class="p-5 gsap-contenido pb-20 md:pb-0">
+  <div class="md:flex md:items-center md:flex-wrap">
+    <div *ngIf="authService.usuario.role === 'ADMIN_ROLE'" (click)="abrirModalNuevaMesa()"
+      class="md:h-36 p-4 md:pd-0 md:w-1/6 ml-2 mt-2 cursor-pointer bg-gray-100 flex flex-col items-center justify-center border text-center border-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
       <p class="mt-2 text-gray-600 text-xs"> Nueva mesa </p>
     </div>
-    <div *ngFor="let mesa of mesas" [routerLink]="['/dashboard/cafeteria/mesa', mesa._id]"
+    <div *ngFor="let mesa of mesas"
+      [routerLink]="[mesa.estado === 'Ocupada' ? '/dashboard/cafeteria/mesa/detalles' : '/dashboard/cafeteria/mesa/nuevo-pedido', mesa._id]"
       [ngClass]="{'bg-red-100 border-red-500':mesa.estado === 'Ocupada', 'bg-green-100 border-green-500':mesa.estado === 'Libre'}"
-      class="h-36 w-1/6 ml-2 mt-2 cursor-pointer flex flex-col items-center justify-center border text-center">
-      <img class="w-16" src="assets/svg/icono-mesa.svg">
+      class="md:h-36 p-4 md:p-0 md:w-1/6 ml-2 mt-2 cursor-pointer flex flex-col items-center justify-center border text-center">
+      <img class="w-12 md:w-16" src="assets/svg/icono-mesa.svg">
       <p class="mt-2"> {{ mesa.descripcion }} </p>
     </div>
   </div>

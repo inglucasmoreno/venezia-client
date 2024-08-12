@@ -28,7 +28,8 @@ export class EditarUsuarioComponent implements OnInit {
     pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
     mayoristas: 'MAYORISTAS_NOT_ACCESS',
     cajas: 'CAJAS_NOT_ACCESS',
-    reservas: 'RESERVAS_NOT_ACCESS'
+    reservas: 'RESERVAS_NOT_ACCESS',
+    cafeteria: 'CAFETERIA_NOT_ACCESS',
   };
 
   // Modals
@@ -132,6 +133,9 @@ export class EditarUsuarioComponent implements OnInit {
       // Reservas
       (permiso === 'RESERVAS_ALL' || permiso === 'RESERVAS_READ') ? this.permisos.reservas = permiso : null;
 
+      // Cafeteria
+      (permiso === 'CAFETERIA_ALL' || permiso === 'CAFETERIA_READ') ? this.permisos.cafeteria = permiso : null;
+
     });
 
   }
@@ -194,6 +198,7 @@ export class EditarUsuarioComponent implements OnInit {
         mayoristas: 'MAYORISTAS_NOT_ACCESS',
         cajas: 'CAJAS_ALL',
         reservas: 'RESERVAS_ALL',
+        cafeteria: 'CAFETERIA_ALL',
       }
     }
 
@@ -208,7 +213,8 @@ export class EditarUsuarioComponent implements OnInit {
         pedidosYa: 'PEDIDOSYA_NOT_ACCESS',
         mayoristas: 'MAYORISTAS_ALL',
         cajas: 'CAJAS_NOT_ACCESS',
-        reservas: 'RESERVAS_NOT_ACCESS'
+        reservas: 'RESERVAS_NOT_ACCESS',
+        cafeteria: 'CAFETERIA_ALL',
       }
     }
 
@@ -277,6 +283,12 @@ export class EditarUsuarioComponent implements OnInit {
     if (this.permisos.reservas !== 'RESERVAS_NOT_ACCESS') {
       permisos.push('RESERVAS_NAV');
       permisos.push(this.permisos.reservas);
+    }
+
+    // Seccion cafeteria
+    if (this.permisos.cafeteria !== 'CAFETERIA_NOT_ACCESS') {
+      permisos.push('CAFETERIA_NAV');
+      permisos.push(this.permisos.cafeteria);
     }
 
     return permisos;

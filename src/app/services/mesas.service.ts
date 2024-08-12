@@ -10,7 +10,7 @@ const base_url = environment.base_url;
 })
 export class MesasService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Nueva mesa
   nuevaMesa(data: any): Observable<any> {
@@ -23,7 +23,7 @@ export class MesasService {
 
   // Mesa por ID
   getMesa(id: string): Observable<any> {
-    return this.http.get(`${base_url}/mesas/${ id }`,{
+    return this.http.get(`${base_url}/mesas/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
@@ -47,8 +47,17 @@ export class MesasService {
   }
 
   // Actualizar mesas
-  actualizarMesas(id:string, data: any): Observable<any> {
+  actualizarMesa(id: string, data: any): Observable<any> {
     return this.http.put(`${base_url}/mesas/${id}`, data, {
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      }
+    });
+  }
+
+  // Eliminar mesas
+  eliminarMesas(id: string): Observable<any> {
+    return this.http.delete(`${base_url}/mesas/${id}`, {
       headers: {
         'Authorization': localStorage.getItem('token')
       }
