@@ -134,8 +134,11 @@ export class MesasNuevoPedidoComponent implements OnInit {
       return;
     }
 
+    console.log(this.productoSeleccionado);
+
     this.productosCarrito.push({
       producto: this.productoSeleccionado,
+      alicuota: this.productoSeleccionado.alicuota ? this.productoSeleccionado.alicuota : 21,
       precio: this.productoSeleccionado.precio,
       precioTotal: this.productoSeleccionado.precio * this.cantidad,
       cantidad: this.cantidad
@@ -165,6 +168,7 @@ export class MesasNuevoPedidoComponent implements OnInit {
               mesa: this.mesa._id,
               producto: producto._id,
               precio: producto.precio,
+              alicuota: producto.alicuota ? producto.alicuota : 21,
               cantidad,
               precioTotal: producto.precio * cantidad,
               creatorUser: this.authService.usuario.userId,

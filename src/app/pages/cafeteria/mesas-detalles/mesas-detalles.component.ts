@@ -181,6 +181,7 @@ export class MesasDetallesComponent implements OnInit {
       cantidad: this.cantidad,
       mesa: this.mesa._id,
       pedido: this.pedido._id,
+      alicuota: this.productoSeleccionado.alicuota || 21,
       precio: this.productoSeleccionado.precio,
       precioTotal: this.cantidad * this.productoSeleccionado.precio,
       producto: this.productoSeleccionado._id,

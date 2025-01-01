@@ -4,8 +4,8 @@ export const environment = {
   // base_url: 'http://178.128.146.6'
   // base_url: 'http://146.190.52.149',
   // base_url: 'https://panaderiavenezia.com',
-  // base_url: 'https://panaderiavenezialince.com',
-  base_url: 'http://localhost:3000',
-  // sucursal: 'SUCURSAL ARISTOBULO'
-  sucursal: 'SUCURSAL LINCE'
+  base_url: 'https://panaderiavenezialince.com',
+  // base_url: 'http://localhost:3000',
+  sucursal: 'SUCURSAL ARISTOBULO'
+  // sucursal: 'SUCURSAL LINCE'
 };
